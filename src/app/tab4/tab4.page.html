@@ -1,15 +1,26 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>
-      Tab 4
-    </ion-title>
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+      <div class="header-logo">
+        <img src="assets/icon/logo/Logo_GreenLight.png" alt="GreenLight Logo" class="logo-image" />
+      </div>
+    </ion-buttons>
+
+    <ion-title></ion-title>
+
+    <ion-buttons slot="end">
+      <ion-button fill="clear" (click)="toggleLanguage()">
+        <ion-icon name="language" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Tab 4</ion-title>
+      <ion-title size="large">Профіль</ion-title>
     </ion-toolbar>
   </ion-header>
 

@@ -2,16 +2,12 @@
   <ion-toolbar>
     <ion-buttons slot="start">
       <ion-menu-button></ion-menu-button>
-      <div class="header-logo">
-        <img src="assets/icon/logo/Logo_GreenLight.png" alt="GreenLight Logo" class="logo-image" />
-      </div>
     </ion-buttons>
-
-    <ion-title></ion-title>
-
+    <ion-title>Заробіток</ion-title>
     <ion-buttons slot="end">
       <ion-button fill="clear" (click)="toggleLanguage()">
-        <ion-icon name="language" slot="icon-only"></ion-icon>
+        <ion-icon name="language" slot="start"></ion-icon>
+        {{ currentLanguage }}
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -20,9 +16,9 @@
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">QR сканер</ion-title>
+      <ion-title size="large">Заробіток</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <app-explore-container name="Tab 3 page"></app-explore-container>
+  <app-explore-container name="Tab 5 page"></app-explore-container>
 </ion-content>
