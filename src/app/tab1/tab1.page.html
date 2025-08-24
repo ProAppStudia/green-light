@@ -82,32 +82,34 @@
     </ion-toolbar>
   </ion-header>
 
+<div class="slider-wrapper">
   <swiper-container
-    slides-per-view="1"
-    pagination="true"
-    pagination-clickable="true"
-    space-between="0"
+    slides-per-view="auto"
+    centered-slides="true"
+    space-between="10"
+    pagination='{"el": ".swiper-pagination", "clickable": true}'
     autoplay="true"
-    autoplay-delay="3000">
-    <swiper-slide>
-      <div class="slide-content">
-        <h3>Slide 1</h3>
-        <p>This is the first slide content</p>
-      </div>
-    </swiper-slide>
-    <swiper-slide>
-      <div class="slide-content">
-        <h3>Slide 2</h3>
-        <p>This is the second slide content</p>
-      </div>
-    </swiper-slide>
-    <swiper-slide>
-      <div class="slide-content">
-        <h3>Slide 3</h3>
-        <p>This is the third slide content</p>
-      </div>
+    autoplay-delay="3000"
+    loop="true"
+    initial-slide="1">
+    <swiper-slide *ngFor="let slide of slides">
+      <ion-card class="slide-card">
+        <img [src]="slide.photo" class="slide-image" />
+        <div class="discount-badge">{{ slide.discount }}% OFF</div>
+        <ion-card-header>
+          <ion-card-title>{{ slide.title }}</ion-card-title>
+          <ion-card-subtitle>{{ slide.address }}</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-button expand="block" fill="solid" color="primary">
+            Go
+          </ion-button>
+        </ion-card-content>
+      </ion-card>
     </swiper-slide>
   </swiper-container>
+  <div class="swiper-pagination"></div>
+</div>
 
   <!-- Banners -->
   <div class="banners-section">

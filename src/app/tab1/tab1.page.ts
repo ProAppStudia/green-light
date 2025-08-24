@@ -20,10 +20,18 @@ interface Product {
   image: string;
 }
 
+interface Slide {
+  photo: string;
+  title: string;
+  address: string;
+  discount: number;
+}
+
 @Component({
   selector: 'app-tab1',
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss'],
+  standalone: true,
   imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonButton, IonIcon, IonSegment, IonSegmentButton, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, IonList, IonItem, FormsModule, CommonModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
@@ -33,6 +41,27 @@ export class Tab1Page implements OnInit {
   selectedCategory = 'all';
   isLanguageOpen = false;
   isCountryOpen = false;
+
+  slides: Slide[] = [
+    {
+      photo: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=300&fit=crop',
+      title: 'Restaurant Name 1',
+      address: '123 Main St, City, Country',
+      discount: 25,
+    },
+    {
+      photo: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&h=300&fit=crop',
+      title: 'Cafe Cool',
+      address: '456 Oak Ave, Town, Country',
+      discount: 15,
+    },
+    {
+      photo: 'https://images.unsplash.com/photo-1579731118440-8c3a831d5393?w=400&h=300&fit=crop',
+      title: 'The Grand Hotel',
+      address: '789 Pine Rd, Village, Country',
+      discount: 30,
+    },
+  ];
 
   products: Product[] = [
     {
