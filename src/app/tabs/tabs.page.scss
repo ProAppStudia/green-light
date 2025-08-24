@@ -38,9 +38,40 @@ ion-tab-button {
     color: var(--color);
   }
 
+  // Green line above the icon
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%) scaleY(0);
+    transform-origin: top;
+    width: 30px;
+    height: 4px;
+    background: var(--color-selected);
+    border-radius: 2px;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    opacity: 0; // Hidden by default
+  }
+
+  // Spotlight cone effect
+  &::after {
+    content: '';
+    position: absolute;
+    top: 4px; // Position just below the green line
+    left: 50%;
+    transform: translateX(-50%) scaleY(0);
+    transform-origin: top;
+    width: 80px;
+    height: 50px;
+    background: linear-gradient(to bottom, rgba(47, 199, 76, 0.3), transparent);
+    // Create the trapezoid shape for the light cone
+    clip-path: polygon(25% 0, 75% 0, 100% 100%, 0% 100%);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    opacity: 0; // Hidden by default
+  }
+
   &.tab-selected {
-    // The label color will be handled by the --color-selected variable on the tab-bar
-    
     // Style for the selected icon
     ion-icon {
       color: var(--color-selected);
@@ -48,32 +79,10 @@ ion-tab-button {
       text-shadow: 0 0 15px rgba(47, 199, 76, 0.7);
     }
 
-    // Red line above the icon
-    &::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 30px;
-      height: 4px;
-      background: var(--color-selected);
-      border-radius: 2px;
-    }
-
-    // Spotlight cone effect
-    &::after {
-      content: '';
-      position: absolute;
-      top: 4px; // Position just below the red line
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80px;
-      height: 50px;
-      background: linear-gradient(to bottom, rgba(47, 199, 76, 0.3), transparent);
-      // Create the trapezoid shape for the light cone
-      clip-path: polygon(25% 0, 75% 0, 100% 100%, 0% 100%);
-      opacity: 0.8;
+    // Show the spotlight effects on the selected tab
+    &::before, &::after {
+      opacity: 1;
+      transform: translateX(-50%) scaleY(1);
     }
   }
 }
