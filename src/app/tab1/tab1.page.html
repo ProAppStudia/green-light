@@ -1,81 +1,32 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-      <div class="header-logo">
-        <img src="assets/icon/logo/Logo_GreenLight.png" alt="GreenLight Logo" class="logo-image" />
+<ion-header class="ion-no-border">
+  <div class="header-container" [class.hidden]="hideHeader" [class.scrolled]="isScrolled">
+    <div class="header-top">
+      <img src="assets/icon/logo/Logo_GreenLight.png" alt="GreenLight Logo" class="header-logo-img" />
+      <div class="header-icons">
+        <ion-button>
+          <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+        </ion-button>
+        <ion-button>
+          <ion-icon slot="icon-only" name="language-outline"></ion-icon>
+        </ion-button>
+        <ion-button>
+          <ion-icon slot="icon-only" name="globe-outline"></ion-icon>
+        </ion-button>
+        <ion-button>
+          <ion-icon slot="icon-only" name="menu-outline"></ion-icon>
+        </ion-button>
       </div>
-    </ion-buttons>
-
-    <ion-title></ion-title>
-
-    <ion-buttons slot="end">
-      <!-- Language Dropdown -->
-      <ion-button fill="clear" id="language-trigger">
-        <ion-icon name="language" slot="start"></ion-icon>
-        <span>{{ selectedLanguage }}</span>
-        <ion-icon name="chevron-down" slot="end"></ion-icon>
-      </ion-button>
-
-      <!-- Country Dropdown -->
-      <ion-button fill="clear" id="country-trigger">
-        <ion-icon name="flag" slot="start"></ion-icon>
-        <span>{{ selectedCountry }}</span>
-        <ion-icon name="chevron-down" slot="end"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-
-    <!-- Language Popover -->
-    <ion-popover trigger="language-trigger" [isOpen]="isLanguageOpen" (didDismiss)="isLanguageOpen = false">
-      <ng-template>
-        <ion-content>
-          <ion-list>
-            <ion-item button (click)="selectLanguage('EN')">
-              <ion-label>English</ion-label>
-            </ion-item>
-            <ion-item button (click)="selectLanguage('DE')">
-              <ion-label>Deutsch</ion-label>
-            </ion-item>
-            <ion-item button (click)="selectLanguage('UA')">
-              <ion-label>Українська</ion-label>
-            </ion-item>
-            <ion-item button (click)="selectLanguage('RU')">
-              <ion-label>Русский</ion-label>
-            </ion-item>
-          </ion-list>
-        </ion-content>
-      </ng-template>
-    </ion-popover>
-
-    <!-- Country Popover -->
-    <ion-popover trigger="country-trigger" [isOpen]="isCountryOpen" (didDismiss)="isCountryOpen = false">
-      <ng-template>
-        <ion-content>
-          <ion-list>
-            <ion-item button (click)="selectCountry('Ukraine')">
-              <ion-icon name="flag" slot="start" style="color: #005BBB;"></ion-icon>
-              <ion-label>Ukraine</ion-label>
-            </ion-item>
-            <ion-item button (click)="selectCountry('Germany')">
-              <ion-icon name="flag" slot="start" style="color: #000;"></ion-icon>
-              <ion-label>Germany</ion-label>
-            </ion-item>
-            <ion-item button (click)="selectCountry('USA')">
-              <ion-icon name="flag" slot="start" style="color: #B22234;"></ion-icon>
-              <ion-label>USA</ion-label>
-            </ion-item>
-            <ion-item button (click)="selectCountry('Russia')">
-              <ion-icon name="flag" slot="start" style="color: #FF0000;"></ion-icon>
-              <ion-label>Russia</ion-label>
-            </ion-item>
-          </ion-list>
-        </ion-content>
-      </ng-template>
-    </ion-popover>
-  </ion-toolbar>
+    </div>
+    <div class="header-bottom">
+      <div class="search-bar">
+        <ion-icon name="search-outline"></ion-icon>
+        <input type="text" placeholder="Search" />
+      </div>
+    </div>
+  </div>
 </ion-header>
 
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" [scrollEvents]="true" (ionScroll)="onScroll($event)">
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large">Знижки</ion-title>

@@ -3,7 +3,7 @@ import { IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton,
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
-import { language, cart, chevronDown, flag } from 'ionicons/icons';
+import { notificationsOutline, languageOutline, globeOutline, menuOutline, searchOutline } from 'ionicons/icons';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
 // Import Swiper modules
@@ -41,6 +41,9 @@ export class Tab1Page implements OnInit {
   selectedCategory = 'all';
   isLanguageOpen = false;
   isCountryOpen = false;
+  hideHeader = false;
+  isScrolled = false;
+  lastScrollTop = 0;
 
   slides: Slide[] = [
     {
@@ -133,7 +136,18 @@ export class Tab1Page implements OnInit {
   filteredProducts: Product[] = [];
 
   constructor() {
-    addIcons({ language, cart, chevronDown, flag });
+    addIcons({ notificationsOutline, languageOutline, globeOutline, menuOutline, searchOutline });
+  }
+
+  onScroll(event: any) {
+    const scrollTop = event.detail.scrollTop;
+    if (scrollTop > this.lastScrollTop && scrollTop > 10) {
+      this.hideHeader = true;
+    } else {
+      this.hideHeader = false;
+    }
+    this.lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    this.isScrolled = scrollTop > 0;
   }
 
   ngOnInit() {

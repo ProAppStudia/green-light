@@ -1,5 +1,85 @@
+ion-header {
+  box-shadow: none;
+  --box-shadow: none;
+}
+
+.header-container {
+  background-color: #4B5C4A;
+  padding: 16px;
+  color: white;
+  transition: all 0.3s ease-out;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+
+  &.scrolled {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  &.hidden .header-bottom {
+    transform: translateY(-100%);
+    opacity: 0;
+    height: 0;
+    padding: 0;
+    margin: 0;
+  }
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-logo-img {
+  height: 40px;
+}
+
+.header-icons {
+  display: flex;
+  align-items: center;
+
+  ion-button {
+    --background: rgba(255, 255, 255, 0.2);
+    --background-activated: rgba(255, 255, 255, 0.3);
+    --background-focused: rgba(255, 255, 255, 0.3);
+    --background-hover: rgba(255, 255, 255, 0.3);
+    --color: white;
+    --border-radius: 10px;
+    width: 40px;
+    height: 40px;
+  }
+}
+
+.header-bottom {
+  transition: all 0.3s ease-out;
+  overflow: hidden;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin-top: 16px;
+
+  ion-icon {
+    color: #888;
+    margin-right: 8px;
+  }
+
+  input {
+    border: none;
+    outline: none;
+    flex-grow: 1;
+    font-size: 16px;
+    background-color: transparent;
+  }
+}
+
 .slider-wrapper {
-  margin-bottom: 32px !important; /* Ensure space below the entire slider component */
+  margin-bottom: 32px !important;
 }
 
 swiper-container {
@@ -75,10 +155,9 @@ swiper-slide {
   }
 }
 
-// Pagination styling
 .swiper-pagination {
-  position: static !important; /* Override any inline styles from Swiper */
-  margin-top: 16px !important; /* Add space between slides and pagination */
+  position: static !important;
+  margin-top: 16px !important;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -93,33 +172,6 @@ swiper-slide {
   }
 }
 
-// Header styling
-.header-logo {
-  display: flex;
-  align-items: center;
-  margin-left: 12px;
-
-  .logo-image {
-    height: 28px;
-    width: auto;
-    object-fit: contain;
-  }
-}
-
-ion-toolbar {
-  --background: rgba(255, 255, 255, 0.95);
-  --border-color: transparent;
-}
-
-ion-button[fill="clear"] {
-  --color: var(--ion-color-medium);
-
-  &:hover {
-    --color: var(--ion-color-primary);
-  }
-}
-
-// Categories section
 .categories-section {
   padding: 16px;
   background: var(--ion-color-light);
@@ -144,7 +196,6 @@ ion-button[fill="clear"] {
   }
 }
 
-// Products section
 .products-section {
   padding: 16px;
   background: var(--ion-background-color);
@@ -232,7 +283,6 @@ ion-button[fill="clear"] {
   }
 }
 
-/* Banners Section */
 .banners-section {
   padding: 16px;
   background: var(--ion-color-light);
