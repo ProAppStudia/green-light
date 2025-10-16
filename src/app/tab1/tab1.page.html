@@ -101,7 +101,7 @@
           <ion-card-subtitle>{{ slide.address }}</ion-card-subtitle>
         </ion-card-header>
         <ion-card-content>
-          <ion-button expand="block" fill="solid" color="primary">
+          <ion-button (click)="openDiscount(slide.discount_id)" expand="block" fill="solid" color="primary">
             Go
           </ion-button>
         </ion-card-content>
@@ -131,17 +131,10 @@
       <ion-segment-button value="all">
         <ion-label>All</ion-label>
       </ion-segment-button>
-      <ion-segment-button value="electronics">
-        <ion-label>Electronics</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="clothing">
-        <ion-label>Clothing</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="books">
-        <ion-label>Books</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="sports">
-        <ion-label>Sports</ion-label>
+
+      <ion-segment-button *ngFor="let cat of main_categories" value="{{ cat.category_id }}">
+        <ion-label>
+          {{ cat.name }}</ion-label>
       </ion-segment-button>
     </ion-segment>
   </div>
@@ -158,10 +151,10 @@
         <ion-card-content>
           <p class="product-description">{{ product.description }}</p>
           <div class="product-footer">
-            <span class="product-price">${{ product.price }}</span>
-            <ion-button fill="solid" size="small">
+            <span class="product-price">{{ product.percent }}</span>
+            <ion-button (click)="openDiscount(product.discount_id)" fill="solid" size="small">
               <ion-icon name="cart" slot="start"></ion-icon>
-              Add to Cart
+              More
             </ion-button>
           </div>
         </ion-card-content>

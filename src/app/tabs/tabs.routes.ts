@@ -31,7 +31,10 @@ export const routes: Routes = [
         loadComponent: () =>
           import('../tab5/tab5.page').then((m) => m.Tab5Page),
       },
-     
+      {
+        path: 'discount/:id',
+        loadComponent: () => import('../pages/discount/discount.page').then(m => m.DiscountPage)
+      },
       {
         path: '',
         redirectTo: '/tabs/tab1',

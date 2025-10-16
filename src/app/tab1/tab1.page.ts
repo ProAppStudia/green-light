@@ -6,6 +6,9 @@ import { addIcons } from 'ionicons';
 import { language, cart, chevronDown, flag } from 'ionicons/icons';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 
+import { ApiService } from '../services/api';
+import { Router } from '@angular/router';
+
 // Import Swiper modules
 import { register } from 'swiper/element/bundle';
 // Register Swiper custom elements
@@ -18,6 +21,9 @@ interface Product {
   price: number;
   description: string;
   image: string;
+  category_id:number;
+  discount_id:number;
+  percent:string;
 }
 
 interface Slide {
@@ -25,6 +31,7 @@ interface Slide {
   title: string;
   address: string;
   discount: number;
+  discount_id: number;
 }
 
 @Component({
@@ -48,106 +55,73 @@ export class Tab1Page implements OnInit {
       title: 'Restaurant Name 1',
       address: '123 Main St, City, Country',
       discount: 25,
-    },
-    {
-      photo: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&h=300&fit=crop',
-      title: 'Cafe Cool',
-      address: '456 Oak Ave, Town, Country',
-      discount: 15,
-    },
-    {
-      photo: 'https://images.unsplash.com/photo-1579731118440-8c3a831d5393?w=400&h=300&fit=crop',
-      title: 'The Grand Hotel',
-      address: '789 Pine Rd, Village, Country',
-      discount: 30,
-    },
+      discount_id: 0,
+    }
   ];
 
   products: Product[] = [
     {
       id: 1,
       name: 'iPhone 15 Pro',
-      category: 'electronics',
+      category_id: 0,
+      category: '',
       price: 999,
+      discount_id:0,
       description: 'Latest iPhone with advanced camera system',
-      image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=300&h=200&fit=crop'
-    },
+      image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=300&h=200&fit=crop',
+      percent: '',
+    }
+  ];
+
+  main_categories = [
     {
-      id: 2,
-      name: 'MacBook Air',
-      category: 'electronics',
-      price: 1299,
-      description: 'Powerful laptop with M2 chip',
-      image: 'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=300&h=200&fit=crop'
-    },
-    {
-      id: 3,
-      name: 'Nike Air Max',
-      category: 'clothing',
-      price: 129,
-      description: 'Comfortable running shoes',
-      image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&h=200&fit=crop'
-    },
-    {
-      id: 4,
-      name: 'Denim Jacket',
-      category: 'clothing',
-      price: 89,
-      description: 'Classic denim jacket for any season',
-      image: 'https://images.unsplash.com/photo-1544966503-7cc5ac882d5c?w=300&h=200&fit=crop'
-    },
-    {
-      id: 5,
-      name: 'The Great Gatsby',
-      category: 'books',
-      price: 15,
-      description: 'Classic American novel',
-      image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=300&h=200&fit=crop'
-    },
-    {
-      id: 6,
-      name: 'Programming Guide',
-      category: 'books',
-      price: 45,
-      description: 'Complete guide to modern programming',
-      image: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?w=300&h=200&fit=crop'
-    },
-    {
-      id: 7,
-      name: 'Tennis Racket',
-      category: 'sports',
-      price: 199,
-      description: 'Professional tennis racket',
-      image: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=300&h=200&fit=crop'
-    },
-    {
-      id: 8,
-      name: 'Yoga Mat',
-      category: 'sports',
-      price: 35,
-      description: 'Premium yoga mat for daily practice',
-      image: 'https://images.unsplash.com/photo-1506629905135-cb8ecb3a8c10?w=300&h=200&fit=crop'
+      name : null, 
+      icon: null, 
+      category_id : 0
     }
   ];
 
   filteredProducts: Product[] = [];
 
-  constructor() {
+  constructor(
+    private api: ApiService,
+    private router: Router
+  ) {
     addIcons({ language, cart, chevronDown, flag });
   }
 
   ngOnInit() {
     this.filteredProducts = this.products;
+
+    this.api.getHomeData().subscribe({
+      next: (res) => {
+        if(res.slider){
+          this.slides = res.slider;
+        }
+        if(res.discounts_to_categories){
+          this.main_categories = res.discounts_to_categories;
+        }
+        
+        if(res.products_to_cat){
+          this.filteredProducts = res.products_to_cat;
+          this.products = res.products_to_cat;
+        }
+        
+      },
+      error: (err) => console.error('Помилка GET:', err)
+    });
+
   }
 
   onCategoryChange(event: any) {
-    const category = event.detail.value;
-    this.selectedCategory = category;
+    const category_id = event.detail.value;
+    
+    this.selectedCategory = category_id;
 
-    if (category === 'all') {
+    if (category_id === 'all') {
       this.filteredProducts = this.products;
     } else {
-      this.filteredProducts = this.products.filter(product => product.category === category);
+      this.filteredProducts = this.products.filter(product => product.category_id == category_id);
     }
   }
 
@@ -162,4 +136,9 @@ export class Tab1Page implements OnInit {
     this.isCountryOpen = false;
     console.log('Country changed to:', country);
   }
+
+  openDiscount(discount_id: number){
+    this.router.navigate(['/discount', discount_id]);
+  }
+
 }

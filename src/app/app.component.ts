@@ -3,6 +3,7 @@ import { IonApp, IonRouterOutlet, IonMenu, IonHeader, IonToolbar, IonTitle, IonC
 import { addIcons } from 'ionicons';
 import { home, person, settings, star, helpCircle, informationCircle } from 'ionicons/icons';
 
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',

@@ -1,0 +1,45 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+          <ion-back-button><ion-icon name="add"></ion-icon></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{discount_name}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" *ngIf="!loading; else loadingTpl" class="ion-padding">
+
+  <ng-container *ngIf="discount; else notFound">
+    <ion-card>
+      <img *ngIf="discount.image" [src]="discount.image" alt="{{ discount.name }}">
+      <ion-card-header>
+        <ion-card-title>{{ discount.name }}</ion-card-title>
+        <ion-card-subtitle>{{ discount.category }}</ion-card-subtitle>
+        <ion-card-subtitle>{{ discount.shop_name }}</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <p [innerHTML]="discount.description"></p>
+        <h3>Знижка: {{ discount.percent }}</h3>
+        <h3>Період дії: {{ discount.date_start }} - {{ discount.date_end }}</h3>
+      </ion-card-content>
+    </ion-card>
+  </ng-container>
+
+<ion-fab slot="fixed" vertical="bottom" horizontal="end">
+  <ion-fab-button>
+    <ion-icon name="add"></ion-icon>
+  </ion-fab-button>
+</ion-fab>
+
+  <ng-template #notFound>
+    <p class="ion-text-center">Знижку не знайдено.</p>
+  </ng-template>
+
+</ion-content>
+
+<ng-template #loadingTpl>
+  <ion-content class="ion-padding ion-text-center">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Завантаження...</p>
+  </ion-content>
+</ng-template>
