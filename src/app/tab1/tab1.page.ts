@@ -9,6 +9,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ApiService } from '../services/api.service';
 import { Observable, BehaviorSubject, combineLatest, forkJoin, of } from 'rxjs';
 import { map, switchMap, startWith, tap } from 'rxjs/operators';
+import { CategoriesGridComponent } from '../components/categories-grid/categories-grid.component'; // Import the new component
 
 // Import Swiper modules
 import { register } from 'swiper/element/bundle';
@@ -41,7 +42,7 @@ interface CategorizedDiscounts {
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss'],
   standalone: true,
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonButton, IonIcon, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, IonList, IonItem, FormsModule, CommonModule],
+  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonButton, IonIcon, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, IonList, IonItem, FormsModule, CommonModule, CategoriesGridComponent], // Add CategoriesGridComponent here
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class Tab1Page implements OnInit {
