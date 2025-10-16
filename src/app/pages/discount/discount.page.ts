@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonFab, IonFabButton, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonBackButton, IonCard,IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, IonList, IonItem, IonIcon, IonSpinner } from '@ionic/angular/standalone';
+import { IonLabel, IonThumbnail, ToastController, IonFab, IonFabButton, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonBackButton, IonCard,IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, IonList, IonItem, IonIcon, IonSpinner } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
-import { add } from 'ionicons/icons';
+import { add, bagCheckOutline, callOutline } from 'ionicons/icons';
 import { IonicModule, LoadingController } from '@ionic/angular';
 import { ApiService } from '../../services/api';
 import { ActivatedRoute } from '@angular/router';
@@ -14,7 +14,7 @@ import { ActivatedRoute } from '@angular/router';
   templateUrl: './discount.page.html',
   styleUrls: ['./discount.page.scss'],
   standalone: true,
-  imports: [IonFab, IonFabButton, IonCard, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonBackButton, IonButtons, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, IonList, IonItem, IonIcon,IonSpinner]
+  imports: [IonLabel, IonThumbnail, IonFab, IonFabButton, IonCard, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonBackButton, IonButtons, IonButton, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, IonList, IonItem, IonIcon,IonSpinner]
 })
 export class DiscountPage implements OnInit {
 
@@ -26,9 +26,10 @@ export class DiscountPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private api: ApiService,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private toastController: ToastController
   ) { 
-    addIcons({ add });
+    addIcons({ add, callOutline, bagCheckOutline });
   }
 
   async ngOnInit() {
@@ -52,6 +53,34 @@ export class DiscountPage implements OnInit {
         }
       });
     }
+  }
+
+  addDiscountToMyList(discount_id:any){
+    console.log(discount_id);
+    this.api.setDiscountToMyList(discount_id).subscribe({
+        next: async (res:any) => {
+          if(res['success']){
+            this.presentToast(res['success'], 'success');
+          }else if(res['error']){
+            this.presentToast(res['error'], 'danger');
+          }
+        },
+        error: async (err) => {
+          console.error('Помилка завантаження товару:', err);
+        }
+      });
+  }
+
+   async presentToast(message:string, color:string, delay: any = 3000) {
+    const toast = await this.toastController.create({
+      message: message,
+      duration: delay,
+      position: 'bottom',
+      swipeGesture: 'vertical',
+      color: color
+    });
+
+    await toast.present();
   }
 
 }

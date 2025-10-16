@@ -23,6 +23,13 @@ export class ApiService {
   return this.http.get(url, { headers });
 }
 
+  setDiscountToMyList(id: string){
+    const url = `${this.baseUrl}?type=add_to_my_discounts`;
+    const headers = new HttpHeaders({ 'Accept': 'application/json' });
+    const params = new HttpParams().set('discount_id', id);
+    return this.http.get(url, { headers, params });
+  }
+
   sendForm(data: any): Observable<any> {
     const url = `${this.baseUrl}/contact-form`;
     const headers = new HttpHeaders({
