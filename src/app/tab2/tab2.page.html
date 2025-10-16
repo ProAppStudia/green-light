@@ -11,14 +11,14 @@
 
     <ion-buttons slot="end">
       <!-- Language Dropdown -->
-      <ion-button fill="clear" id="language-trigger">
+      <ion-button fill="clear" id="language-trigger" (click)="isLanguageOpen = true">
         <ion-icon name="language" slot="start"></ion-icon>
         <span>{{ selectedLanguage }}</span>
         <ion-icon name="chevron-down" slot="end"></ion-icon>
       </ion-button>
 
       <!-- Country Dropdown -->
-      <ion-button fill="clear" id="country-trigger">
+      <ion-button fill="clear" id="country-trigger" (click)="isCountryOpen = true">
         <ion-icon name="flag" slot="start"></ion-icon>
         <span>{{ selectedCountry }}</span>
         <ion-icon name="chevron-down" slot="end"></ion-icon>
@@ -30,17 +30,8 @@
       <ng-template>
         <ion-content>
           <ion-list>
-            <ion-item button (click)="selectLanguage('EN')">
-              <ion-label>English</ion-label>
-            </ion-item>
-            <ion-item button (click)="selectLanguage('DE')">
-              <ion-label>Deutsch</ion-label>
-            </ion-item>
-            <ion-item button (click)="selectLanguage('UA')">
-              <ion-label>Українська</ion-label>
-            </ion-item>
-            <ion-item button (click)="selectLanguage('RU')">
-              <ion-label>Русский</ion-label>
+            <ion-item *ngFor="let language of (languages$ | async)" button (click)="selectLanguage(language); isLanguageOpen = false">
+              {{ language.name }}
             </ion-item>
           </ion-list>
         </ion-content>
@@ -52,21 +43,8 @@
       <ng-template>
         <ion-content>
           <ion-list>
-            <ion-item button (click)="selectCountry('Ukraine')">
-              <ion-icon name="flag" slot="start" style="color: #005BBB;"></ion-icon>
-              <ion-label>Ukraine</ion-label>
-            </ion-item>
-            <ion-item button (click)="selectCountry('Germany')">
-              <ion-icon name="flag" slot="start" style="color: #000;"></ion-icon>
-              <ion-label>Germany</ion-label>
-            </ion-item>
-            <ion-item button (click)="selectCountry('USA')">
-              <ion-icon name="flag" slot="start" style="color: #B22234;"></ion-icon>
-              <ion-label>USA</ion-label>
-            </ion-item>
-            <ion-item button (click)="selectCountry('Russia')">
-              <ion-icon name="flag" slot="start" style="color: #FF0000;"></ion-icon>
-              <ion-label>Russia</ion-label>
+            <ion-item *ngFor="let country of (countries$ | async)" button (click)="selectCountry(country); isCountryOpen = false">
+              {{ country.name }}
             </ion-item>
           </ion-list>
         </ion-content>
@@ -89,63 +67,41 @@
     space-between="0"
     autoplay="true"
     autoplay-delay="3000">
-    <swiper-slide>
+    <swiper-slide *ngFor="let shop of (shops$ | async)">
       <div class="slide-content">
-        <h3>Slide 1</h3>
-        <p>This is the first slide content</p>
-      </div>
-    </swiper-slide>
-    <swiper-slide>
-      <div class="slide-content">
-        <h3>Slide 2</h3>
-        <p>This is the second slide content</p>
-      </div>
-    </swiper-slide>
-    <swiper-slide>
-      <div class="slide-content">
-        <h3>Slide 3</h3>
-        <p>This is the third slide content</p>
+        <h3>{{ shop.name }}</h3>
+        <p>{{ shop.address }}</p>
+        <img [src]="shop.image" [alt]="shop.name" />
       </div>
     </swiper-slide>
   </swiper-container>
 
   <!-- Category Tabs -->
   <div class="categories-section">
-    <ion-segment [(ngModel)]="selectedCategory" (ionChange)="onCategoryChange($event)">
+    <ion-segment [(ngModel)]="selectedCategory" (ionChange)="onCategoryChange($event)" mode="md">
       <ion-segment-button value="all">
         <ion-label>All</ion-label>
       </ion-segment-button>
-      <ion-segment-button value="electronics">
-        <ion-label>Electronics</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="clothing">
-        <ion-label>Clothing</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="books">
-        <ion-label>Books</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="sports">
-        <ion-label>Sports</ion-label>
+      <ion-segment-button *ngFor="let category of (categories$ | async)" [value]="category.id?.toString()">
+        <ion-label>{{ category.name }}</ion-label>
       </ion-segment-button>
     </ion-segment>
   </div>
 
-  <!-- Products Grid -->
+  <!-- Shops Grid -->
   <div class="products-section">
     <div class="products-grid">
-      <ion-card *ngFor="let product of filteredProducts" class="product-card">
-        <img [src]="product.image" [alt]="product.name" />
+      <ion-card *ngFor="let shop of (filteredShops$ | async)" class="product-card">
+        <img [src]="shop.image" [alt]="shop.name" />
         <ion-card-header>
-          <ion-card-subtitle>{{ product.category }}</ion-card-subtitle>
-          <ion-card-title>{{ product.name }}</ion-card-title>
+          <ion-card-subtitle>{{ shop.category }}</ion-card-subtitle>
+          <ion-card-title>{{ shop.name }}</ion-card-title>
         </ion-card-header>
         <ion-card-content>
-          <p class="product-description">{{ product.description }}</p>
+          <p class="product-description">{{ shop.address }}</p>
           <div class="product-footer">
-            <span class="product-price">${{ product.price }}</span>
             <ion-button fill="solid" size="small">
-              <ion-icon name="cart" slot="start"></ion-icon>
-              Add to Cart
+              Go to Shop
             </ion-button>
           </div>
         </ion-card-content>

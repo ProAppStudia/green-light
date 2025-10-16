@@ -3,20 +3,22 @@ import { IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton,
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
-import { language, cart, chevronDown, flag } from 'ionicons/icons';
+import { language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, searchOutline, globeOutline } from 'ionicons/icons';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { ApiService } from '../services/api.service';
+import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
+import { map, switchMap, startWith } from 'rxjs/operators';
 
 // Import Swiper modules
 import { register } from 'swiper/element/bundle';
 // Register Swiper custom elements
 register();
 
-interface Product {
+interface Shop {
   id: number;
   name: string;
   category: string;
-  price: number;
-  description: string;
+  address: string;
   image: string;
 }
 
@@ -24,113 +26,116 @@ interface Product {
   selector: 'app-tab2',
   templateUrl: 'tab2.page.html',
   styleUrls: ['tab2.page.scss'],
+  standalone: true,
   imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonButton, IonIcon, IonSegment, IonSegmentButton, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, IonList, IonItem, FormsModule, CommonModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class Tab2Page implements OnInit {
-  selectedLanguage = 'EN';
+  selectedLanguage = 'UA';
   selectedCountry = 'Ukraine';
-  selectedCategory = 'all';
+  selectedCategory: string | null = 'all'; // Initialize with 'all'
   isLanguageOpen = false;
   isCountryOpen = false;
 
-  products: Product[] = [
-    {
-      id: 1,
-      name: 'iPhone 15 Pro',
-      category: 'electronics',
-      price: 999,
-      description: 'Latest iPhone with advanced camera system',
-      image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=300&h=200&fit=crop'
-    },
-    {
-      id: 2,
-      name: 'MacBook Air',
-      category: 'electronics',
-      price: 1299,
-      description: 'Powerful laptop with M2 chip',
-      image: 'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=300&h=200&fit=crop'
-    },
-    {
-      id: 3,
-      name: 'Nike Air Max',
-      category: 'clothing',
-      price: 129,
-      description: 'Comfortable running shoes',
-      image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&h=200&fit=crop'
-    },
-    {
-      id: 4,
-      name: 'Denim Jacket',
-      category: 'clothing',
-      price: 89,
-      description: 'Classic denim jacket for any season',
-      image: 'https://images.unsplash.com/photo-1544966503-7cc5ac882d5c?w=300&h=200&fit=crop'
-    },
-    {
-      id: 5,
-      name: 'The Great Gatsby',
-      category: 'books',
-      price: 15,
-      description: 'Classic American novel',
-      image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=300&h=200&fit=crop'
-    },
-    {
-      id: 6,
-      name: 'Programming Guide',
-      category: 'books',
-      price: 45,
-      description: 'Complete guide to modern programming',
-      image: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?w=300&h=200&fit=crop'
-    },
-    {
-      id: 7,
-      name: 'Tennis Racket',
-      category: 'sports',
-      price: 199,
-      description: 'Professional tennis racket',
-      image: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=300&h=200&fit=crop'
-    },
-    {
-      id: 8,
-      name: 'Yoga Mat',
-      category: 'sports',
-      price: 35,
-      description: 'Premium yoga mat for daily practice',
-      image: 'https://images.unsplash.com/photo-1506629905135-cb8ecb3a8c10?w=300&h=200&fit=crop'
-    }
-  ];
+  categories$: Observable<any[]> | undefined;
+  countries$: Observable<any[]> | undefined;
+  languages$: Observable<any[]> | undefined;
+  shops$: Observable<any[]> | undefined;
+  filteredShops$: Observable<any[]> | undefined;
+  homeData$: Observable<any> | undefined; // Assuming homeData might be needed for shops as well
 
-  filteredProducts: Product[] = [];
+  private selectedCategorySubject = new BehaviorSubject<string | null>('all');
+  selectedCategory$ = this.selectedCategorySubject.asObservable();
 
-  constructor() {
-    addIcons({ language, cart, chevronDown, flag });
+  constructor(private apiService: ApiService) {
+    addIcons({ language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, searchOutline, globeOutline });
   }
 
   ngOnInit() {
-    this.filteredProducts = this.products;
+    this.homeData$ = this.apiService.getHomeData().pipe(
+      map(response => {
+        console.log('Home Data (parsed):', JSON.stringify(response, null, 2));
+        return response;
+      })
+    );
+
+    this.categories$ = this.apiService.getCategories().pipe(
+      map(response => {
+        console.log('Categories (parsed):', JSON.stringify(response, null, 2));
+        return response.categories;
+      })
+    );
+
+    this.countries$ = this.apiService.getCountries().pipe(
+      map(response => {
+        console.log('Countries (parsed):', JSON.stringify(response, null, 2));
+        const countries = response.countries;
+        const selectedCountry = countries.find((country: any) => country.selected);
+        if (selectedCountry) {
+          this.selectedCountry = selectedCountry.name;
+        }
+        return countries;
+      })
+    );
+
+    this.languages$ = this.apiService.getLanguages().pipe(
+      map(response => {
+        console.log('Languages (parsed):', JSON.stringify(response, null, 2));
+        const languages = response.languages;
+        const activeLanguage = languages.find((lang: any) => lang.active);
+        if (activeLanguage) {
+          this.selectedLanguage = activeLanguage.context_key.toUpperCase();
+        }
+        return languages;
+      })
+    );
+
+    this.shops$ = this.apiService.getShops().pipe(
+      map((response: any) => { // Cast response to any
+        console.log('Shops (parsed):', JSON.stringify(response, null, 2));
+        return response.shops;
+      })
+    );
+
+    this.filteredShops$ = combineLatest([
+      this.shops$.pipe(startWith([])),
+      this.selectedCategory$.pipe(startWith('all'))
+    ]).pipe(
+      map(([shops, selectedCategory]) => {
+        if (selectedCategory === 'all') {
+          return shops;
+        } else {
+          return shops.filter((shop: any) => shop && shop.category_id?.toString() === selectedCategory); // Add null check for shop
+        }
+      })
+    );
   }
 
   onCategoryChange(event: any) {
-    const category = event.detail.value;
-    this.selectedCategory = category;
-
-    if (category === 'all') {
-      this.filteredProducts = this.products;
-    } else {
-      this.filteredProducts = this.products.filter(product => product.category === category);
-    }
+    this.selectedCategory = event.detail.value;
+    console.log('Selected Category:', this.selectedCategory);
+    this.selectedCategorySubject.next(this.selectedCategory);
   }
 
-  selectLanguage(language: string) {
-    this.selectedLanguage = language;
+  selectLanguage(language: any) {
+    console.log('Attempting to set language:', language);
+    this.selectedLanguage = language.context_key.toUpperCase();
     this.isLanguageOpen = false;
-    console.log('Language changed to:', language);
+    this.apiService.setLanguage(language.context_key).subscribe((response: any) => { // Cast response to any
+      console.log('Language set API response:', response);
+      this.categories$ = this.apiService.getCategories().pipe(map((res: any) => res.categories)); // Cast res to any
+      this.shops$ = this.apiService.getShops().pipe(map((res: any) => res.shops)); // Cast res to any
+    });
   }
 
-  selectCountry(country: string) {
-    this.selectedCountry = country;
+  selectCountry(country: any) {
+    console.log('Attempting to set country:', country);
+    this.selectedCountry = country.name;
     this.isCountryOpen = false;
-    console.log('Country changed to:', country);
+    this.apiService.setCountry(country.country_id).subscribe((response: any) => { // Cast response to any
+      console.log('Country set API response:', response);
+      this.categories$ = this.apiService.getCategories().pipe(map((res: any) => res.categories)); // Cast res to any
+      this.shops$ = this.apiService.getShops().pipe(map((res: any) => res.shops)); // Cast res to any
+    });
   }
 }

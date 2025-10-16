@@ -6,13 +6,37 @@
         <ion-button>
           <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
         </ion-button>
-        <ion-button>
-          <ion-icon slot="icon-only" name="language-outline"></ion-icon>
+        <ion-button id="language-popover-button" (click)="isLanguageOpen = true">
+          <ion-icon slot="start" name="language-outline"></ion-icon>
+          <ion-label>{{ selectedLanguage }}</ion-label>
         </ion-button>
-        <ion-button>
-          <ion-icon slot="icon-only" name="globe-outline"></ion-icon>
+        <ion-popover trigger="language-popover-button" [isOpen]="isLanguageOpen" (didDismiss)="isLanguageOpen = false">
+          <ng-template>
+            <ion-content>
+              <ion-list>
+                <ion-item *ngFor="let language of (languages$ | async)" button (click)="selectLanguage(language); isLanguageOpen = false">
+                  {{ language.name }}
+                </ion-item>
+              </ion-list>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
+        <ion-button id="country-popover-button" (click)="isCountryOpen = true">
+          <ion-icon slot="start" name="map-outline"></ion-icon>
+          <ion-label>{{ selectedCountry }}</ion-label>
         </ion-button>
-        <ion-button>
+        <ion-popover trigger="country-popover-button" [isOpen]="isCountryOpen" (didDismiss)="isCountryOpen = false">
+          <ng-template>
+            <ion-content>
+              <ion-list>
+                <ion-item *ngFor="let country of (countries$ | async)" button (click)="selectCountry(country); isCountryOpen = false">
+                  {{ country.name }}
+                </ion-item>
+              </ion-list>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
+        <ion-button (click)="openMenu()">
           <ion-icon slot="icon-only" name="menu-outline"></ion-icon>
         </ion-button>
       </div>
@@ -33,37 +57,37 @@
     </ion-toolbar>
   </ion-header>
 
-<div class="slider-wrapper">
-  <swiper-container
-    slides-per-view="auto"
-    centered-slides="true"
-    space-between="10"
-    pagination='{"el": ".swiper-pagination", "clickable": true}'
-    autoplay="true"
-    autoplay-delay="3000"
-    loop="true"
-    initial-slide="1">
-    <swiper-slide *ngFor="let slide of slides">
-      <ion-card class="slide-card">
-        <img [src]="slide.photo" class="slide-image" />
-        <div class="discount-badge">{{ slide.discount }}% OFF</div>
-        <ion-card-header>
-          <ion-card-title>{{ slide.title }}</ion-card-title>
-          <ion-card-subtitle>{{ slide.address }}</ion-card-subtitle>
-        </ion-card-header>
-        <ion-card-content>
-          <ion-button expand="block" fill="solid" color="primary">
-            Go
-          </ion-button>
-        </ion-card-content>
-      </ion-card>
-    </swiper-slide>
-  </swiper-container>
-  <div class="swiper-pagination"></div>
-</div>
+  <div class="slider-wrapper" *ngIf="(homeData$ | async) as homeData">
+    <swiper-container
+      slides-per-view="auto"
+      centered-slides="true"
+      space-between="10"
+      pagination='{"el": ".swiper-pagination", "clickable": true}'
+      autoplay="true"
+      autoplay-delay="3000"
+      loop="true"
+      initial-slide="1">
+      <swiper-slide *ngFor="let discount of homeData.products_to_cat">
+        <ion-card class="slide-card">
+          <img [src]="discount.image" class="slide-image" />
+          <div class="discount-badge">{{ discount.percent_raw }}% OFF</div>
+          <ion-card-header>
+            <ion-card-title>{{ discount.name }}</ion-card-title>
+            <ion-card-subtitle>{{ discount.address }}</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-button expand="block" fill="solid" color="primary">
+              Go
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      </swiper-slide>
+    </swiper-container>
+    <div class="swiper-pagination"></div>
+  </div>
 
-  <!-- Banners -->
-  <div class="banners-section">
+  <!-- Banners - Removed as no direct API equivalent and original was static -->
+  <!-- <div class="banners-section">
     <ion-card class="banner-card banner-1">
       <ion-card-content>
         Banner 1
@@ -74,49 +98,43 @@
         Banner 2
       </ion-card-content>
     </ion-card>
-  </div>
+  </div> -->
 
-  <!-- Category Tabs -->
-  <div class="categories-section">
-    <ion-segment [(ngModel)]="selectedCategory" (ionChange)="onCategoryChange($event)">
-      <ion-segment-button value="all">
-        <ion-label>All</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="electronics">
-        <ion-label>Electronics</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="clothing">
-        <ion-label>Clothing</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="books">
-        <ion-label>Books</ion-label>
-      </ion-segment-button>
-      <ion-segment-button value="sports">
-        <ion-label>Sports</ion-label>
-      </ion-segment-button>
-    </ion-segment>
-  </div>
+  <!-- Categorized Discounts Sections -->
+  <div *ngIf="(categorizedDiscounts$ | async) as categorizedDiscounts">
+    <div *ngFor="let categoryGroup of categorizedDiscounts">
+      <ion-item-divider *ngIf="categoryGroup.discounts.length > 0">
+        <ion-label>{{ categoryGroup.category.name }}</ion-label>
+      </ion-item-divider>
 
-  <!-- Products Grid -->
-  <div class="products-section">
-    <div class="products-grid">
-      <ion-card *ngFor="let product of filteredProducts" class="product-card">
-        <img [src]="product.image" [alt]="product.name" />
-        <ion-card-header>
-          <ion-card-subtitle>{{ product.category }}</ion-card-subtitle>
-          <ion-card-title>{{ product.name }}</ion-card-title>
-        </ion-card-header>
-        <ion-card-content>
-          <p class="product-description">{{ product.description }}</p>
-          <div class="product-footer">
-            <span class="product-price">${{ product.price }}</span>
-            <ion-button fill="solid" size="small">
-              <ion-icon name="cart" slot="start"></ion-icon>
-              Add to Cart
-            </ion-button>
-          </div>
-        </ion-card-content>
-      </ion-card>
+      <swiper-container
+        *ngIf="categoryGroup.discounts.length > 0"
+        slides-per-view="auto"
+        centered-slides="true"
+        space-between="10"
+        pagination='{"el": ".swiper-pagination", "clickable": true}'
+        autoplay="true"
+        autoplay-delay="3000"
+        loop="true"
+        initial-slide="1"
+        class="category-slider">
+        <swiper-slide *ngFor="let discount of categoryGroup.discounts">
+          <ion-card class="slide-card"> <!-- Use slide-card class for consistent styling -->
+            <img [src]="discount.image" class="slide-image" [alt]="discount.name" />
+            <div class="discount-badge">{{ discount.percent }}</div> <!-- Assuming percent is already formatted -->
+            <ion-card-header>
+              <ion-card-title>{{ discount.name }}</ion-card-title>
+              <ion-card-subtitle>{{ discount.category }}</ion-card-subtitle>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-button expand="block" fill="solid" color="primary">
+                Go
+              </ion-button>
+            </ion-card-content>
+          </ion-card>
+        </swiper-slide>
+      </swiper-container>
+      <div class="swiper-pagination" *ngIf="categoryGroup.discounts.length > 0"></div>
     </div>
   </div>
 </ion-content>
