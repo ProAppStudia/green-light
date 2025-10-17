@@ -1,0 +1,8 @@
+<div class="categories-grid">
+  <ion-card *ngFor="let category of categories" class="category-card">
+    <ion-img *ngIf="category.icon" [src]="category.icon" class="category-icon"></ion-img>
+    <ion-card-header>
+      <ion-card-title>{{ category.name }}</ion-card-title>
+    </ion-card-header>
+  </ion-card>
+</div>

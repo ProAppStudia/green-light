@@ -1,7 +1,7 @@
 <ion-header class="ion-no-border">
   <div class="header-container" [class.hidden]="hideHeader" [class.scrolled]="isScrolled">
     <div class="header-top">
-      <img src="assets/icon/logo/Logo_GreenLight.png" alt="GreenLight Logo" class="header-logo-img" />
+      <img src="assets/icon/logo/Logo_GreenLight_White_G.png" alt="GreenLight Logo" class="header-logo-img" />
       <div class="header-icons">
         <ion-button>
           <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
@@ -85,6 +85,9 @@
     </swiper-container>
     <div class="swiper-pagination"></div>
   </div>
+
+  <!-- Categories Grid -->
+  <app-categories-grid [categories]="(categories$ | async) || []"></app-categories-grid>
 
   <!-- Banners - Removed as no direct API equivalent and original was static -->
   <!-- <div class="banners-section">
