@@ -3,11 +3,11 @@ import { RouteReuseStrategy, provideRouter, withPreloading, PreloadAllModules } 
 import { IonicRouteStrategy, provideIonicAngular } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { pricetagsOutline, cartOutline, qrCodeOutline, personOutline } from 'ionicons/icons';
+import { HttpClientModule, provideHttpClient } from '@angular/common/http';
 
 import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
 
-import { provideHttpClient } from '@angular/common/http';
 
 // Register the icons
 addIcons({
