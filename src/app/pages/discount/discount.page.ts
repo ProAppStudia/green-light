@@ -9,6 +9,8 @@ import { IonicModule, LoadingController } from '@ionic/angular';
 import { ApiService } from '../../services/api';
 import { ActivatedRoute } from '@angular/router';
 
+import { Router } from '@angular/router';
+
 @Component({
   selector: 'app-discount',
   templateUrl: './discount.page.html',
@@ -27,7 +29,8 @@ export class DiscountPage implements OnInit {
     private route: ActivatedRoute,
     private api: ApiService,
     private loadingCtrl: LoadingController,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private router: Router
   ) { 
     addIcons({ add, callOutline, bagCheckOutline });
   }
@@ -71,7 +74,7 @@ export class DiscountPage implements OnInit {
       });
   }
 
-   async presentToast(message:string, color:string, delay: any = 3000) {
+  async presentToast(message:string, color:string, delay: any = 3000) {
     const toast = await this.toastController.create({
       message: message,
       duration: delay,
@@ -81,6 +84,10 @@ export class DiscountPage implements OnInit {
     });
 
     await toast.present();
+  }
+
+  openShop(shop_id: number){
+    this.router.navigate(['/shop', shop_id]);
   }
 
 }

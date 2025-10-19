@@ -9,5 +9,10 @@ export const routes: Routes = [
     path: 'discount/:id',
     loadComponent: () => import('./pages/discount/discount.page').then( m => m.DiscountPage)
   },
+  {
+    path: 'shop/:id',
+    loadComponent: () => import('./pages/shop/shop.page').then( m => m.ShopPage)
+  },
+
 
 ];

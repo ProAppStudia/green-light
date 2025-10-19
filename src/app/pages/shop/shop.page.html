@@ -1,0 +1,102 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+          <ion-back-button><ion-icon name="add"></ion-icon></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{shop_name}}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" *ngIf="!loading; else loadingTpl">
+   <!-- Логотип магазину -->
+  <div class="shop-header ion-text-center ion-padding">
+    <img
+      [src]="shop.shop_logo"
+      alt="{{ shop.shop_name }}"
+      class="shop-logo"
+    />
+    <h2>{{ shop.shop_name }}</h2>
+    <p class="shop-address">{{ shop.shop_addresses }}</p>
+
+    <div class="shop-phones">
+      <ion-chip *ngFor="let phone of shop.shop_phones">
+        <ion-icon name="call-outline"></ion-icon>
+        <ion-label>{{ phone }}</ion-label>
+      </ion-chip>
+    </div>
+
+    <!-- Соцмережі -->
+    <div *ngIf="shop.shop_socials?.length" class="shop-socials ion-margin-top">
+      <ion-button
+        *ngFor="let social of shop.shop_socials"
+        fill="clear"
+        size="small"
+        [href]="social.url"
+        target="_blank"
+      >
+        <ion-icon
+          [name]="getSocialIcon(social.type)"
+          slot="icon-only"
+        ></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+
+  <!-- Опис магазину -->
+  <ion-card>
+    <ion-card-content>
+      <div [innerHTML]="shop.shop_description"></div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Знижки -->
+  <ion-list *ngIf="discounts?.length">
+    <ion-list-header>
+      <ion-label>Акційні товари</ion-label>
+    </ion-list-header>
+
+  <!----->
+  <div class="slider-wrapper" *ngIf="discounts">
+    <swiper-container
+      slides-per-view="auto"
+      centered-slides="true"
+      space-between="10"
+      pagination='{"el": ".swiper-pagination", "clickable": true}'
+      autoplay="true"
+      autoplay-delay="3000"
+      loop="true"
+      initial-slide="1">
+      <swiper-slide *ngFor="let discount of discounts">
+        <ion-card class="slide-card">
+          <img [src]="discount.image" class="slide-image" />
+          <div class="discount-badge">{{ discount.percent_raw }}% OFF</div>
+          <ion-card-header>
+            <ion-card-title>{{ discount.name }}</ion-card-title>
+            <ion-card-subtitle>{{ discount.address }}</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <ion-button (click)="openDiscount(discount.discount_id)" expand="block" fill="solid" color="primary">
+              Go
+            </ion-button>
+          </ion-card-content>
+        </ion-card>
+      </swiper-slide>
+    </swiper-container>
+    <div class="swiper-pagination"></div>
+  </div>
+  <!----->
+
+  </ion-list>
+</ion-content>
+
+
+<ng-template #notFound>
+    <p class="ion-text-center">Магазин не знайдено.</p>
+</ng-template>
+
+<ng-template #loadingTpl>
+  <ion-content class="ion-padding ion-text-center">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Завантаження...</p>
+  </ion-content>
+</ng-template>

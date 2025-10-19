@@ -36,6 +36,10 @@ export const routes: Routes = [
         loadComponent: () => import('../pages/discount/discount.page').then(m => m.DiscountPage)
       },
       {
+        path: 'shop/:id',
+        loadComponent: () => import('../pages/shop/shop.page').then(m => m.ShopPage)
+      },
+      {
         path: '',
         redirectTo: '/tabs/tab1',
         pathMatch: 'full',

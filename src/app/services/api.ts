@@ -29,6 +29,11 @@ export class ApiService {
     const params = new HttpParams().set('discount_id', id);
     return this.http.get(url, { headers, params });
   }
+  getShopById(id: string) {
+    const url = `${this.baseUrl}?type=getShop&shop_id=${id}`;
+    const headers = new HttpHeaders({ 'Accept': 'application/json' });
+    return this.http.get(url, { headers });
+  }
 
   sendForm(data: any): Observable<any> {
     const url = `${this.baseUrl}/contact-form`;

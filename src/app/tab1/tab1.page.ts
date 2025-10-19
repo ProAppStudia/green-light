@@ -205,5 +205,8 @@ export class Tab1Page implements OnInit {
   openDiscount(discount_id: number){
     this.router.navigate(['/discount', discount_id]);
   }
+  openShop(shop_id: number){
+    this.router.navigate(['/shop', shop_id]);
+  }
 
 }
