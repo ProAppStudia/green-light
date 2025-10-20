@@ -1,0 +1,52 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>{{ categoryTitle || 'Категорія' }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <h2>{{categoryTitle || 'Результати'}}</h2>
+  <div class="man-top">
+    <div>Всього знижок: {{ total_discounts }}</div>
+    <ion-buttons >
+      <ion-button (click)="toggleView('list')" [color]="viewMode === 'list' ? 'light' : 'medium'">
+        <ion-icon name="list-outline"></ion-icon> LIST
+      </ion-button>
+      <ion-button (click)="toggleView('grid')" [color]="viewMode === 'grid' ? 'light' : 'medium'">
+        <ion-icon name="grid-outline"></ion-icon> GRID
+      </ion-button>
+    </ion-buttons>
+  </div>
+
+  <div *ngIf="products.length > 0; else noData" 
+       [ngClass]="{'grid-view': viewMode === 'grid', 'list-view': viewMode === 'list'}">
+
+    <ion-card *ngFor="let discount of products" class="slide-card">
+      <img [src]="discount.image" class="slide-image" [alt]="discount.name" />
+      <div class="discount-badge">{{ discount.percent }}</div>
+      <ion-card-header>
+        <ion-card-title>{{ discount.name }}</ion-card-title>
+        <ion-card-subtitle>{{ discount.category }}</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-button (click)="openDiscount(discount.discount_id)" expand="block" fill="solid" color="primary">
+          Go
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+  </div>
+  
+
+  <ng-template #noData>
+    <ion-label color="medium">Немає товарів</ion-label>
+  </ng-template>
+
+  <div class="ion-text-center ion-padding">
+    <ion-button class="loadMoreButton" *ngIf="page < totalPages && !isLoading" (click)="loadMore()">
+      Показати ще
+    </ion-button>
+    <ion-spinner *ngIf="isLoading"></ion-spinner>
+  </div>
+
+</ion-content>

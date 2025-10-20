@@ -44,6 +44,21 @@ export class ApiService {
     return this.http.post(url, {code: code}, { headers });
   }
 
+  getItemsByCategoryId(category_id:number, page:number, limit:number){
+    let url = `${this.baseUrl}?type=getCategory&category_id=${category_id}`;
+    if(page){
+      url += '&page='+page;
+    }
+    if(limit){
+      url += '&limit='+limit;
+    }
+    const headers = new HttpHeaders({ 'Accept': 'application/json' });
+    return this.http.get(url, { headers });
+  }
+  getItemsByKeyword(keyword:string, page:number, limit:number){
+
+  }
+
   sendForm(data: any): Observable<any> {
     const url = `${this.baseUrl}/contact-form`;
     const headers = new HttpHeaders({

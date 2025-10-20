@@ -40,6 +40,15 @@ export const routes: Routes = [
         loadComponent: () => import('../pages/shop/shop.page').then(m => m.ShopPage)
       },
       {
+        path: 'category/:id',
+        loadComponent: () => import('../pages/category/category.page').then(m => m.CategoryPage)
+      },
+      /*Для результатів пошуку на сторінку категорії*/
+      {
+        path: 'search',
+        loadComponent: () => import('../pages/category/category.page').then(m => m.CategoryPage)
+      },
+      {
         path: '',
         redirectTo: '/tabs/tab1',
         pathMatch: 'full',

@@ -11,21 +11,21 @@
       </ion-item>
       <div class="ion-padding" slot="content" *ngIf="category.child && category.child.length > 0">
         <ion-accordion-group>
-          <ion-accordion *ngFor="let subCategory of category.child" value="{{ subCategory.category_id }}">
+          <ion-accordion (click)="openCategory(subCategory.category_id)" *ngFor="let subCategory of category.child" value="{{ subCategory.category_id }}">
             <ion-item slot="header" lines="none">
               <img *ngIf="subCategory.icon" [src]="subCategory.icon" class="category-icon" slot="start" />
               <ion-label>{{ subCategory.name }}</ion-label>
             </ion-item>
             <div class="ion-padding" slot="content" *ngIf="subCategory.child && subCategory.child.length > 0">
               <ion-accordion-group>
-                <ion-accordion *ngFor="let subCategory2 of subCategory.child" value="{{ subCategory2.category_id }}">
+                <ion-accordion (click)="openCategory(subCategory2.category_id)" *ngFor="let subCategory2 of subCategory.child" value="{{ subCategory2.category_id }}">
                   <ion-item slot="header" lines="none">
                     <img *ngIf="subCategory2.icon" [src]="subCategory2.icon" class="category-icon" slot="start" />
                     <ion-label>{{ subCategory2.name }}</ion-label>
                   </ion-item>
                   <div class="ion-padding" slot="content" *ngIf="subCategory2.child && subCategory2.child.length > 0">
                     <ion-list>
-                      <ion-item *ngFor="let subCategory3 of subCategory2.child" button>
+                      <ion-item (click)="openCategory(subCategory3.category_id)" *ngFor="let subCategory3 of subCategory2.child" button>
                         <img *ngIf="subCategory3.icon" [src]="subCategory3.icon" class="category-icon" slot="start" />
                         <ion-label>{{ subCategory3.name }}</ion-label>
                       </ion-item>
