@@ -6,4 +6,22 @@ ion-card {
 ion-card-content {
   font-size: 14px;
   line-height: 1.4;
+  background: #fff;
+}
+ion-list {
+    border-radius: 12px;
+}
+ion-list ion-list-header ion-label {
+    font-weight: 500;
+    font-size: 1.2rem;
+    color: #2fc74c;
+}
+img.discount-image {
+    display: block;
+    margin: auto;
+    border-radius: 12px;
+}
+ion-card-title {
+    text-align: center;
+    padding-bottom: 10px;
 }

@@ -35,6 +35,15 @@ export class ApiService {
     return this.http.get(url, { headers });
   }
 
+  validateCode(code: string): Observable<any> {
+    const url = `${this.baseUrl}?type=validate_code`;
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    });
+    return this.http.post(url, {code: code}, { headers });
+  }
+
   sendForm(data: any): Observable<any> {
     const url = `${this.baseUrl}/contact-form`;
     const headers = new HttpHeaders({

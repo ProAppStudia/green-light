@@ -8,9 +8,9 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule, AlertController, ModalController } from '@ionic/angular';
 import { ApiService } from '../services/api';
-/*
+
 import { InfoModalComponent } from 'src/app/components/info-modal/info-modal.component';
-*/
+
 
 import { registerPlugin } from '@capacitor/core';
 interface MyBarcodeScanner {
@@ -79,28 +79,35 @@ export class Tab3Page {
   }
 
   async checkQrOnServer(code: string) {
-    try {
-      /*
-      const res = await this.api.post('/check-qr', { code });
-      if (res.success) {
-        this.openModal(res.data);
-      } else {
-        this.showAlert(res.message || 'Код не знайдено');
-      }
-      */
-    } catch (e) {
-      this.showAlert('Помилка з’єднання з сервером');
-    }
+  try {
+    this.api.validateCode(code).subscribe({
+      next: (res) => {
+        if (res.success) {
+          this.openModal(res.success);
+        } else if(res.error) {
+          this.showAlert(res.error || 'Код не знайдено');
+        }
+      },
+      error: (err) => {
+        console.error('❌ Помилка HTTP:', err);
+        this.showAlert('Помилка з’єднання з сервером');
+      },
+    });
+  } catch (e) {
+    this.showAlert('Неочікувана помилка');
   }
+}
+
 
   async openModal(data: any) {
-    /*
+    
     const modal = await this.modalCtrl.create({
       component: InfoModalComponent,
       componentProps: { data },
     });
     await modal.present();
-    */
+    console.log('Modal is present, data:');
+    console.log(data);
   }
 
   async showAlert(message: string) {
