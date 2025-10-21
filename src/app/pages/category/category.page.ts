@@ -18,12 +18,18 @@ import {
   IonCardTitle,
   IonCardSubtitle,
   IonButtons,
-  IonIcon
+  IonIcon,
+  IonPopover,
+  MenuController
 } from '@ionic/angular/standalone';
 import { ApiService } from 'src/app/services/api';
 import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
-import { gridOutline, listOutline } from 'ionicons/icons';
+import { gridOutline, listOutline, languageOutline, mapOutline, notificationsOutline, menuOutline } from 'ionicons/icons';
+//for header
+import { Observable, BehaviorSubject, combineLatest, forkJoin, of } from 'rxjs';
+import { map, switchMap, startWith, tap } from 'rxjs/operators';
+//end header
 
 @Component({
   selector: 'app-category',
@@ -48,10 +54,23 @@ import { gridOutline, listOutline } from 'ionicons/icons';
     IonCardTitle,
     IonCardSubtitle,
     IonButtons,
-    IonIcon
+    IonIcon,
+    IonPopover
   ],
 })
 export class CategoryPage implements OnInit {
+  //for header 
+  selectedLanguage = 'UA';
+  selectedCountry = 'Ukraine';
+  isLanguageOpen = false;
+  isCountryOpen = false;
+  hideHeader = false;
+  isScrolled = false;
+  lastScrollTop = 0;
+  categories$: Observable<any[]> | undefined;
+  countries$: any | [];
+  languages$: any | [];
+  //end for header
   categoryId: string | any;
   searchQuery: string | null = null;
   viewMode: 'grid' | 'list' = 'list'; // за замовчуванням 1 у ряд
@@ -67,9 +86,10 @@ export class CategoryPage implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private api: ApiService,
-    private router: Router
+    private router: Router,
+    private menu: MenuController, 
   ) {
-    addIcons({listOutline, gridOutline});
+    addIcons({listOutline, gridOutline, languageOutline, mapOutline, notificationsOutline, menuOutline});
   }
 
   ngOnInit() {
@@ -79,6 +99,39 @@ export class CategoryPage implements OnInit {
       this.searchQuery = this.route.snapshot.queryParamMap.get('search');
       this.resetAndLoad();
     });
+
+    //for header
+    this.api.getAvailableLanguages().subscribe({
+      next: (res:any) => {
+        if(typeof res.languages != 'undefined'){
+          this.languages$ = res.languages;
+          this.languages$?.forEach((element:any) => {
+            if(typeof element.active != 'undefined' && element.active){
+              this.selectedLanguage = element.context_key.toUpperCase();
+            }
+          });
+        }
+      },
+      error: (err) => {
+        console.error('❌ Помилка HTTP:', err);
+      },
+    });
+    this.api.getAvailableCountry().subscribe({
+      next: (res:any) => {
+        if(typeof res.countries != 'undefined'){
+          this.countries$ = res.countries;
+          this.countries$?.forEach((element:any) => {
+            if(typeof element.selected != 'undefined' && element.selected){
+              this.selectedCountry = element.name;
+            }
+          });
+        }
+      },
+      error: (err) => {
+        console.error('❌ Помилка HTTP:', err);
+      },
+    });
+
   }
 
   resetAndLoad() {
@@ -96,7 +149,6 @@ export class CategoryPage implements OnInit {
       try {
         this.api.getItemsByCategoryId(this.categoryId, this.page, this.limit).subscribe({
           next: (res:any) => {
-            console.log(res);
             if(res){
               this.products = [...this.products, ...res.discounts];
               this.categoryTitle = res.name || 'Результати';
@@ -130,5 +182,31 @@ export class CategoryPage implements OnInit {
   openDiscount(discount_id: number){
     this.router.navigate(['/discount', discount_id]);
   }
+
+  //for header 
+  openMenu() {
+    this.menu.open('main-menu'); // 'main-menu' is the ID of the ion-menu
+  }
+
+  onScroll(event: any) {
+    const scrollTop = event.detail.scrollTop;
+    if (scrollTop > this.lastScrollTop && scrollTop > 10) {
+      this.hideHeader = true;
+    } else {
+      this.hideHeader = false;
+    }
+    this.lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    this.isScrolled = scrollTop > 0;
+  }
+  selectLanguage(language: any) {
+      console.log('Attempting to set language:', language);
+      
+    }
+  
+    selectCountry(country: any) {
+      console.log('Attempting to set country:', country);
+      
+    }
+  //end for header
 
 }

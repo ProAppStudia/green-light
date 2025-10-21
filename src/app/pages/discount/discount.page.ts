@@ -87,7 +87,7 @@ export class DiscountPage implements OnInit {
   }
 
   openShop(shop_id: number){
-    this.router.navigate(['/shop', shop_id]);
+    this.router.navigate(['/tabs/shop', shop_id]);
   }
 
 }

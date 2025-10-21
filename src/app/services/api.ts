@@ -59,6 +59,18 @@ export class ApiService {
 
   }
 
+  getAvailableLanguages(){
+    const url = `${this.baseUrl}?type=getLanguages`;
+    const headers = new HttpHeaders({ 'Accept': 'application/json' });
+    return this.http.get(url, { headers });
+  }
+  
+  getAvailableCountry(){
+    const url = `${this.baseUrl}?type=getCountries`;
+    const headers = new HttpHeaders({ 'Accept': 'application/json' });
+    return this.http.get(url, { headers });
+  }
+
   sendForm(data: any): Observable<any> {
     const url = `${this.baseUrl}/contact-form`;
     const headers = new HttpHeaders({

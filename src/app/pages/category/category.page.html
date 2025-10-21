@@ -1,7 +1,47 @@
-<ion-header>
-  <ion-toolbar color="primary">
-    <ion-title>{{ categoryTitle || 'Категорія' }}</ion-title>
-  </ion-toolbar>
+<ion-header class="ion-no-border">
+  <div class="header-container" [class.hidden]="hideHeader" [class.scrolled]="isScrolled">
+    <div class="header-top">
+      <img src="assets/icon/logo/Logo_GreenLight_White_G.png" alt="GreenLight Logo" class="header-logo-img" />
+      <div class="header-icons">
+        <ion-button>
+          <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+        </ion-button>
+        <ion-button id="language-popover-button" (click)="isLanguageOpen = true">
+          <ion-icon slot="start" name="language-outline"></ion-icon>
+          <ion-label>{{ selectedLanguage }}</ion-label>
+        </ion-button>
+        <ion-popover trigger="language-popover-button" [isOpen]="isLanguageOpen" (didDismiss)="isLanguageOpen = false">
+          <ng-template>
+            <ion-content>
+              <ion-list>
+                <ion-item *ngFor="let language of languages$" button (click)="selectLanguage(language); isLanguageOpen = false">
+                  {{ language.name }}
+                </ion-item>
+              </ion-list>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
+        <ion-button id="country-popover-button" (click)="isCountryOpen = true">
+          <ion-icon slot="start" name="map-outline"></ion-icon>
+          <ion-label>{{ selectedCountry }}</ion-label>
+        </ion-button>
+        <ion-popover trigger="country-popover-button" [isOpen]="isCountryOpen" (didDismiss)="isCountryOpen = false">
+          <ng-template>
+            <ion-content>
+              <ion-list>
+                <ion-item *ngFor="let country of countries$" button (click)="selectCountry(country); isCountryOpen = false">
+                  {{ country.name }}
+                </ion-item>
+              </ion-list>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
+        <ion-button (click)="openMenu()">
+          <ion-icon slot="icon-only" name="menu-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+  </div>
 </ion-header>
 
 <ion-content class="ion-padding">
@@ -9,11 +49,11 @@
   <div class="man-top">
     <div>Всього знижок: {{ total_discounts }}</div>
     <ion-buttons >
-      <ion-button (click)="toggleView('list')" [color]="viewMode === 'list' ? 'light' : 'medium'">
-        <ion-icon name="list-outline"></ion-icon> LIST
+      <ion-button fill="outline" (click)="toggleView('list')" [color]="viewMode === 'list' ? 'dark' : 'medium'">
+        <ion-icon name="list-outline"></ion-icon>
       </ion-button>
-      <ion-button (click)="toggleView('grid')" [color]="viewMode === 'grid' ? 'light' : 'medium'">
-        <ion-icon name="grid-outline"></ion-icon> GRID
+      <ion-button fill="outline" (click)="toggleView('grid')" [color]="viewMode === 'grid' ? 'dark' : 'medium'">
+        <ion-icon name="grid-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </div>

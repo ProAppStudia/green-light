@@ -1,9 +1,9 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-          <ion-back-button><ion-icon name="add"></ion-icon></ion-back-button>
+          <ion-back-button><ion-icon name="arrow-back-outline"></ion-icon></ion-back-button>
     </ion-buttons>
-    <ion-title>{{shop_name}}</ion-title>
+    <ion-title>{{shop_name ? shop_name : ''}}</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -11,24 +11,24 @@
    <!-- Логотип магазину -->
   <div class="shop-header ion-text-center ion-padding">
     <img
-      [src]="shop.shop_logo"
-      alt="{{ shop.shop_name }}"
+      [src]="shop_logo"
+      alt="{{ shop_name }}"
       class="shop-logo"
     />
-    <h2>{{ shop.shop_name }}</h2>
-    <p class="shop-address">{{ shop.shop_addresses }}</p>
+    <h2>{{ shop_name  }}</h2>
+    <p class="shop-address">{{ shop_addresses }}</p>
 
     <div class="shop-phones">
-      <ion-chip *ngFor="let phone of shop.shop_phones">
+      <ion-chip *ngFor="let phone of shop_phones">
         <ion-icon name="call-outline"></ion-icon>
         <ion-label>{{ phone }}</ion-label>
       </ion-chip>
     </div>
 
     <!-- Соцмережі -->
-    <div *ngIf="shop.shop_socials?.length" class="shop-socials ion-margin-top">
+    <div *ngIf="shop_socials?.length" class="shop-socials ion-margin-top">
       <ion-button
-        *ngFor="let social of shop.shop_socials"
+        *ngFor="let social of shop_socials"
         fill="clear"
         size="small"
         [href]="social.url"
@@ -45,7 +45,7 @@
   <!-- Опис магазину -->
   <ion-card>
     <ion-card-content>
-      <div [innerHTML]="shop.shop_description"></div>
+      <div [innerHTML]="shop_description"></div>
     </ion-card-content>
   </ion-card>
 

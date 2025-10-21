@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { IonBadge, IonListHeader, IonChip, IonLabel, IonThumbnail, ToastController, IonFab, IonFabButton, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonBackButton, IonCard,IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, IonList, IonItem, IonIcon, IonSpinner } from '@ionic/angular/standalone';
 
 import { addIcons } from 'ionicons';
-import { add, bagCheckOutline, callOutline } from 'ionicons/icons';
+import { add, bagCheckOutline, callOutline, arrowBackOutline } from 'ionicons/icons';
 import { IonicModule, LoadingController } from '@ionic/angular';
 import { ApiService } from '../../services/api';
 import { ActivatedRoute } from '@angular/router';
@@ -29,6 +29,11 @@ register();
 export class ShopPage implements OnInit {
 
   shop_name:any;
+  shop_logo:string='';
+  shop_description:string='';
+  shop_addresses:any=[];
+  shop_phones:any=[];
+  shop_socials:any=[];
   shop_id!:string;
   shop:any;
   discounts:any;
@@ -40,7 +45,9 @@ export class ShopPage implements OnInit {
     private loadingCtrl: LoadingController,
     private toastController: ToastController,
     private router: Router
-  ) { }
+  ) { 
+    addIcons({arrowBackOutline,  add, bagCheckOutline, callOutline});
+  }
 
   ngOnInit() {
 
@@ -52,9 +59,15 @@ export class ShopPage implements OnInit {
           
           if(typeof res.error != 'undefined'){
             this.presentToast(res.error, 'danger');
+            this.router.navigate(['/tabs/tab1']);
           }else{
             this.shop = res. shop|| '';
             this.shop_name = res.shop.shop_name;
+            this.shop_logo = res.shop.shop_logo;
+            this.shop_addresses = res.shop.shop_addresses;
+            this.shop_phones = res.shop.shop_phones;
+            this.shop_socials = res.shop.shop_socials;
+            this.shop_description = res.shop.shop_description;
             this.discounts = res.discounts;
 console.log(this.discounts);
           }
