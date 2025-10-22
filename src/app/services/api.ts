@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, of, from } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
+/*capacitor preferences cache method*/
+import { CacheServices } from './cache';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +11,10 @@ import { Observable } from 'rxjs';
 export class ApiService {
   private baseUrl = 'https://firstgreenlight.com/app/api.php'; //
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private cache: CacheServices
+  ) {}
 
   getHomeData(): Observable<any> {
     const url = `${this.baseUrl}?type=get_home_data`;
@@ -58,17 +64,62 @@ export class ApiService {
   getItemsByKeyword(keyword:string, page:number, limit:number){
 
   }
+/*
+getAvailableLanguages(maxAgeHours = 5) {
+  const cacheKey = 'languages';
 
+  return from(this.cache.get(cacheKey, maxAgeHours)).pipe(
+    switchMap(cached => {
+      if (cached) {
+        // якщо є кеш — повертаємо Observable із кешу
+        return of(cached);
+      }
+
+      // якщо кеш застарів або відсутній — запит на сервер
+      return this.http.get(`${this.baseUrl}/languages`).pipe(
+        switchMap(async (data: any) => {
+          await this.cache.set(cacheKey, data);
+          return data;
+        })
+      );
+    })
+  );
+}
+*/
   getAvailableLanguages(){
-    const url = `${this.baseUrl}?type=getLanguages`;
-    const headers = new HttpHeaders({ 'Accept': 'application/json' });
-    return this.http.get(url, { headers });
+    const cacheKey = 'languages';
+    const maxAgeHours = 6;
+    return from(this.cache.get(cacheKey, maxAgeHours)).pipe(
+      switchMap(cached => {
+        if (cached) {
+          return of(cached);
+        }
+        return this.http.get(`${this.baseUrl}?type=getLanguages`).pipe(
+          switchMap(async (data: any) => {
+            await this.cache.set(cacheKey, data);
+            return data;
+          })
+        );
+      })
+    );
   }
   
   getAvailableCountry(){
-    const url = `${this.baseUrl}?type=getCountries`;
-    const headers = new HttpHeaders({ 'Accept': 'application/json' });
-    return this.http.get(url, { headers });
+    const cacheKey = 'countries';
+    const maxAgeHours = 6;
+    return from(this.cache.get(cacheKey, maxAgeHours)).pipe(
+      switchMap(cached => {
+        if (cached) {
+          return of(cached);
+        }
+        return this.http.get(`${this.baseUrl}?type=getCountries`).pipe(
+          switchMap(async (data: any) => {
+            await this.cache.set(cacheKey, data);
+            return data;
+          })
+        );
+      })
+    );
   }
 
   sendForm(data: any): Observable<any> {

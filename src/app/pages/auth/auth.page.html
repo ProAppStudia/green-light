@@ -1,0 +1,68 @@
+<ion-content class="ion-padding">
+ <div class="close-auth"> 
+  <ion-buttons slot="end">
+    <ion-button color="light" (click)="goHome()"><ion-icon name="close-outline"></ion-icon></ion-button>
+  </ion-buttons>
+</div>
+  <ion-card *ngIf="isLoginMode">
+
+    <img src="assets/icon/logo/Logo_GreenLight_White_G.png" alt="GreenLight Logo" class="header-logo-img" />
+
+    <ion-item>
+      <ion-label position="floating">Email</ion-label>
+      <ion-input type="email" [(ngModel)]="loginData.username"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Пароль</ion-label>
+      <ion-input type="password" [(ngModel)]="loginData.password"></ion-input>
+    </ion-item>
+
+    <ion-button expand="block" color="primary" (click)="onSubmit()" [disabled]="loading">
+      <ion-icon slot="start" name="log-in-outline"></ion-icon>
+      Увійти
+    </ion-button>
+
+    <ion-button fill="clear" expand="block" (click)="toggleMode()">Реєстрація</ion-button>
+
+    <ion-text color="danger" *ngIf="errorMessage">{{ errorMessage }}</ion-text>
+
+    <ion-text color="medium">
+      <a (click)="openForgotPassword()">Забули пароль?</a>
+    </ion-text>
+  </ion-card>
+
+  <ion-card *ngIf="!isLoginMode">
+    <ion-item class="register-header">
+      <h4>Створити особистий кабінет</h4>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Повне ім'я</ion-label>
+      <ion-input type="text" [(ngModel)]="registerData.fullname"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Email</ion-label>
+      <ion-input type="email" [(ngModel)]="registerData.email"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Реферальний код</ion-label>
+      <ion-input type="text" [(ngModel)]="registerData.referral_code"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Пароль</ion-label>
+      <ion-input type="password" [(ngModel)]="registerData.password"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Підтвердження паролю</ion-label>
+      <ion-input type="password" [(ngModel)]="registerData.password_confirm"></ion-input>
+    </ion-item>
+
+    <ion-button expand="block" color="success" (click)="onSubmit()" [disabled]="loading">
+      <ion-icon slot="start" name="person-add-outline"></ion-icon>
+      Зареєструватися
+    </ion-button>
+
+    <ion-button fill="clear" expand="block" (click)="toggleMode()">Вхід</ion-button>
+
+    <ion-text color="danger" *ngIf="errorMessage">{{ errorMessage }}</ion-text>
+  </ion-card>
+</ion-content>

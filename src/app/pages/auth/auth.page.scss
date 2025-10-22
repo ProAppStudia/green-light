@@ -1,0 +1,34 @@
+ion-card {
+    padding: 25px;
+    border-radius: 15px;
+    margin: 25px;
+    background: #2e2e2e;
+}
+ion-content {
+  --background: #2e2e2e;
+}
+.close-auth {
+    display: flex;
+    justify-content: end;
+}
+ion-item.item {
+    margin-bottom: 10px;
+    border-radius: 10px;
+}
+img.header-logo-img {
+    margin-bottom: 35px;
+    max-width: 200px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+ion-item.register-header {
+    background: transparent;
+    --background: transparent;
+    color: #fff;
+    text-align: center;
+}
+ion-item.register-header h4 {
+    width: 100%;
+    text-align: center;
+}

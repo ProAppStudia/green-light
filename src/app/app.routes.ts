@@ -16,7 +16,11 @@ export const routes: Routes = [
   {
     path: 'category/:id',
     loadComponent: () => import('./pages/category/category.page').then( m => m.CategoryPage)
+  },  {
+    path: 'auth',
+    loadComponent: () => import('./pages/auth/auth.page').then( m => m.AuthPage)
   },
+
 
 
 

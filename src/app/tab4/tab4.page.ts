@@ -4,6 +4,9 @@ import { ExploreContainerComponent } from '../explore-container/explore-containe
 import { addIcons } from 'ionicons';
 import { language } from 'ionicons/icons';
 
+import { Preferences } from '@capacitor/preferences';
+import { Router } from '@angular/router';
+
 @Component({
   selector: 'app-tab4',
   templateUrl: 'tab4.page.html',
@@ -13,8 +16,18 @@ import { language } from 'ionicons/icons';
 export class Tab4Page {
   currentLanguage = 'EN';
 
-  constructor() {
+  constructor(
+    private router: Router
+  ) {
     addIcons({ language });
+  }
+
+  async ngOnInit() {
+    const { value: token } = await Preferences.get({ key: 'auth_token' });
+    
+    if (!token) {
+      this.router.navigate(['/auth'], { replaceUrl: true });
+    }
   }
 
   toggleLanguage() {
