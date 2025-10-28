@@ -1,0 +1,136 @@
+ion-content {
+  --padding-top: 0;
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-bottom: 0;
+  position: relative;
+}
+
+/* Слайдер без відступів */
+.slider-wrapper {
+  position: relative;
+  width: 100%;
+  height: auto;
+}
+
+swiper-container {
+  width: 100%;
+  height: auto; /* Повноекранний слайдер */
+  --swiper-navigation-size: 32px;
+}
+
+.slide-image {
+  width: 100%;
+  height: 100%;
+}
+
+/* Кнопка "Назад" поверх слайдера */
+ion-button.back-btn {
+position: absolute;
+    left: 0px;
+    top: 0px;
+    z-index: 5;
+    color: #000;
+    background: rgba(255, 255, 255, 0.568627451);
+    border-radius: 10px;
+    border-top-left-radius: 0px;
+}
+
+/* Кнопки навігації слайдів */
+.swiper-button-prev,
+.swiper-button-next {
+color: #000000;
+    position: absolute;
+    top: 50%;
+    width: 34px;
+    height: 34px;
+    margin-top: -18px;
+    padding-top: 9px;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.568627451);
+    border-radius: 50%;
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    transition: background 0.2s;
+    text-align: center;
+}
+
+span.swiper-pagination-bullet {
+    width: 15px !important;
+    border-radius: 5px;
+    height: 5px !important;
+}
+.swiper-pagination-bullets .swiper-pagination-bullet-active{
+background: #2fc74c;
+}
+
+.swiper-button-prev {
+  left: 10px;
+}
+
+.swiper-button-next {
+  right: 10px;
+}
+
+/* Точки пагінації */
+.swiper-pagination {
+  bottom: 10px !important;
+}
+ion-card {
+    background: #fff;
+    border-radius: 15px;
+}
+ion-card.card-about, ion-card.card-shop{
+    margin-top: 25px;
+}
+ion-card.card-about ion-card-title {
+    font-size: 1.7rem;
+    color: #212529;
+}
+p.with-icon-text {
+    margin-bottom: 10px;
+    color: #212529;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+p.with-icon-text ion-icon {
+    color: #2fc74c;
+    font-size: 1.3rem;
+    vertical-align: middle;
+}
+span.sale-badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: 5;
+    background: #ffc107;
+    padding: 10px 15px;
+    border-radius: 12px;
+    color: #fff;
+    text-align: center;
+    font-weight: 600;
+    font-size: 12px;
+    border-top-right-radius: 0px;
+}
+span.sale-badge > span {
+    font-size: 19px;
+    font-weight: 800;
+}
+span.category-link ion-icon, span.shop_name_top ion-icon{
+    color:#2fc74c;
+}
+span.category-link, span.shop_name_top {
+    margin-right: 15px;
+}
+.shop-logo{
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 20px auto 0px;
+    display: block;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
+}
+ion-card.card-shop {
+    text-align: center;
+}

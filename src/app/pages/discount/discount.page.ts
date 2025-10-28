@@ -2,21 +2,26 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonLabel, IonThumbnail, ToastController, IonFab, IonFabButton, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonBackButton, IonCard,IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, IonList, IonItem, IonIcon, IonSpinner } from '@ionic/angular/standalone';
-
+import { Location } from '@angular/common';
 import { addIcons } from 'ionicons';
-import { add, bagCheckOutline, callOutline } from 'ionicons/icons';
+import { add, bagCheckOutline, callOutline, arrowBackOutline, chevronBackOutline, chevronForwardOutline, mapOutline, calendarOutline, linkOutline, pricetag, pricetagOutline } from 'ionicons/icons';
 import { IonicModule, LoadingController } from '@ionic/angular';
 import { ApiService } from '../../services/api';
 import { ActivatedRoute } from '@angular/router';
 
 import { Router } from '@angular/router';
 
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { register } from 'swiper/element/bundle';
+register();
+
 @Component({
   selector: 'app-discount',
   templateUrl: './discount.page.html',
   styleUrls: ['./discount.page.scss'],
   standalone: true,
-  imports: [IonLabel, IonThumbnail, IonFab, IonFabButton, IonCard, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonBackButton, IonButtons, IonButton, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, IonList, IonItem, IonIcon,IonSpinner]
+  imports: [IonLabel, IonThumbnail, IonFab, IonFabButton, IonCard, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonBackButton, IonButtons, IonButton, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, IonList, IonItem, IonIcon,IonSpinner],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class DiscountPage implements OnInit {
 
@@ -30,9 +35,11 @@ export class DiscountPage implements OnInit {
     private api: ApiService,
     private loadingCtrl: LoadingController,
     private toastController: ToastController,
-    private router: Router
+    private router: Router,
+    private location: Location
   ) { 
-    addIcons({ add, callOutline, bagCheckOutline });
+    addIcons({ add, callOutline, bagCheckOutline, arrowBackOutline, chevronBackOutline, 
+      chevronForwardOutline, mapOutline, calendarOutline, linkOutline, pricetagOutline});
   }
 
   async ngOnInit() {
@@ -88,6 +95,13 @@ export class DiscountPage implements OnInit {
 
   openShop(shop_id: number){
     this.router.navigate(['/tabs/shop', shop_id]);
+  }
+  openCategory(category_id: number){
+    this.router.navigate(['/tabs/category', category_id]);
+  }
+
+  goBack() {
+    this.location.back();
   }
 
 }

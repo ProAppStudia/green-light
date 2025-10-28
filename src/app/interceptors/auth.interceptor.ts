@@ -14,10 +14,13 @@ export class AuthInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return from(Preferences.get({ key: 'auth_token' })).pipe(
       switchMap(({ value: token }) => {
-        if (token) {
+        if (token && token != 'undefined') {
           req = req.clone({
             setHeaders: { Authorization: `Bearer ${token}` },
           });
+        }else if(token == 'undefined'){
+          /*токен помер, видалимо його для уникнення проблем отримання інформації авторизованим*/
+          Preferences.remove({ key: 'auth_token' });
         }
         return next.handle(req);
       })

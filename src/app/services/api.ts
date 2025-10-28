@@ -9,7 +9,7 @@ import { CacheServices } from './cache';
   providedIn: 'root'
 })
 export class ApiService {
-  private baseUrl = 'https://firstgreenlight.com/app/api.php'; //
+  private baseUrl = 'https://firstgreenlight.com/app/api.php';
 
   constructor(
     private http: HttpClient,
@@ -64,28 +64,7 @@ export class ApiService {
   getItemsByKeyword(keyword:string, page:number, limit:number){
 
   }
-/*
-getAvailableLanguages(maxAgeHours = 5) {
-  const cacheKey = 'languages';
 
-  return from(this.cache.get(cacheKey, maxAgeHours)).pipe(
-    switchMap(cached => {
-      if (cached) {
-        // якщо є кеш — повертаємо Observable із кешу
-        return of(cached);
-      }
-
-      // якщо кеш застарів або відсутній — запит на сервер
-      return this.http.get(`${this.baseUrl}/languages`).pipe(
-        switchMap(async (data: any) => {
-          await this.cache.set(cacheKey, data);
-          return data;
-        })
-      );
-    })
-  );
-}
-*/
   getAvailableLanguages(){
     const cacheKey = 'languages';
     const maxAgeHours = 6;
