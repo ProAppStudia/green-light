@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonButton, IonIcon, IonSegment, IonSegmentButton, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, IonList, IonItem } from '@ionic/angular/standalone';
+import { IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonButton, IonIcon, IonSegment, IonSegmentButton, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, IonList, IonItem, MenuController } from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
-import { language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, searchOutline, globeOutline } from 'ionicons/icons';
+import { language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, searchOutline, globeOutline, languageOutline } from 'ionicons/icons';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-import { ApiService } from '../services/api.service';
+import { ApiService } from '../services/api';
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { map, switchMap, startWith } from 'rxjs/operators';
+
+import { Router } from '@angular/router';
 
 // Import Swiper modules
 import { register } from 'swiper/element/bundle';
@@ -31,111 +33,130 @@ interface Shop {
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class Tab2Page implements OnInit {
+  //for header 
   selectedLanguage = 'UA';
   selectedCountry = 'Ukraine';
-  selectedCategory: string | null = 'all'; // Initialize with 'all'
   isLanguageOpen = false;
   isCountryOpen = false;
-
+  hideHeader = false;
+  isScrolled = false;
+  lastScrollTop = 0;
   categories$: Observable<any[]> | undefined;
-  countries$: Observable<any[]> | undefined;
-  languages$: Observable<any[]> | undefined;
-  shops$: Observable<any[]> | undefined;
-  filteredShops$: Observable<any[]> | undefined;
-  homeData$: Observable<any> | undefined; // Assuming homeData might be needed for shops as well
+  countries$: any | [];
+  languages$: any | [];
+  isLoading = false;
+  page = 1;
+  totalPages = 1;
+  count_shops = 1;
+  keyword:any = '';
+  //end for header
 
-  private selectedCategorySubject = new BehaviorSubject<string | null>('all');
-  selectedCategory$ = this.selectedCategorySubject.asObservable();
+  selectedCategory: string | null = 'all'; // Initialize with 'all'
+ 
+  shops$: any | [];
 
-  constructor(private apiService: ApiService) {
-    addIcons({ language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, searchOutline, globeOutline });
+  constructor(
+    private api: ApiService,
+    private menu: MenuController,
+    private router: Router,
+  ) {
+    addIcons({ language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, searchOutline, globeOutline, languageOutline });
   }
 
   ngOnInit() {
-    this.homeData$ = this.apiService.getHomeData().pipe(
-      map(response => {
-        console.log('Home Data (parsed):', JSON.stringify(response, null, 2));
-        return response;
-      })
-    );
-
-    this.categories$ = this.apiService.getCategories().pipe(
-      map(response => {
-        console.log('Categories (parsed):', JSON.stringify(response, null, 2));
-        return response.categories;
-      })
-    );
-
-    this.countries$ = this.apiService.getCountries().pipe(
-      map(response => {
-        console.log('Countries (parsed):', JSON.stringify(response, null, 2));
-        const countries = response.countries;
-        const selectedCountry = countries.find((country: any) => country.selected);
-        if (selectedCountry) {
-          this.selectedCountry = selectedCountry.name;
+    //for header
+    this.api.getAvailableLanguages().subscribe({
+      next: (res:any) => {
+        if(typeof res.languages != 'undefined'){
+          this.languages$ = res.languages;
+          this.languages$?.forEach((element:any) => {
+            if(typeof element.active != 'undefined' && element.active){
+              this.selectedLanguage = element.context_key.toUpperCase();
+            }
+          });
         }
-        return countries;
-      })
-    );
-
-    this.languages$ = this.apiService.getLanguages().pipe(
-      map(response => {
-        console.log('Languages (parsed):', JSON.stringify(response, null, 2));
-        const languages = response.languages;
-        const activeLanguage = languages.find((lang: any) => lang.active);
-        if (activeLanguage) {
-          this.selectedLanguage = activeLanguage.context_key.toUpperCase();
+      },
+      error: (err) => {
+        console.error('❌ Помилка HTTP:', err);
+      },
+    });
+    this.api.getAvailableCountry().subscribe({
+      next: (res:any) => {
+        if(typeof res.countries != 'undefined'){
+          this.countries$ = res.countries;
+          this.countries$?.forEach((element:any) => {
+            if(typeof element.selected != 'undefined' && element.selected){
+              this.selectedCountry = element.name;
+            }
+          });
         }
-        return languages;
-      })
-    );
+      },
+      error: (err) => {
+        console.error('❌ Помилка HTTP:', err);
+      },
+    });
 
-    this.shops$ = this.apiService.getShops().pipe(
-      map((response: any) => { // Cast response to any
-        console.log('Shops (parsed):', JSON.stringify(response, null, 2));
-        return response.shops;
-      })
-    );
+    this.loadShops();
+    
+  }
+  async loadShops() {
+    if (this.isLoading || (this.page > this.totalPages)) return;
+    this.isLoading = true;
 
-    this.filteredShops$ = combineLatest([
-      this.shops$.pipe(startWith([])),
-      this.selectedCategory$.pipe(startWith('all'))
-    ]).pipe(
-      map(([shops, selectedCategory]) => {
-        if (selectedCategory === 'all') {
-          return shops;
-        } else {
-          return shops.filter((shop: any) => shop && shop.category_id?.toString() === selectedCategory); // Add null check for shop
-        }
-      })
-    );
+      try {
+        this.api.getAllActiveShops(this.keyword, this.page).subscribe({
+          next: (res:any) => {
+            if(res){
+              this.shops$ = [...res.shops];
+              this.totalPages = res.total_pages || 1;
+              this.count_shops = res.count_shops || 0;
+            }
+          },
+          error: (err) => {
+            console.error('❌ Помилка HTTP:', err);
+          },
+        });
+      } catch (e) {
+        console.error('Помилка завантаження:', e);
+      }finally {
+         this.isLoading = false;
+      }
   }
 
-  onCategoryChange(event: any) {
-    this.selectedCategory = event.detail.value;
-    console.log('Selected Category:', this.selectedCategory);
-    this.selectedCategorySubject.next(this.selectedCategory);
+  loadMore() {
+    if (this.page < this.totalPages) {
+      this.page++;
+      this.loadShops();
+    }
   }
 
+  openShop(shop_id: number){
+    this.router.navigate(['/tabs/shop', shop_id]);
+  }
+
+  //for header 
+  openMenu() {
+    this.menu.open('main-menu'); // 'main-menu' is the ID of the ion-menu
+  }
+
+  onScroll(event: any) {
+    const scrollTop = event.detail.scrollTop;
+    if (scrollTop > this.lastScrollTop && scrollTop > 10) {
+      this.hideHeader = true;
+    } else {
+      this.hideHeader = false;
+    }
+    this.lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    this.isScrolled = scrollTop > 0;
+  }
   selectLanguage(language: any) {
-    console.log('Attempting to set language:', language);
-    this.selectedLanguage = language.context_key.toUpperCase();
-    this.isLanguageOpen = false;
-    this.apiService.setLanguage(language.context_key).subscribe((response: any) => { // Cast response to any
-      console.log('Language set API response:', response);
-      this.categories$ = this.apiService.getCategories().pipe(map((res: any) => res.categories)); // Cast res to any
-      this.shops$ = this.apiService.getShops().pipe(map((res: any) => res.shops)); // Cast res to any
-    });
-  }
-
-  selectCountry(country: any) {
-    console.log('Attempting to set country:', country);
-    this.selectedCountry = country.name;
-    this.isCountryOpen = false;
-    this.apiService.setCountry(country.country_id).subscribe((response: any) => { // Cast response to any
-      console.log('Country set API response:', response);
-      this.categories$ = this.apiService.getCategories().pipe(map((res: any) => res.categories)); // Cast res to any
-      this.shops$ = this.apiService.getShops().pipe(map((res: any) => res.shops)); // Cast res to any
-    });
-  }
+      console.log('Attempting to set language:', language);
+      
+    }
+  
+    selectCountry(country: any) {
+      console.log('Attempting to set country:', country);
+      
+    }
+  //end for header
 }

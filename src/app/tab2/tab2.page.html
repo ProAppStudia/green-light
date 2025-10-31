@@ -1,111 +1,82 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-      <div class="header-logo">
-        <img src="assets/icon/logo/Logo_GreenLight.png" alt="GreenLight Logo" class="logo-image" />
+<ion-header class="ion-no-border">
+  <div class="header-container" [class.hidden]="hideHeader" [class.scrolled]="isScrolled">
+    <div class="header-top">
+      <img src="assets/icon/logo/Logo_GreenLight_White_G.png" alt="GreenLight Logo" class="header-logo-img" />
+      <div class="header-icons">
+        <ion-button>
+          <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+        </ion-button>
+        <ion-button id="language-popover-button" (click)="isLanguageOpen = true">
+          <ion-icon slot="start" name="language-outline"></ion-icon>
+          <ion-label>{{ selectedLanguage }}</ion-label>
+        </ion-button>
+        <ion-popover trigger="language-popover-button" [isOpen]="isLanguageOpen" (didDismiss)="isLanguageOpen = false">
+          <ng-template>
+            <ion-content>
+              <ion-list>
+                <ion-item *ngFor="let language of languages$" button (click)="selectLanguage(language); isLanguageOpen = false">
+                  {{ language.name }}
+                </ion-item>
+              </ion-list>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
+        <ion-button id="country-popover-button" (click)="isCountryOpen = true">
+          <ion-icon slot="start" name="map-outline"></ion-icon>
+          <ion-label>{{ selectedCountry }}</ion-label>
+        </ion-button>
+        <ion-popover trigger="country-popover-button" [isOpen]="isCountryOpen" (didDismiss)="isCountryOpen = false">
+          <ng-template>
+            <ion-content>
+              <ion-list>
+                <ion-item *ngFor="let country of countries$" button (click)="selectCountry(country); isCountryOpen = false">
+                  {{ country.name }}
+                </ion-item>
+              </ion-list>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
+        <ion-button (click)="openMenu()">
+          <ion-icon slot="icon-only" name="menu-outline"></ion-icon>
+        </ion-button>
       </div>
-    </ion-buttons>
-
-    <ion-title></ion-title>
-
-    <ion-buttons slot="end">
-      <!-- Language Dropdown -->
-      <ion-button fill="clear" id="language-trigger" (click)="isLanguageOpen = true">
-        <ion-icon name="language" slot="start"></ion-icon>
-        <span>{{ selectedLanguage }}</span>
-        <ion-icon name="chevron-down" slot="end"></ion-icon>
-      </ion-button>
-
-      <!-- Country Dropdown -->
-      <ion-button fill="clear" id="country-trigger" (click)="isCountryOpen = true">
-        <ion-icon name="flag" slot="start"></ion-icon>
-        <span>{{ selectedCountry }}</span>
-        <ion-icon name="chevron-down" slot="end"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-
-    <!-- Language Popover -->
-    <ion-popover trigger="language-trigger" [isOpen]="isLanguageOpen" (didDismiss)="isLanguageOpen = false">
-      <ng-template>
-        <ion-content>
-          <ion-list>
-            <ion-item *ngFor="let language of (languages$ | async)" button (click)="selectLanguage(language); isLanguageOpen = false">
-              {{ language.name }}
-            </ion-item>
-          </ion-list>
-        </ion-content>
-      </ng-template>
-    </ion-popover>
-
-    <!-- Country Popover -->
-    <ion-popover trigger="country-trigger" [isOpen]="isCountryOpen" (didDismiss)="isCountryOpen = false">
-      <ng-template>
-        <ion-content>
-          <ion-list>
-            <ion-item *ngFor="let country of (countries$ | async)" button (click)="selectCountry(country); isCountryOpen = false">
-              {{ country.name }}
-            </ion-item>
-          </ion-list>
-        </ion-content>
-      </ng-template>
-    </ion-popover>
-  </ion-toolbar>
+    </div>
+  </div>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Магазини</ion-title>
+      <ion-title size="large">Каталог компаній</ion-title>
     </ion-toolbar>
   </ion-header>
 
-  <swiper-container
-    slides-per-view="1"
-    pagination="true"
-    pagination-clickable="true"
-    space-between="0"
-    autoplay="true"
-    autoplay-delay="3000">
-    <swiper-slide *ngFor="let shop of (shops$ | async)">
-      <div class="slide-content">
-        <h3>{{ shop.name }}</h3>
-        <p>{{ shop.address }}</p>
-        <img [src]="shop.image" [alt]="shop.name" />
-      </div>
-    </swiper-slide>
-  </swiper-container>
-
-  <!-- Category Tabs -->
-  <div class="categories-section">
-    <ion-segment [(ngModel)]="selectedCategory" (ionChange)="onCategoryChange($event)" mode="md">
-      <ion-segment-button value="all">
-        <ion-label>All</ion-label>
-      </ion-segment-button>
-      <ion-segment-button *ngFor="let category of (categories$ | async)" [value]="category.id?.toString()">
-        <ion-label>{{ category.name }}</ion-label>
-      </ion-segment-button>
-    </ion-segment>
-  </div>
 
   <!-- Shops Grid -->
   <div class="products-section">
     <div class="products-grid">
-      <ion-card *ngFor="let shop of (filteredShops$ | async)" class="product-card">
-        <img [src]="shop.image" [alt]="shop.name" />
+      <ion-card *ngFor="let shop of shops$" class="product-card">
+        <img [src]="shop.shop_logo" [alt]="shop.shop_name" />
         <ion-card-header>
           <ion-card-subtitle>{{ shop.category }}</ion-card-subtitle>
-          <ion-card-title>{{ shop.name }}</ion-card-title>
+          <ion-card-title>{{ shop.shop_name }}</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <p class="product-description">{{ shop.address }}</p>
           <div class="product-footer">
-            <ion-button fill="solid" size="small">
+            <ion-button (click)="openShop(shop.shop_id)" fill="solid" size="small">
               Go to Shop
             </ion-button>
           </div>
         </ion-card-content>
       </ion-card>
     </div>
+  </div>
+
+  <div class="ion-text-center ion-padding">
+    <ion-button class="loadMoreButton" *ngIf="page < totalPages && !isLoading" (click)="loadMore()">
+      Показати ще
+    </ion-button>
+    <ion-spinner *ngIf="isLoading"></ion-spinner>
   </div>
 </ion-content>

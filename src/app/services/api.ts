@@ -82,6 +82,12 @@ export class ApiService {
       })
     );
   }
+
+  getAllActiveShops(keyword:string, page:number){
+    const url = `${this.baseUrl}?type=getShops&keyword=${keyword}&page=${page}`;
+    const headers = new HttpHeaders({ 'Accept': 'application/json' });
+    return this.http.get(url, { headers });
+  }
   
   getAvailableCountry(){
     const cacheKey = 'countries';
