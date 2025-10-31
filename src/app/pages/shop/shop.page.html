@@ -1,14 +1,8 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-          <ion-back-button><ion-icon name="arrow-back-outline"></ion-icon></ion-back-button>
-    </ion-buttons>
-    <ion-title>{{shop_name ? shop_name : ''}}</ion-title>
-  </ion-toolbar>
-</ion-header>
-
 <ion-content [fullscreen]="true" *ngIf="!loading; else loadingTpl">
-   <!-- Логотип магазину -->
+<ion-button fill="clear" class="back-btn" (click)="goBack()">
+    <ion-icon name="arrow-back-outline"></ion-icon>
+  </ion-button>
+
   <div class="shop-header ion-text-center ion-padding">
     <img
       [src]="shop_logo"
@@ -16,7 +10,7 @@
       class="shop-logo"
     />
     <h2>{{ shop_name  }}</h2>
-    <p class="shop-address">{{ shop_addresses }}</p>
+    <p class="shop-address"> {{ shop_addresses }}</p>
 
     <div class="shop-phones">
       <ion-chip *ngFor="let phone of shop_phones">
@@ -27,6 +21,8 @@
 
     <!-- Соцмережі -->
     <div *ngIf="shop_socials?.length" class="shop-socials ion-margin-top">
+      <h4>{{ shop_name }} в соціальних мережах:</h4>
+      <div class="links">
       <ion-button
         *ngFor="let social of shop_socials"
         fill="clear"
@@ -34,11 +30,9 @@
         [href]="social.url"
         target="_blank"
       >
-        <ion-icon
-          [name]="getSocialIcon(social.type)"
-          slot="icon-only"
-        ></ion-icon>
+      <img *ngIf="social.image" src="{{social.image}}" class="social-icon">
       </ion-button>
+     </div>
     </div>
   </div>
 
@@ -52,7 +46,7 @@
   <!-- Знижки -->
   <ion-list *ngIf="discounts?.length">
     <ion-list-header>
-      <ion-label>Акційні товари</ion-label>
+      <ion-label>Акційні пропозиції</ion-label>
     </ion-list-header>
 
   <!----->

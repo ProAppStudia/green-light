@@ -3,8 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonBadge, IonListHeader, IonChip, IonLabel, IonThumbnail, ToastController, IonFab, IonFabButton, IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, IonBackButton, IonCard,IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, IonList, IonItem, IonIcon, IonSpinner } from '@ionic/angular/standalone';
 
+import { Location } from '@angular/common';
 import { addIcons } from 'ionicons';
-import { add, bagCheckOutline, callOutline, arrowBackOutline } from 'ionicons/icons';
+import { add, bagCheckOutline, callOutline, arrowBackOutline, chevronBackOutline } from 'ionicons/icons';
 import { IonicModule, LoadingController } from '@ionic/angular';
 import { ApiService } from '../../services/api';
 import { ActivatedRoute } from '@angular/router';
@@ -44,9 +45,10 @@ export class ShopPage implements OnInit {
     private api: ApiService,
     private loadingCtrl: LoadingController,
     private toastController: ToastController,
-    private router: Router
+    private router: Router,
+    private location: Location
   ) { 
-    addIcons({arrowBackOutline,  add, bagCheckOutline, callOutline});
+    addIcons({arrowBackOutline,  add, bagCheckOutline, callOutline, chevronBackOutline});
   }
 
   ngOnInit() {
@@ -69,7 +71,7 @@ export class ShopPage implements OnInit {
             this.shop_socials = res.shop.shop_socials;
             this.shop_description = res.shop.shop_description;
             this.discounts = res.discounts;
-console.log(this.discounts);
+
           }
           this.loading = false;
           
@@ -101,20 +103,13 @@ console.log(this.discounts);
     await toast.present();
   }
 
-  getSocialIcon(type: string): string {
-    const map: any = {
-      facebook: 'logo-facebook',
-      instagram: 'logo-instagram',
-      telegram: 'paper-plane-outline',
-      youtube: 'logo-youtube',
-      tiktok: 'logo-tiktok',
-      twitter: 'logo-twitter',
-    };
-    return map[type?.toLowerCase()] || 'link-outline';
-  }
 
   openDiscount(discount_id: number){
     this.router.navigate(['/discount', discount_id]);
+  }
+
+  goBack() {
+    this.location.back();
   }
 
 }

@@ -116,3 +116,32 @@ swiper-slide {
     background: var(--swiper-pagination-color) !important;
   }
 }
+.shop-header img.shop-logo {
+    background: #fff;
+}
+ion-card {
+    background: #fff;
+    border-radius: 15px;
+}
+ion-button.back-btn {
+position: absolute;
+    left: 0px;
+    top: 0px;
+    z-index: 5;
+    color: #000;
+    background: rgba(255, 255, 255, 0.568627451);
+    border-radius: 10px;
+    border-top-left-radius: 0px;
+}
+ion-list-header {
+    font-size: 1.5rem;
+    color: #212529;
+}
+.shop-socials .links {
+  display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.shop-socials .links img {
+    max-width: 32px;
+}
