@@ -3,11 +3,13 @@ import { IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton,
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
-import { language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, searchOutline, globeOutline, languageOutline } from 'ionicons/icons';
+import { language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, searchOutline, globeOutline, languageOutline, listOutline, gridOutline } from 'ionicons/icons';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ApiService } from '../services/api';
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { map, switchMap, startWith } from 'rxjs/operators';
+
+import { AuthService } from 'src/app/services/auth.service';
 
 import { Router } from '@angular/router';
 
@@ -49,18 +51,20 @@ export class Tab2Page implements OnInit {
   totalPages = 1;
   count_shops = 1;
   keyword:any = '';
+  viewMode = 'list';
   //end for header
 
   selectedCategory: string | null = 'all'; // Initialize with 'all'
  
-  shops$: any | [];
+  shops$: any[] = [];
 
   constructor(
     private api: ApiService,
     private menu: MenuController,
     private router: Router,
+    private auth: AuthService
   ) {
-    addIcons({ language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, searchOutline, globeOutline, languageOutline });
+    addIcons({ language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, searchOutline, globeOutline, languageOutline, listOutline, gridOutline });
   }
 
   ngOnInit() {
@@ -80,6 +84,14 @@ export class Tab2Page implements OnInit {
         console.error('❌ Помилка HTTP:', err);
       },
     });
+    // FOR header підставити активну мову
+    // ПОтрібно використати .then, бо це promise а не переміна, тож потрібно дочекатись відповіді
+    this.auth.getLanguage().then(lang_code => {
+      if (lang_code !== null) {
+        this.selectedLanguage = lang_code.toUpperCase();
+      }
+    });
+
     this.api.getAvailableCountry().subscribe({
       next: (res:any) => {
         if(typeof res.countries != 'undefined'){
@@ -96,9 +108,27 @@ export class Tab2Page implements OnInit {
       },
     });
 
-    this.loadShops();
+    this.auth.getCountry().then(country_id => {
+      if (country_id !== null) {
+        this.countries$?.forEach((element:any) => {
+            if(element.country_id == country_id){
+              this.selectedCountry = element.name;
+            }
+        });
+      }
+    });
+
+    this.resetAndLoad();
     
   }
+
+  resetAndLoad() {
+    this.shops$ = [];
+    this.page = 1;
+    this.totalPages = 1;
+    this.loadShops();
+  }
+
   async loadShops() {
     if (this.isLoading || (this.page > this.totalPages)) return;
     this.isLoading = true;
@@ -107,7 +137,7 @@ export class Tab2Page implements OnInit {
         this.api.getAllActiveShops(this.keyword, this.page).subscribe({
           next: (res:any) => {
             if(res){
-              this.shops$ = [...res.shops];
+              this.shops$ = [...this.shops$, ...res.shops];
               this.totalPages = res.total_pages || 1;
               this.count_shops = res.count_shops || 0;
             }
@@ -130,6 +160,23 @@ export class Tab2Page implements OnInit {
     }
   }
 
+  searchByKeyword(event: CustomEvent){
+    const value = String((event.target as HTMLIonInputElement).value ?? '');
+    if(value.length > 4){
+      this.keyword = value;
+      this.page = 1;
+      this.loadShops();
+    }else if(value == ''){
+      this.keyword = '';
+      this.page = 1;
+      this.loadShops();
+    }
+  }
+
+  toggleView(mode: 'grid' | 'list') {
+    this.viewMode = mode;
+  }
+
   openShop(shop_id: number){
     this.router.navigate(['/tabs/shop', shop_id]);
   }
@@ -150,13 +197,13 @@ export class Tab2Page implements OnInit {
     this.isScrolled = scrollTop > 0;
   }
   selectLanguage(language: any) {
-      console.log('Attempting to set language:', language);
-      
-    }
+    this.auth.saveLanguage(language.context_key);
+    this.selectedLanguage = language.context_key.toUpperCase();
+  }
   
-    selectCountry(country: any) {
-      console.log('Attempting to set country:', country);
-      
-    }
+  selectCountry(country: any) {
+    this.auth.saveCountry(country.country_id);
+    this.selectedCountry = country.name;
+  }
   //end for header
 }

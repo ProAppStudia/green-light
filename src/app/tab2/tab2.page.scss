@@ -52,10 +52,16 @@ ion-header {
     min-width: 40px; /* Ensure it's at least 40px wide */
   }
 }
-
+.man-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 5px;
+    border-radius: 12px;
+    padding-top: 5px;
+}
 .loadMoreButton{
-    margin-bottom: 3rem;
-    margin-top: 25px;
+    margin-bottom: 65px;
   }
     ion-card {
     background: #fff;
@@ -73,3 +79,34 @@ ion-header {
       font-weight: 600;
     }
   }
+  span.count-special {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: #2fc74c;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 10px;
+}
+.no-results {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+.grid-view, .list-view {
+  transition: all 0.3s ease;
+}
+.grid-view {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.list-view {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}

@@ -36,4 +36,21 @@ export class AuthService {
   async logout() {
     await Preferences.remove({ key: 'auth_token' });
   }
+
+  /*Інші записи які є сенс зберігати в застосунку*/
+  async saveCountry(country: string) {
+    await Preferences.set({ key: 'country', value: country });
+  }
+  async saveLanguage(language: string) {
+    await Preferences.set({ key: 'language', value: language });
+  }
+  async getLanguage(): Promise<string | null> {
+    const { value } = await Preferences.get({ key: 'language' });
+    return value;
+  }
+  async getCountry(): Promise<string | null> {
+    const { value } = await Preferences.get({ key: 'country' });
+    return value;
+  }
+
 }
