@@ -1,28 +1,91 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-      <div class="header-logo">
-        <img src="assets/icon/logo/Logo_GreenLight.png" alt="GreenLight Logo" class="logo-image" />
+<ion-header class="ion-no-border">
+  <div class="header-container" [class.hidden]="hideHeader" [class.scrolled]="isScrolled">
+    <div class="header-top">
+      <img src="assets/icon/logo/Logo_GreenLight_White_G.png" alt="GreenLight Logo" class="header-logo-img" />
+      <div class="header-icons">
+        <ion-button>
+          <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+        </ion-button>
+        <ion-button id="language-popover-button" (click)="isLanguageOpen = true">
+          <ion-icon slot="start" name="language-outline"></ion-icon>
+          <ion-label>{{ selectedLanguage }}</ion-label>
+        </ion-button>
+        <ion-popover trigger="language-popover-button" [isOpen]="isLanguageOpen" (didDismiss)="isLanguageOpen = false">
+          <ng-template>
+            <ion-content>
+              <ion-list>
+                <ion-item *ngFor="let language of languages$" button (click)="selectLanguage(language); isLanguageOpen = false">
+                  {{ language.name }}
+                </ion-item>
+              </ion-list>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
+        <ion-button id="country-popover-button" (click)="isCountryOpen = true">
+          <ion-icon slot="start" name="map-outline"></ion-icon>
+          <ion-label>{{ selectedCountry }}</ion-label>
+        </ion-button>
+        <ion-popover trigger="country-popover-button" [isOpen]="isCountryOpen" (didDismiss)="isCountryOpen = false">
+          <ng-template>
+            <ion-content>
+              <ion-list>
+                <ion-item *ngFor="let country of countries$" button (click)="selectCountry(country); isCountryOpen = false">
+                  {{ country.name }}
+                </ion-item>
+              </ion-list>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
+        <ion-button (click)="openMenu()">
+          <ion-icon slot="icon-only" name="menu-outline"></ion-icon>
+        </ion-button>
       </div>
-    </ion-buttons>
-
-    <ion-title></ion-title>
-
-    <ion-buttons slot="end">
-      <ion-button fill="clear" (click)="toggleLanguage()">
-        <ion-icon name="language" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+    </div>
+  </div>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Профіль</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="ion-padding">
+  
+  <div class="hello-block">
+    <h3>Привіт, {{ fullname }}!</h3>
+  </div>
+  <div class="buy-a-plan">
+    <span>Придбайте тариф, щоб відчути всі переваги!</span>
+    <span class="amount">500 USDT</span>
+    <span class="ref-prog">Станьте учасником реферальної програми!</span>
+  </div>
+  <div class="links">
+    <ion-button expand="block" class="btn-link">
+      <ion-icon name="pencil-outline"></ion-icon>
+      <span>Редагувати профіль</span>
+    </ion-button>
+    <ion-button expand="block" class="btn-link">
+      <ion-icon name="bar-chart-outline"></ion-icon>
+      <span>Мій баланс</span>
+    </ion-button>
+    <ion-button expand="block" class="btn-link">
+      <ion-icon name="list-outline"></ion-icon>
+      <span>Транзакції</span>
+    </ion-button>
+    <ion-button expand="block" class="btn-link">
+      <ion-icon name="cart-outline"></ion-icon>
+      <span>Мої покупки</span>
+    </ion-button>
+  </div>
+  <div class="my-code">
+    <h4>Ваш реферальний код</h4>
+    <span class="copy-code"></span>
+  </div>
+  <div class="my-ref-count">
+    <h4>У вас 0 рефералів</h4>
+  </div>
 
-  <app-explore-container name="Tab 4 page"></app-explore-container>
+
+  <ion-footer>
+    <ion-buttons>
+      <ion-button slot="start" fill="outline" color="primary">Вийти</ion-button>
+      <ion-button slot="end" fill="solid" color="danger" size="small">Видалити обілковий запис</ion-button>
+    </ion-buttons>
+  </ion-footer>
+
 </ion-content>

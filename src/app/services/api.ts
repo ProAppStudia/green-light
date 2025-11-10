@@ -89,6 +89,12 @@ export class ApiService {
     return this.http.get(url, { headers });
   }
   
+  getMyName(){
+    const url = `${this.baseUrl}?type=get_my_name`;
+    const headers = new HttpHeaders({ 'Accept': 'application/json' });
+    return this.http.get(url, { headers });
+  }
+  
   getAvailableCountry(){
     const cacheKey = 'countries';
     const maxAgeHours = 6;
