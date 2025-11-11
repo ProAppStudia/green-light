@@ -94,6 +94,10 @@ export class ApiService {
     const headers = new HttpHeaders({ 'Accept': 'application/json' });
     return this.http.get(url, { headers });
   }
+
+  updateProfile(formData:any = {}): Observable<any> {
+    return this.http.post(`${this.baseUrl}?type=update_profile`, formData);
+  }
   
   getAvailableCountry(){
     const cacheKey = 'countries';

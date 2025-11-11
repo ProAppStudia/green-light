@@ -60,3 +60,94 @@ ion-footer {
 .hello-block {
     text-align: center;
 }
+.buy-a-plan {
+    background: #474747;
+    background: linear-gradient(39deg, rgba(71, 71, 71, 1) 0%, rgba(47, 199, 76, 1) 100%);
+    padding: 10px 15px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    color: #fff;
+    box-shadow: 0px 10px 15px #00000047;
+    text-align: center;
+}
+.buy-a-plan span.amount small{
+  font-size: 65%;
+  font-weight: 100;
+}
+.buy-a-plan span.amount {
+    text-align: center;
+    display: block;
+    font-size: 1.9rem;
+    font-weight: 700;
+    line-height: 47px;
+}
+.buy-a-plan span.ref-prog {
+    font-weight: 100;
+    text-align: center;
+    display: block;
+}
+
+span.btn-link.btn-buy {
+    background: #474747;
+    background: linear-gradient(39deg, rgb(71, 71, 71) 0%, rgb(47, 199, 76) 100%);
+    color: #fff;
+}
+span.btn-link {
+    display: block;
+    margin: 10px 0px;
+    background: #fff;
+    padding: 10px 15px;
+    border-radius: 10px;
+}
+span.btn-link span {
+    padding-left: 10px;
+}
+span.btn-link.btn-danger {
+    background: #F44336;
+    color: #fff;
+    display: table;
+    font-size: .7rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+ion-content {
+  --padding-bottom: 80px; /* або стільки, скільки висота твоїх табів */
+}
+
+.dark-bg > h4:first-child {
+  margin-top: 0px;
+}
+.dark-bg {
+    background: #474747;
+    background: linear-gradient(39deg, rgb(71, 71, 71) 0%, rgb(47, 199, 76) 100%);
+    color: #fff;
+    padding: 10px 15px;
+    border-radius: 15px;
+    margin-bottom: 15px;
+    color: #fff;
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2784313725);
+    text-align: center;
+}
+.with-icon.dark-bg {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+}
+.with-icon.dark-bg ion-icon {
+    font-size: 2.5rem;
+}
+.hello-pages ion-icon{
+  font-size: 1.5rem;
+}
+.hello-pages {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.inner-content {
+    background: #fff;
+    padding: 10px 15px;
+    border-radius: 15px;
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2784313725);
+}

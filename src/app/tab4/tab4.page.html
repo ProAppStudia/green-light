@@ -45,47 +45,101 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
-  
+  <div *ngIf="currentView === 'main'">
   <div class="hello-block">
     <h3>Привіт, {{ fullname }}!</h3>
   </div>
   <div class="buy-a-plan">
     <span>Придбайте тариф, щоб відчути всі переваги!</span>
-    <span class="amount">500 USDT</span>
+    <span class="amount"><small>Всього</small> 500 USDT</span>
     <span class="ref-prog">Станьте учасником реферальної програми!</span>
   </div>
   <div class="links">
-    <ion-button expand="block" class="btn-link">
+
+    <span class="btn-link btn-buy">
+      <ion-icon name="flash-outline"></ion-icon>
+      <span>Придбати тариф</span>
+    </span>
+
+    <span (click)="switchView('edit')" class="btn-link">
       <ion-icon name="pencil-outline"></ion-icon>
       <span>Редагувати профіль</span>
-    </ion-button>
-    <ion-button expand="block" class="btn-link">
+    </span>
+    <span class="btn-link">
       <ion-icon name="bar-chart-outline"></ion-icon>
       <span>Мій баланс</span>
-    </ion-button>
-    <ion-button expand="block" class="btn-link">
+    </span>
+    <span class="btn-link">
       <ion-icon name="list-outline"></ion-icon>
       <span>Транзакції</span>
-    </ion-button>
-    <ion-button expand="block" class="btn-link">
+    </span>
+    <span class="btn-link">
       <ion-icon name="cart-outline"></ion-icon>
       <span>Мої покупки</span>
-    </ion-button>
+    </span>
+    <span class="btn-link">
+      <ion-icon name="log-out-outline"></ion-icon>
+      <span>Вихід</span>
+    </span>
+    <span class="btn-link btn-danger">
+      <ion-icon name="trash-outline"></ion-icon>
+      <span>Видалити обліковий запис</span>
+    </span>
   </div>
-  <div class="my-code">
+  <div class="my-code dark-bg ion-margin-top">
     <h4>Ваш реферальний код</h4>
-    <span class="copy-code"></span>
+    <span class="copy-code">
+      <ion-icon (click)="copy('cd')" class="copy-icon" name="copy-outline"></ion-icon>
+      bc49ab3ad20e</span>
+    <h4>Посилання</h4>
+    <span class="copy-code">
+      <ion-icon (click)="copy('cd')" class="copy-icon" name="copy-outline"></ion-icon>
+      bc49ab3ad20e</span>
   </div>
-  <div class="my-ref-count">
+  <div class="my-ref-count dark-bg with-icon ion-margin-top">
+    <ion-icon name="people-outline"></ion-icon>
     <h4>У вас 0 рефералів</h4>
   </div>
+  <div class="my-balance dark-bg with-icon ion-margin-top">
+    <ion-icon name="cash-outline"></ion-icon>
+    <h4>Ви накопичили 0 USDT</h4>
+  </div>
+</div>
+<div *ngIf="currentView === 'edit'">
+  <div class="hello-pages">
+    <ion-icon (click)="switchView('main')" name="arrow-back-outline"></ion-icon>
+    <h3>Редагувати профіль</h3>
+  </div>
 
+  <div class="inner-content">
+    <div class="input-item">
+        <ion-input [(ngModel)]="formData.fullname" labelPlacement="floating" value="{{fullname}}">
+          <div slot="label">Повне ім'я <ion-text color="danger">*</ion-text></div>
+        </ion-input>
+    </div>
+    <div class="input-item">
+        <ion-input [(ngModel)]="formData.username" labelPlacement="floating" value="{{email}}">
+          <div slot="label">Email <ion-text color="danger">*</ion-text></div>
+        </ion-input>
+    </div>
+    <div class="input-item">
+        <ion-input [(ngModel)]="formData.password" labelPlacement="floating" type="password" value="">
+          <div slot="label">Пароль</div>
+          <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+        </ion-input>
+    </div>
+    <div class="input-item">
+        <ion-input [(ngModel)]="formData.confirm_password" labelPlacement="floating" type="password" value="">
+          <div slot="label">Повторіть пароль</div>
+          <ion-input-password-toggle slot="end"></ion-input-password-toggle>
+        </ion-input>
+    </div>
+    <div>
+    <small>Якщо ви не бажаєте змінити пароль - просто залиште поле порожнім</small>
+    </div>
+    <ion-button (click)="updateProfile()" class="ion-margin-top">Зберегти</ion-button>
+  </div>
 
-  <ion-footer>
-    <ion-buttons>
-      <ion-button slot="start" fill="outline" color="primary">Вийти</ion-button>
-      <ion-button slot="end" fill="solid" color="danger" size="small">Видалити обілковий запис</ion-button>
-    </ion-buttons>
-  </ion-footer>
+</div>
 
 </ion-content>
