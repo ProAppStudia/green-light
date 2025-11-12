@@ -10,7 +10,7 @@ import { ApiService } from '../services/api';
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { map, switchMap, startWith } from 'rxjs/operators';
 import { Preferences } from '@capacitor/preferences';
-import { ToastController } from '@ionic/angular';
+import { ToastController, AlertController } from '@ionic/angular';
 
 
 import { AuthService } from 'src/app/services/auth.service';
@@ -51,6 +51,7 @@ export class Tab4Page {
   popupCode: any | '';
 
   wallet_address: any | '';
+  wallet_amount: any | 0;
   plan_amount: any | '';
   plan_currency: any | '';
   plan_currency_type: any | '';
@@ -58,6 +59,7 @@ export class Tab4Page {
   count_referals: any | 0;
   ref_code: any | '';
   ref_link: any | '';
+  is_active_user:any | false;
 
 
   constructor(
@@ -66,6 +68,7 @@ export class Tab4Page {
     private router: Router,
     private auth: AuthService,
     private toastCtrl: ToastController,
+    private alertCtrl: AlertController
   ) {
     addIcons({ language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, 
       searchOutline, globeOutline, languageOutline, pencilOutline, barChartOutline, listOutline, 
@@ -144,6 +147,7 @@ export class Tab4Page {
           this.ref_link = res.ref_link;
           this.formData.fullname = this.fullname;
           this.formData.username = this.email;
+          this.is_active_user = res.is_active_user;
         }
       },
       error: (err) => {
@@ -189,10 +193,10 @@ export class Tab4Page {
     });
   }
 
-  async showToast(text:any, color:any='light') {
+  async showToast(text:any, color:any='light', duration:any=2000) {
   const toast = await this.toastCtrl.create({
     message: text,
-    duration: 1500,
+    duration: duration,
     position: 'bottom',
     color: color
   });
@@ -289,7 +293,64 @@ showPopup(img:any, code:any){
 }
 
 createPayout(){
-
+  if(String(this.wallet_address).length < 5){
+    this.showToast('Введіть адресу гаманця', 'danger');
+  }else if(Number(this.wallet_amount) > Number(this.max_payout_amount)){
+    this.showToast('Сума перевищує доступну', 'danger');
+  }else{
+    this.api.createPayout({address: this.wallet_address, amount: this.wallet_amount}).subscribe({
+      next: (res:any) => {
+        if(typeof res.success != 'undefined'){
+          this.showToast(res.success, 'success', 8000);
+          this.currentView = 'main';
+        }else if(typeof res.error != 'undefined'){
+          this.showToast(res.error, 'danger');
+        }
+      }
+    });
+  }
 }
+
+logout(){
+  this.auth.logout();
+  this.router.navigate(['/tabs/tab1']);
+}
+
+async deleteAccount(){
+   const alert = await this.alertCtrl.create({
+    header: 'Підтвердіть видалення',
+    message: 'Ви не зможете відновити акаунт та всю пов\'язану із ним інформацію.',
+    buttons: [
+      {
+        text: 'Скасувати',
+        role: 'cancel',
+        cssClass: 'secondary',
+        handler: () => {
+
+        } 
+      },
+      {
+        text: 'Підтвердити',
+        cssClass: ['danger', 'red'],
+        handler: () => {
+          this.api.deleteAccount().subscribe({
+            next: (res:any) => {
+              if(typeof res.success != 'undefined'){
+                this.showToast(res.success, 'success', 5500);
+                this.logout();
+              }else if(typeof res.error != 'undefined'){
+                this.showToast(res.error, 'success');
+              }
+            }
+          });
+        }
+      }
+    ]
+  });
+
+  await alert.present();
+}
+
+
 
 }

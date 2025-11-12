@@ -111,6 +111,9 @@ export class ApiService {
   deleteMyPurchase(id:any): Observable<any>{
     return this.http.post(`${this.baseUrl}?type=delete_my_purchase`, {id: id});
   }
+  createPayout(params:any): Observable<any>{
+    return this.http.post(`${this.baseUrl}?type=create_payout`, params);
+  }
 
   updateProfile(formData:any = {}): Observable<any> {
     return this.http.post(`${this.baseUrl}?type=update_profile`, formData);
@@ -132,6 +135,11 @@ export class ApiService {
         );
       })
     );
+  }
+
+  deleteAccount(){
+    const url = `${this.baseUrl}?type=delete_account`;
+    return this.http.get(url);
   }
 
   sendForm(data: any): Observable<any> {

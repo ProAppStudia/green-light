@@ -81,11 +81,11 @@
       <ion-icon name="star-outline"></ion-icon>
       <span>Вивести кошти</span>
     </span>
-    <span class="btn-link">
+    <span (click)="logout()" class="btn-link">
       <ion-icon name="log-out-outline"></ion-icon>
       <span>Вихід</span>
     </span>
-    <span class="btn-link btn-danger">
+    <span (click)="deleteAccount()" class="btn-link btn-danger">
       <ion-icon name="trash-outline"></ion-icon>
       <span>Видалити обліковий запис</span>
     </span>
@@ -99,6 +99,7 @@
     <span class="copy-code">
       <ion-icon (click)="copy(ref_link)" class="copy-icon" name="copy-outline"></ion-icon>
       {{ ref_link }}</span>
+      <small *ngIf="!is_active_user">Зверніть увагу. Щоб стати учасником реферальної програми потрібно придбати тариф.</small>
   </div>
   <div class="my-ref-count dark-bg with-icon ion-margin-top">
     <ion-icon name="people-outline"></ion-icon>
@@ -197,6 +198,11 @@
     <div class="input-item">
         <ion-input [(ngModel)]="wallet_address" labelPlacement="floating" value="">
           <div slot="label">Адреса гаманця <ion-text color="danger">*</ion-text></div>
+        </ion-input>
+    </div>
+    <div class="input-item">
+        <ion-input type="number" [(ngModel)]="wallet_amount" labelPlacement="floating" value="">
+          <div slot="label">Сума для виводу <ion-text color="danger">*</ion-text></div>
         </ion-input>
     </div>
   <br>
