@@ -1,10 +1,10 @@
 import { ExploreContainerComponent } from '../explore-container/explore-container.component';
 import { Component, OnInit } from '@angular/core';
-import { IonHeader,IonFooter, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonButton, IonIcon, IonSegment, IonSegmentButton, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, IonList, IonItem, MenuController, IonInput, IonText, IonInputPasswordToggle } from '@ionic/angular/standalone';
+import { IonLoading, IonHeader,IonFooter, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonButton, IonIcon, IonSegment, IonSegmentButton, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, IonList, IonItem, MenuController, IonInput, IonText, IonInputPasswordToggle } from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
-import { language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, searchOutline, globeOutline, languageOutline, listOutline, gridOutline, pencilOutline, barChartOutline, cartOutline, logOutOutline, trashOutline, flashOffOutline, flashOutline, copyOutline, peopleOutline, cashOutline, arrowBackOutline } from 'ionicons/icons';
+import { language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, searchOutline, globeOutline, languageOutline, listOutline, gridOutline, pencilOutline, barChartOutline, cartOutline, logOutOutline, trashOutline, flashOffOutline, flashOutline, copyOutline, peopleOutline, cashOutline, arrowBackOutline, starOutline } from 'ionicons/icons';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ApiService } from '../services/api';
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
@@ -12,15 +12,15 @@ import { map, switchMap, startWith } from 'rxjs/operators';
 import { Preferences } from '@capacitor/preferences';
 import { ToastController } from '@ionic/angular';
 
-import { AuthService } from 'src/app/services/auth.service';
 
+import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-tab4',
   templateUrl: 'tab4.page.html',
   styleUrls: ['tab4.page.scss'],
-  imports: [IonInputPasswordToggle, IonInput, IonText, IonFooter, IonHeader, IonToolbar, IonTitle, IonContent, IonMenuButton, IonButton, IonSegment, IonSegmentButton, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, IonList, IonItem, FormsModule, CommonModule, IonButtons, IonMenuButton, IonButton, IonIcon, ExploreContainerComponent],
+  imports: [IonLoading, IonInputPasswordToggle, IonInput, IonText, IonFooter, IonHeader, IonToolbar, IonTitle, IonContent, IonMenuButton, IonButton, IonSegment, IonSegmentButton, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, IonList, IonItem, FormsModule, CommonModule, IonButtons, IonMenuButton, IonButton, IonIcon, ExploreContainerComponent],
 })
 export class Tab4Page {
   //for header 
@@ -44,6 +44,8 @@ export class Tab4Page {
     password: '',
     confirm_password: ''
   };
+  showLoading: boolean = false;
+  purchases: any | [];
 
 
   constructor(
@@ -51,12 +53,12 @@ export class Tab4Page {
     private menu: MenuController,
     private router: Router,
     private auth: AuthService,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
   ) {
     addIcons({ language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, 
       searchOutline, globeOutline, languageOutline, pencilOutline, barChartOutline, listOutline, 
       cartOutline, logOutOutline, trashOutline, flashOutline, copyOutline, peopleOutline, 
-      cashOutline, arrowBackOutline});
+      cashOutline, arrowBackOutline, starOutline});
   }
 
   async ngOnInit() {
@@ -207,7 +209,64 @@ updateProfile(){
 }
 
 buyPlane(){
-
+  this.api.createPaymentLink().subscribe({
+    next: (res:any) => {
+      if(typeof res.success != 'undefined' && res.checkout_url){
+        this.showToast(res.success, 'success');
+        window.open(res.checkout_url, '_system');
+      }else if(typeof res.error != 'undefined'){
+        this.showToast(res.error, 'danger');
+      }
+    },
+    error: (err) => {
+      console.error('error: '+err);
+    }
+  });
 }
+
+getMyPurchases(){
+  this.purchases = [];
+  this.showLoading = true;
+  this.currentView = 'purchases';  
+  this.api.getMyPurchases().subscribe({
+    next: (res:any) => {
+      if(typeof res.purchases != 'undefined'){
+        this.purchases = res.purchases;
+      }
+      this.showLoading = false;
+    },
+    error: (err) => {
+      console.error(err);
+      this.showLoading = false;
+    }
+  });
+}
+async openQr(image:string){
+ /*
+  const modal = await this.modalCtrl.create({
+    component: FullscreenImageComponent,
+    componentProps: { image },
+    cssClass: 'fullscreen-modal',
+  });
+  await modal.present();*/
+}
+deletePurchase(id:any){
+  this.api.deleteMyPurchase(id).subscribe({
+    next : (res:any) => {
+      if(typeof res.success != 'undefined'){
+        this.getMyPurchases();
+        this.showToast('Успіх!', 'success');
+      }else if(typeof res.error != 'undefined'){
+        this.showToast(res.error, 'danger');
+      }
+    }, 
+    error: (err) => {
+      console.log(err);
+    }
+  });
+}
+openDiscount(discount_id: number){
+    this.router.navigate(['/discount', discount_id]);
+  }
 
 }

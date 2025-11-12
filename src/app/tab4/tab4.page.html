@@ -56,7 +56,7 @@
   </div>
   <div class="links">
 
-    <span class="btn-link btn-buy">
+    <span (click)="buyPlane()" class="btn-link btn-buy">
       <ion-icon name="flash-outline"></ion-icon>
       <span>Придбати тариф</span>
     </span>
@@ -73,9 +73,13 @@
       <ion-icon name="list-outline"></ion-icon>
       <span>Транзакції</span>
     </span>
-    <span class="btn-link">
+    <span (click)="getMyPurchases()" class="btn-link">
       <ion-icon name="cart-outline"></ion-icon>
       <span>Мої покупки</span>
+    </span>
+    <span class="btn-link">
+      <ion-icon name="star-outline"></ion-icon>
+      <span>Вивести кошти</span>
     </span>
     <span class="btn-link">
       <ion-icon name="log-out-outline"></ion-icon>
@@ -140,6 +144,39 @@
     <ion-button (click)="updateProfile()" class="ion-margin-top">Зберегти</ion-button>
   </div>
 
+</div>
+
+<div *ngIf="currentView === 'purchases'">
+  <div class="hello-pages">
+    <ion-icon (click)="switchView('main')" name="arrow-back-outline"></ion-icon>
+    <h3>Мої покупки</h3>
+  </div>
+  <div class="inner-content">
+    <ion-loading isOpen="showLoading" message="Завантаження..." duration="1000"></ion-loading>
+
+    <div class="my-purchases">
+      <div *ngFor="let purchase of purchases" class="purchase-item">
+          <div class="main-img">
+            <img src="{{purchase.image}}">
+          </div>
+          <div class="caption">
+            <h5>{{ purchase.name }}</h5>
+            <span class="code">Код: <b>{{ purchase.code }}</b> <ion-icon (click)="copy(purchase.code)" class="copy-icon" name="copy-outline"></ion-icon></span>
+            <span class="date">Період дії: {{purchase.date_start}} - {{purchase.date_end}}</span>
+            <ion-buttons>
+            <ion-button (click)="openQr(purchase.qr)" fill="solid" color="primary" slot="start">QR</ion-button>
+            <ion-button (click)="openDiscount(purchase.id)" fill="solid" color="primary" slot="start">Відкрити</ion-button>
+            <ion-button (click)="deletePurchase(purchase.id)" fill="solid" slot="end" color="danger" size="small">Видалити</ion-button>
+            </ion-buttons>
+          </div>
+      </div>
+    </div>
+
+    <div class="show-qr">
+      <div class="headline"></div>
+    </div>
+
+  </div>
 </div>
 
 </ion-content>

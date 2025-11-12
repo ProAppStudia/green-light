@@ -94,6 +94,23 @@ export class ApiService {
     const headers = new HttpHeaders({ 'Accept': 'application/json' });
     return this.http.get(url, { headers });
   }
+  
+  createPaymentLink(){
+    const url = `${this.baseUrl}?type=buy_plan`;
+    return this.http.get(url);
+  }
+  
+  getMyTransactions(){
+    const url = `${this.baseUrl}?type=get_my_transcations`;
+    return this.http.get(url);
+  }
+  getMyPurchases(){
+    const url = `${this.baseUrl}?type=get_my_purchases`;
+    return this.http.get(url);
+  }
+  deleteMyPurchase(id:any): Observable<any>{
+    return this.http.post(`${this.baseUrl}?type=delete_my_purchase`, {id: id});
+  }
 
   updateProfile(formData:any = {}): Observable<any> {
     return this.http.post(`${this.baseUrl}?type=update_profile`, formData);

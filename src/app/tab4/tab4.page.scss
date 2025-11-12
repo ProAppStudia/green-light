@@ -151,3 +151,24 @@ ion-content {
     border-radius: 15px;
     box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2784313725);
 }
+
+.purchase-item {
+    display: flex;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    gap: 10px;
+    align-items: center;
+}
+.purchase-item .main-img {
+    max-width: 25%;
+}
+.purchase-item .caption span.code {
+    display: block;
+    margin-bottom: 10px;
+}
+.purchase-item .caption span.date {
+    font-size: 13px;
+    margin-bottom: 10px;
+    display: block;
+}
