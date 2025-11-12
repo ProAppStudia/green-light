@@ -4,7 +4,7 @@ import { IonLoading, IonHeader,IonFooter, IonToolbar, IonTitle, IonContent, IonB
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
-import { language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, searchOutline, globeOutline, languageOutline, listOutline, gridOutline, pencilOutline, barChartOutline, cartOutline, logOutOutline, trashOutline, flashOffOutline, flashOutline, copyOutline, peopleOutline, cashOutline, arrowBackOutline, starOutline } from 'ionicons/icons';
+import { language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, searchOutline, globeOutline, languageOutline, listOutline, gridOutline, pencilOutline, barChartOutline, cartOutline, logOutOutline, trashOutline, flashOffOutline, flashOutline, copyOutline, peopleOutline, cashOutline, arrowBackOutline, starOutline, closeOutline } from 'ionicons/icons';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ApiService } from '../services/api';
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
@@ -37,7 +37,7 @@ export class Tab4Page {
   //end for header
   fullname: any | '';
   email: any | '';
-  currentView: 'main' | 'edit' | 'balance' | 'purchases' = 'main';
+  currentView: 'main' | 'edit' | 'balance' | 'purchases' | 'payout' = 'main';
   formData = {
     fullname: '',
     username: '',
@@ -46,6 +46,18 @@ export class Tab4Page {
   };
   showLoading: boolean = false;
   purchases: any | [];
+  popupClass: any | '';
+  popupImg: any | '';
+  popupCode: any | '';
+
+  wallet_address: any | '';
+  plan_amount: any | '';
+  plan_currency: any | '';
+  plan_currency_type: any | '';
+  max_payout_amount: any | '';
+  count_referals: any | 0;
+  ref_code: any | '';
+  ref_link: any | '';
 
 
   constructor(
@@ -58,7 +70,7 @@ export class Tab4Page {
     addIcons({ language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, 
       searchOutline, globeOutline, languageOutline, pencilOutline, barChartOutline, listOutline, 
       cartOutline, logOutOutline, trashOutline, flashOutline, copyOutline, peopleOutline, 
-      cashOutline, arrowBackOutline, starOutline});
+      cashOutline, arrowBackOutline, starOutline, closeOutline});
   }
 
   async ngOnInit() {
@@ -123,6 +135,13 @@ export class Tab4Page {
         if(typeof res.success != 'undefined'){
           this.fullname = res.fullname;
           this.email = res.email;
+          this.max_payout_amount = res.max_payout_amount;
+          this.plan_currency = res.plan_currency;
+          this.plan_amount = res.plan_price;
+          this.plan_currency_type = res.plan_currency_type;
+          this.count_referals = res.count_referals;
+          this.ref_code = res.ref_code;
+          this.ref_link = res.ref_link;
           this.formData.fullname = this.fullname;
           this.formData.username = this.email;
         }
@@ -180,7 +199,7 @@ export class Tab4Page {
   await toast.present();
 }
 
-switchView(view: 'main' | 'edit' | 'balance' | 'purchases') {
+switchView(view: 'main' | 'edit' | 'balance' | 'purchases' | 'payout') {
   this.currentView = view;
 }
 updateProfile(){
@@ -241,15 +260,7 @@ getMyPurchases(){
     }
   });
 }
-async openQr(image:string){
- /*
-  const modal = await this.modalCtrl.create({
-    component: FullscreenImageComponent,
-    componentProps: { image },
-    cssClass: 'fullscreen-modal',
-  });
-  await modal.present();*/
-}
+
 deletePurchase(id:any){
   this.api.deleteMyPurchase(id).subscribe({
     next : (res:any) => {
@@ -267,6 +278,18 @@ deletePurchase(id:any){
 }
 openDiscount(discount_id: number){
     this.router.navigate(['/discount', discount_id]);
-  }
+}
+hidePopUp(){
+  this.popupClass = '';
+}
+showPopup(img:any, code:any){
+  this.popupImg = img;
+  this.popupCode = code;
+  this.popupClass = 'show';
+}
+
+createPayout(){
+
+}
 
 }
