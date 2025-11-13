@@ -49,14 +49,14 @@
   <div class="hello-block">
     <h3>Привіт, {{ fullname }}!</h3>
   </div>
-  <div class="buy-a-plan">
+  <div class="buy-a-plan" *ngIf="!is_active_user">
     <span>Придбайте тариф, щоб відчути всі переваги!</span>
     <span class="amount"><small>Всього</small> {{ plan_amount }} {{ plan_currency }}</span>
     <span class="ref-prog">Станьте учасником реферальної програми!</span>
   </div>
   <div class="links">
 
-    <span (click)="buyPlane()" class="btn-link btn-buy">
+    <span *ngIf="!is_active_user" (click)="buyPlane()" class="btn-link btn-buy">
       <ion-icon name="flash-outline"></ion-icon>
       <span>Придбати тариф</span>
     </span>
@@ -65,21 +65,21 @@
       <ion-icon name="pencil-outline"></ion-icon>
       <span>Редагувати профіль</span>
     </span>
-    <span class="btn-link">
+    <span (click)="getMyTransaction()" class="btn-link">
       <ion-icon name="bar-chart-outline"></ion-icon>
       <span>Мій баланс</span>
     </span>
-    <span class="btn-link">
-      <ion-icon name="list-outline"></ion-icon>
-      <span>Транзакції</span>
-    </span>
     <span (click)="getMyPurchases()" class="btn-link">
       <ion-icon name="cart-outline"></ion-icon>
-      <span>Мої покупки</span>
+      <span>Мої знижки</span>
     </span>
     <span (click)="switchView('payout')" class="btn-link">
       <ion-icon name="star-outline"></ion-icon>
       <span>Вивести кошти</span>
+    </span>
+    <span (click)="openRefDescription()" class="btn-link">
+      <ion-icon name="thumbs-up-outline"></ion-icon>
+      <span>Про реферальну програму</span>
     </span>
     <span (click)="logout()" class="btn-link">
       <ion-icon name="log-out-outline"></ion-icon>
@@ -90,7 +90,7 @@
       <span>Видалити обліковий запис</span>
     </span>
   </div>
-  <div class="my-code dark-bg ion-margin-top">
+  <div *ngIf="is_active_user" class="my-code dark-bg ion-margin-top">
     <h4>Ваш реферальний код</h4>
     <span class="copy-code">
       <ion-icon (click)="copy(ref_code)" class="copy-icon" name="copy-outline"></ion-icon>
@@ -99,7 +99,7 @@
     <span class="copy-code">
       <ion-icon (click)="copy(ref_link)" class="copy-icon" name="copy-outline"></ion-icon>
       {{ ref_link }}</span>
-      <small *ngIf="!is_active_user">Зверніть увагу. Щоб стати учасником реферальної програми потрібно придбати тариф.</small>
+      <small *ngIf="!is_active_user"><br><br>Зверніть увагу. Щоб стати учасником реферальної програми потрібно придбати тариф.</small>
   </div>
   <div class="my-ref-count dark-bg with-icon ion-margin-top">
     <ion-icon name="people-outline"></ion-icon>
@@ -107,7 +107,7 @@
   </div>
   <div class="my-balance dark-bg with-icon ion-margin-top">
     <ion-icon name="cash-outline"></ion-icon>
-    <h4>Ви накопичили {{ max_payout_amount }} USDT</h4>
+    <h4>Ви накопичили {{ max_payout_amount }} {{ plan_currency }}</h4>
   </div>
 </div>
 <div *ngIf="currentView === 'edit'">
@@ -207,6 +207,39 @@
     </div>
   <br>
   <ion-button (click)="createPayout()" class="ion-margin-top">Підтвердити</ion-button>
+  </div>
+</div>
+
+<div *ngIf="currentView === 'balance'">
+  <div class="hello-pages">
+    <ion-icon (click)="switchView('main')" name="arrow-back-outline"></ion-icon>
+    <h3>Мій баланс</h3>
+  </div>
+
+  <div class="my-balance dark-bg with-icon ion-margin-top ion-margin-bottom">
+    <ion-icon name="cash-outline"></ion-icon>
+    <h4>Ви накопичили {{ max_payout_amount }} {{ plan_currency }}</h4>
+  </div>
+
+  <div class="inner-content">
+    <p *ngIf="!is_active_user">Щоб взяти учать y реферальній програмі, потрібно придбати тариф.
+      <ion-text (click)="openRefDescription()" color="primary">Детальніше про програму <ion-icon name="chevron-forward-outline"></ion-icon></ion-text>
+    </p>
+
+    <p *ngIf="!transactions" class="ion-margin-bottom ion-margin-top" style="text-align: center;">Транзакції відсутні...</p>
+
+    <h4 *ngIf="transactions" class="ion-margin-top ion-margin-bottom" style="text-align: center;">Останні транзакції</h4>
+    <div class="transactions">
+      <div *ngFor="let transcation of transactions" class="transaction-item">
+          <div class="headline"><span class="date">{{ transcation.date_added }}</span><h5>{{transcation.comment}}</h5></div>
+          <div class="bottom-row">
+          <span class="status status-color-{{transcation.bg_color}}">{{ transcation.text_status }}</span>
+          <p class="transcation-amount">{{ transcation.amount }} <small>{{ plan_currency }}</small></p>
+          </div> 
+      </div>
+    </div>
+
+
   </div>
 </div>
 

@@ -4,7 +4,7 @@ import { IonLoading, IonHeader,IonFooter, IonToolbar, IonTitle, IonContent, IonB
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
-import { language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, searchOutline, globeOutline, languageOutline, listOutline, gridOutline, pencilOutline, barChartOutline, cartOutline, logOutOutline, trashOutline, flashOffOutline, flashOutline, copyOutline, peopleOutline, cashOutline, arrowBackOutline, starOutline, closeOutline } from 'ionicons/icons';
+import { language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, searchOutline, globeOutline, languageOutline, listOutline, gridOutline, pencilOutline, barChartOutline, cartOutline, logOutOutline, trashOutline, flashOffOutline, flashOutline, copyOutline, peopleOutline, cashOutline, arrowBackOutline, starOutline, closeOutline, thumbsUpOutline, chevronForwardOutline } from 'ionicons/icons';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ApiService } from '../services/api';
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
@@ -60,6 +60,9 @@ export class Tab4Page {
   ref_code: any | '';
   ref_link: any | '';
   is_active_user:any | false;
+  ref_description_link:any | '';
+
+  transactions:any | [];
 
 
   constructor(
@@ -73,7 +76,8 @@ export class Tab4Page {
     addIcons({ language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, 
       searchOutline, globeOutline, languageOutline, pencilOutline, barChartOutline, listOutline, 
       cartOutline, logOutOutline, trashOutline, flashOutline, copyOutline, peopleOutline, 
-      cashOutline, arrowBackOutline, starOutline, closeOutline});
+      cashOutline, arrowBackOutline, starOutline, closeOutline, thumbsUpOutline,
+      chevronForwardOutline});
   }
 
   async ngOnInit() {
@@ -148,6 +152,7 @@ export class Tab4Page {
           this.formData.fullname = this.fullname;
           this.formData.username = this.email;
           this.is_active_user = res.is_active_user;
+          this.ref_description_link = res.ref_description_link;
         }
       },
       error: (err) => {
@@ -245,6 +250,14 @@ buyPlane(){
       console.error('error: '+err);
     }
   });
+}
+
+openRefDescription(){
+  if(this.ref_description_link){
+    window.open(this.ref_description_link, '_system');
+  }else{
+    this.showToast('Виникла помилка. Будь ласка, перегляньте наш сайт щоб ознайомитись із інформацією');
+  }
 }
 
 getMyPurchases(){
@@ -351,6 +364,22 @@ async deleteAccount(){
   await alert.present();
 }
 
+getMyTransaction(){
+  this.switchView('balance');
+  //get_my_transcations
+
+  this.api.getMyTransactions().subscribe({
+    next: (res:any) => {
+      if(typeof res.error != 'undefined'){
+        this.showToast(res.error, 'danger', 5000);
+      }else if(typeof res.success != 'undefined'){
+        this.transactions = res.transactions;
+        console.log(this.transactions);
+      }
+    }
+  });
+
+}
 
 
 }

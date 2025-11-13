@@ -202,3 +202,42 @@ ion-content {
     margin-left: 10px;
     vertical-align: top;
 }
+.transaction-item .headline h5, .transactions .bottom-row p{
+  margin: 0px;
+}
+.transaction-item .headline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.transactions .bottom-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+}
+.transactions .transaction-item:last-child .bottom-row {
+  border: 0px;
+  margin-bottom: 0px;
+}
+.transactions span.status {
+    padding: 5px 10px;
+    background: #e7e7e7;
+    border-radius: 10px;
+    font-size:.9rem;
+}
+.transactions span.status.status-color-warning {
+    background: #FF9800;
+    color: #fff;
+}
+.transactions span.status.status-color-success {
+    background: #8BC34A;
+    color: #fff;
+}
+.transactions span.status.status-color-danger {
+    background: #F44336;
+    color: #fff;
+}
