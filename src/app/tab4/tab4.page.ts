@@ -20,7 +20,11 @@ import { Router } from '@angular/router';
   selector: 'app-tab4',
   templateUrl: 'tab4.page.html',
   styleUrls: ['tab4.page.scss'],
-  imports: [IonLoading, IonInputPasswordToggle, IonInput, IonText, IonFooter, IonHeader, IonToolbar, IonTitle, IonContent, IonMenuButton, IonButton, IonSegment, IonSegmentButton, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, IonList, IonItem, FormsModule, CommonModule, IonButtons, IonMenuButton, IonButton, IonIcon, ExploreContainerComponent],
+  imports: [IonLoading, IonInputPasswordToggle, IonInput, IonText, IonFooter, IonHeader, 
+    IonToolbar, IonTitle, IonContent, IonMenuButton, IonButton, IonSegment, IonSegmentButton, 
+    IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, 
+    IonList, IonItem, FormsModule, CommonModule, IonButtons, IonMenuButton, IonButton, IonIcon, 
+    ExploreContainerComponent],
 })
 export class Tab4Page {
   //for header 
@@ -100,11 +104,9 @@ export class Tab4Page {
         }
       },
       error: (err) => {
-        console.error('❌ Помилка HTTP:', err);
+        console.error('Помилка HTTP:', err);
       },
     });
-    // FOR header підставити активну мову
-    // ПОтрібно використати .then, бо це promise а не переміна, тож потрібно дочекатись відповіді
     this.auth.getLanguage().then(lang_code => {
       if (lang_code !== null) {
         this.selectedLanguage = lang_code.toUpperCase();
@@ -123,7 +125,7 @@ export class Tab4Page {
         }
       },
       error: (err) => {
-        console.error('❌ Помилка HTTP:', err);
+        console.error('Помилка HTTP:', err);
       },
     });
 

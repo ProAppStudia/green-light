@@ -23,6 +23,7 @@ import {
   MenuController
 } from '@ionic/angular/standalone';
 import { ApiService } from 'src/app/services/api';
+import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
 import { gridOutline, listOutline, languageOutline, mapOutline, notificationsOutline, menuOutline } from 'ionicons/icons';
@@ -88,6 +89,7 @@ export class CategoryPage implements OnInit {
     private api: ApiService,
     private router: Router,
     private menu: MenuController, 
+    private auth: AuthService
   ) {
     addIcons({listOutline, gridOutline, languageOutline, mapOutline, notificationsOutline, menuOutline});
   }
@@ -113,9 +115,15 @@ export class CategoryPage implements OnInit {
         }
       },
       error: (err) => {
-        console.error('❌ Помилка HTTP:', err);
+        console.error('Помилка HTTP:', err);
       },
     });
+    this.auth.getLanguage().then(lang_code => {
+      if (lang_code !== null) {
+        this.selectedLanguage = lang_code.toUpperCase();
+      }
+    });
+
     this.api.getAvailableCountry().subscribe({
       next: (res:any) => {
         if(typeof res.countries != 'undefined'){
@@ -128,8 +136,18 @@ export class CategoryPage implements OnInit {
         }
       },
       error: (err) => {
-        console.error('❌ Помилка HTTP:', err);
+        console.error('Помилка HTTP:', err);
       },
+    });
+
+    this.auth.getCountry().then(country_id => {
+      if (country_id !== null) {
+        this.countries$?.forEach((element:any) => {
+            if(element.country_id == country_id){
+              this.selectedCountry = element.name;
+            }
+        });
+      }
     });
 
   }
@@ -199,14 +217,16 @@ export class CategoryPage implements OnInit {
     this.isScrolled = scrollTop > 0;
   }
   selectLanguage(language: any) {
-      console.log('Attempting to set language:', language);
-      
-    }
+    this.auth.saveLanguage(language.context_key);
+    this.selectedLanguage = language.context_key.toUpperCase();
+    this.ngOnInit();
+  }
   
-    selectCountry(country: any) {
-      console.log('Attempting to set country:', country);
-      
-    }
+  selectCountry(country: any) {
+    this.auth.saveCountry(country.country_id);
+    this.selectedCountry = country.name;
+    this.ngOnInit();
+  }
   //end for header
 
 }

@@ -1,20 +1,47 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-      <div class="header-logo">
-        <img src="assets/icon/logo/Logo_GreenLight.png" alt="GreenLight Logo" class="logo-image" />
+<ion-header class="ion-no-border">
+  <div class="header-container" [class.hidden]="hideHeader" [class.scrolled]="isScrolled">
+    <div class="header-top">
+      <img src="assets/icon/logo/Logo_GreenLight_White_G.png" alt="GreenLight Logo" class="header-logo-img" />
+      <div class="header-icons">
+        <ion-button>
+          <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+        </ion-button>
+        <ion-button id="language-popover-button" (click)="isLanguageOpen = true">
+          <ion-icon slot="start" name="language-outline"></ion-icon>
+          <ion-label>{{ selectedLanguage }}</ion-label>
+        </ion-button>
+        <ion-popover trigger="language-popover-button" [isOpen]="isLanguageOpen" (didDismiss)="isLanguageOpen = false">
+          <ng-template>
+            <ion-content>
+              <ion-list>
+                <ion-item *ngFor="let language of languages$" button (click)="selectLanguage(language); isLanguageOpen = false">
+                  {{ language.name }}
+                </ion-item>
+              </ion-list>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
+        <ion-button id="country-popover-button" (click)="isCountryOpen = true">
+          <ion-icon slot="start" name="map-outline"></ion-icon>
+          <ion-label>{{ selectedCountry }}</ion-label>
+        </ion-button>
+        <ion-popover trigger="country-popover-button" [isOpen]="isCountryOpen" (didDismiss)="isCountryOpen = false">
+          <ng-template>
+            <ion-content>
+              <ion-list>
+                <ion-item *ngFor="let country of countries$" button (click)="selectCountry(country); isCountryOpen = false">
+                  {{ country.name }}
+                </ion-item>
+              </ion-list>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
+        <ion-button (click)="openMenu()">
+          <ion-icon slot="icon-only" name="menu-outline"></ion-icon>
+        </ion-button>
       </div>
-    </ion-buttons>
-
-    <ion-title></ion-title>
-
-    <ion-buttons slot="end">
-      <ion-button fill="clear" (click)="toggleLanguage()">
-        <ion-icon name="language" slot="icon-only"></ion-icon>
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+    </div>
+  </div>
 </ion-header>
 
 <ion-content [fullscreen]="true">
@@ -42,7 +69,6 @@
         <ion-label position="floating">Введіть код</ion-label>
         <ion-input
           [(ngModel)]="manualCode"
-          placeholder="Наприклад: GT_123"
           clearInput>
         </ion-input>
       </ion-item>

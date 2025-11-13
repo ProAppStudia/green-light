@@ -242,3 +242,72 @@ ion-item-divider {
     font-weight: 600;
   }
 }
+/*search*/
+.no-results {
+    position: absolute;
+    top: calc(100% - 15px);
+    width: 100%;
+    text-align: center;
+    background: #2e2e2e;
+    left: 0px;
+    border-bottom-left-radius: 15px;
+    border-bottom-right-radius: 15px;
+}
+.search-bar ion-spinner {
+    position: absolute;
+    right: 20px;
+}
+.search-results {
+ position: absolute;
+    top: calc(100% - 15px);
+    width: 100%;
+  left: 0;
+  max-height: 300px;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  margin-top: 4px;
+  padding: 5px 0;
+}
+
+.result-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+  gap:15px;
+
+  &:hover {
+    background: #f6f6f6;
+  }
+   img.result-thumb {
+    max-width: 50px;
+  }
+
+  .shop-thumb {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 6px;
+    margin-right: 10px;
+  }
+
+  .result-info {
+    flex: 1;
+
+    h4 {
+      font-size: 15px;
+      margin: 0;
+      color: #222;
+    }
+
+    p {
+      font-size: 13px;
+      color: #888;
+      margin: 0;
+    }
+  }
+}

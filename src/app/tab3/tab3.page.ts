@@ -1,16 +1,19 @@
-import { Component } from '@angular/core';
-import { IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonButton, IonIcon } from '@ionic/angular/standalone';
+import { Component, OnInit } from '@angular/core';
+import { IonMenu, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonButton, IonIcon, IonItem, IonSpinner, MenuController } from '@ionic/angular/standalone';
 import { ExploreContainerComponent } from '../explore-container/explore-container.component';
+import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
-import { language } from 'ionicons/icons';
-
+import { language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, searchOutline, globeOutline, languageOutline, listOutline, gridOutline, pencilOutline, barChartOutline, cartOutline, logOutOutline, trashOutline, flashOffOutline, flashOutline, copyOutline, peopleOutline, cashOutline, arrowBackOutline, starOutline, closeOutline, thumbsUpOutline, chevronForwardOutline } from 'ionicons/icons';
+import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
+import { map, switchMap, startWith } from 'rxjs/operators';
+import { Preferences } from '@capacitor/preferences';
 import { FormsModule } from '@angular/forms';
-
-import { IonicModule, AlertController, ModalController } from '@ionic/angular';
+import { ToastController, IonicModule, AlertController, ModalController } from '@ionic/angular';
 import { ApiService } from '../services/api';
-
 import { InfoModalComponent } from 'src/app/components/info-modal/info-modal.component';
-
+import { AuthService } from 'src/app/services/auth.service';
+import { Router } from '@angular/router';
 
 import { registerPlugin } from '@capacitor/core';
 interface MyBarcodeScanner {
@@ -30,16 +33,32 @@ const BarcodeScanner = registerPlugin('BarcodeScanner') as MyBarcodeScanner;
   styleUrls: ['tab3.page.scss'],
   standalone: true,
   imports: [
+    IonMenuButton,
+    IonMenu,
+    CommonModule,
+    IonSpinner,
     FormsModule,
     IonicModule,                 // для усіх Ionic компонентів
     ExploreContainerComponent    // якщо це standalone компонент
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 
 
 
 export class Tab3Page {
-  currentLanguage = 'EN';
+   //for header 
+  selectedLanguage = 'UA';
+  selectedCountry = 'Ukraine';
+  isLanguageOpen = false;
+  isCountryOpen = false;
+  hideHeader = false;
+  isScrolled = false;
+  lastScrollTop = 0;
+  categories$: Observable<any[]> | undefined;
+  countries$: any | [];
+  languages$: any | [];
+  //end for header
 
   manualCode = '';
   isScanning = false;
@@ -47,8 +66,67 @@ export class Tab3Page {
   constructor(
     private api: ApiService,
     private modalCtrl: ModalController,
-    private alertCtrl: AlertController
-  ) {}
+    private alertCtrl: AlertController,
+    private menu: MenuController,
+    private router: Router,
+    private auth: AuthService,
+    private toastCtrl: ToastController,
+  ) {
+
+    addIcons({language, languageOutline, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline});
+  }
+
+  ngOnInit(){
+    //for header
+    this.api.getAvailableLanguages().subscribe({
+      next: (res:any) => {
+        if(typeof res.languages != 'undefined'){
+          this.languages$ = res.languages;
+          this.languages$?.forEach((element:any) => {
+            if(typeof element.active != 'undefined' && element.active){
+              this.selectedLanguage = element.context_key.toUpperCase();
+            }
+          });
+        }
+      },
+      error: (err) => {
+        console.error('Помилка HTTP:', err);
+      },
+    });
+    this.auth.getLanguage().then(lang_code => {
+      if (lang_code !== null) {
+        this.selectedLanguage = lang_code.toUpperCase();
+      }
+    });
+
+    this.api.getAvailableCountry().subscribe({
+      next: (res:any) => {
+        if(typeof res.countries != 'undefined'){
+          this.countries$ = res.countries;
+          this.countries$?.forEach((element:any) => {
+            if(typeof element.selected != 'undefined' && element.selected){
+              this.selectedCountry = element.name;
+            }
+          });
+        }
+      },
+      error: (err) => {
+        console.error('Помилка HTTP:', err);
+      },
+    });
+
+    this.auth.getCountry().then(country_id => {
+      if (country_id !== null) {
+        this.countries$?.forEach((element:any) => {
+            if(element.country_id == country_id){
+              this.selectedCountry = element.name;
+            }
+        });
+      }
+    });
+    //end for header
+
+  }
 
   async startScan() {
     try {
@@ -96,6 +174,7 @@ export class Tab3Page {
   } catch (e) {
     this.showAlert('Неочікувана помилка');
   }
+  
 }
 
 
@@ -128,8 +207,31 @@ export class Tab3Page {
     }
   }
 
-  toggleLanguage() {
-    this.currentLanguage = this.currentLanguage === 'EN' ? 'ES' : 'EN';
-    console.log('Language changed to:', this.currentLanguage);
+  //for header 
+  openMenu() {
+    this.menu.open('main-menu');
   }
+
+  onScroll(event: any) {
+    const scrollTop = event.detail.scrollTop;
+    if (scrollTop > this.lastScrollTop && scrollTop > 10) {
+      this.hideHeader = true;
+    } else {
+      this.hideHeader = false;
+    }
+    this.lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+    this.isScrolled = scrollTop > 0;
+  }
+  selectLanguage(language: any) {
+    this.auth.saveLanguage(language.context_key);
+    this.selectedLanguage = language.context_key.toUpperCase();
+  }
+  
+  selectCountry(country: any) {
+    this.auth.saveCountry(country.country_id);
+    this.selectedCountry = country.name;
+  }
+  //end for header
+  
+
 }

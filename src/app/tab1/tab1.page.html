@@ -14,7 +14,7 @@
           <ng-template>
             <ion-content>
               <ion-list>
-                <ion-item *ngFor="let language of (languages$ | async)" button (click)="selectLanguage(language); isLanguageOpen = false">
+                <ion-item *ngFor="let language of languages$" button (click)="selectLanguage(language); isLanguageOpen = false">
                   {{ language.name }}
                 </ion-item>
               </ion-list>
@@ -29,7 +29,7 @@
           <ng-template>
             <ion-content>
               <ion-list>
-                <ion-item *ngFor="let country of (countries$ | async)" button (click)="selectCountry(country); isCountryOpen = false">
+                <ion-item *ngFor="let country of countries$" button (click)="selectCountry(country); isCountryOpen = false">
                   {{ country.name }}
                 </ion-item>
               </ion-list>
@@ -44,8 +44,28 @@
     <div class="header-bottom">
       <div class="search-bar">
         <ion-icon name="search-outline"></ion-icon>
-        <input type="text" placeholder="Search" />
+        <input type="text" [value]="search_keyword" placeholder="Search" (input)="onSearchChange($event)"  (focus)="search_showResults = search_results.length > 0" (blur)="closeResults()"/>
+        <ion-spinner *ngIf="search_loading" name="dots"></ion-spinner>
       </div>
+      <!-- Випадаючі результати -->
+  <div class="search-results" *ngIf="search_showResults && search_results.length > 0">
+    <div
+      class="result-item"
+      *ngFor="let result of search_results"
+      (click)="openResult(result.id, result.type)"
+    >
+      <img [src]="result.main_image" alt="{{ result.name }}" class="result-thumb" />
+      <div class="result-info">
+        <h4>{{ result.name }}</h4>
+        <p *ngIf="result.percent">{{ result.percent }}% знижка</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="no-results" *ngIf="search_showResults && search_results.length === 0 && !search_loading">
+    <p>Нічого не знайдено 😔</p>
+  </div>
+<!---->
     </div>
   </div>
 </ion-header>
