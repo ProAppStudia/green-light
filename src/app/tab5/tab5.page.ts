@@ -15,11 +15,14 @@ import { map, switchMap, startWith } from 'rxjs/operators';
 import { Preferences } from '@capacitor/preferences';
 import { ToastController, AlertController } from '@ionic/angular';
 
+//локалізація 
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-tab5',
   templateUrl: 'tab5.page.html',
   styleUrls: ['tab5.page.scss'],
-  imports: [CommonModule, IonLabel, IonList, IonItem, IonPopover,IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonButton, IonIcon, ExploreContainerComponent]
+  imports: [TranslateModule, CommonModule, IonLabel, IonList, IonItem, IonPopover,IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonButton, IonIcon, ExploreContainerComponent]
 })
 export class Tab5Page {
   //for header 
@@ -50,9 +53,12 @@ export class Tab5Page {
     private router: Router,
     private auth: AuthService,
     private toastCtrl: ToastController,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private translate: TranslateService
   ) {
     addIcons({ language, logInOutline, chevronForwardOutline, languageOutline, mapOutline, menuOutline,notificationsOutline, addOutline, removeOutline});
+     //translate.setDefaultLang('ua');
+     translate.use('ua');
   }
 
   async ngOnInit(){
