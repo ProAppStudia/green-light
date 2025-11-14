@@ -67,6 +67,11 @@ export class ApiService {
     const url = `${this.baseUrl}?type=search&keyword=${keyword}`;
     return this.http.get(url);
   }
+  
+  getMyEarnings(){
+    const url = `${this.baseUrl}?type=get_my_earnings`;
+    return this.http.get(url);
+  }
 
   getAvailableLanguages(){
     const cacheKey = 'languages';

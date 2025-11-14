@@ -1,24 +1,108 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-buttons slot="start">
-      <ion-menu-button></ion-menu-button>
-    </ion-buttons>
-    <ion-title>Заробіток</ion-title>
-    <ion-buttons slot="end">
-      <ion-button fill="clear" (click)="toggleLanguage()">
-        <ion-icon name="language" slot="start"></ion-icon>
-        {{ currentLanguage }}
-      </ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+<ion-header class="ion-no-border">
+  <div class="header-container" [class.hidden]="hideHeader" [class.scrolled]="isScrolled">
+    <div class="header-top">
+      <img src="assets/icon/logo/Logo_GreenLight_White_G.png" alt="GreenLight Logo" class="header-logo-img" />
+      <div class="header-icons">
+        <ion-button>
+          <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
+        </ion-button>
+        <ion-button id="language-popover-button" (click)="isLanguageOpen = true">
+          <ion-icon slot="start" name="language-outline"></ion-icon>
+          <ion-label>{{ selectedLanguage }}</ion-label>
+        </ion-button>
+        <ion-popover trigger="language-popover-button" [isOpen]="isLanguageOpen" (didDismiss)="isLanguageOpen = false">
+          <ng-template>
+            <ion-content>
+              <ion-list>
+                <ion-item *ngFor="let language of languages$" button (click)="selectLanguage(language); isLanguageOpen = false">
+                  {{ language.name }}
+                </ion-item>
+              </ion-list>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
+        <ion-button id="country-popover-button" (click)="isCountryOpen = true">
+          <ion-icon slot="start" name="map-outline"></ion-icon>
+          <ion-label>{{ selectedCountry }}</ion-label>
+        </ion-button>
+        <ion-popover trigger="country-popover-button" [isOpen]="isCountryOpen" (didDismiss)="isCountryOpen = false">
+          <ng-template>
+            <ion-content>
+              <ion-list>
+                <ion-item *ngFor="let country of countries$" button (click)="selectCountry(country); isCountryOpen = false">
+                  {{ country.name }}
+                </ion-item>
+              </ion-list>
+            </ion-content>
+          </ng-template>
+        </ion-popover>
+        <ion-button (click)="openMenu()">
+          <ion-icon slot="icon-only" name="menu-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+  </div>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Заробіток</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="need-pay" *ngIf="!is_active_user">
+    <img src="assets/icon/tab5_icon_emoji.svg" alt="Buy plan icon" class="buy-plan-img" />
+    <div class="text-buy">
+      <p>Щоб почати заробляти кошти, будь ласка, придбайте тариф.</p>
+      <ion-button (click)="openRefDescription()" expand="block" color="primary" slot="center" class="ion-margin-top">
+        Про реферальну програму
+        <ion-icon name="chevron-forward-outline"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+  <div class="need-auth" *ngIf="!is_auth_user">
+    <ion-button (click)="openAuth()" expand="block" color="primary"> <ion-icon name="log-in-outline"></ion-icon>
+      Увійти в кабінет
+    </ion-button>  
+  </div>
+  
+  <div class="my-earnings" *ngIf="is_active_user">
+    <div class="hello-text">
+      <img src="assets/icon/tab5_icon_hi.svg">
+      <span>Привіт, {{ fullname }}!</span></div>
+    <div class="card-top">
+      <div class="balance-top">
+        <span class="text-amount">Ваш баланс</span>
+        <span class="amount">{{ my_balance }} {{ plan_currency }}</span>
+      </div>
+      <div class="balance-bottom">
+        <div class="left-section">
+          <ion-icon name="add-outline"></ion-icon>
+          <div class="text">
+            <small>Заробіток</small>
+            <span>{{ earning_amount }} <small>{{ plan_currency }}</small></span>
+          </div>
+        </div>
+        <div class="right-section">
+          <ion-icon name="remove-outline"></ion-icon>
+          <div class="text">
+            <small>Отримано</small>
+            <span>{{ payout_amount }} <small>{{ plan_currency }}</small></span>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  <app-explore-container name="Tab 5 page"></app-explore-container>
+    <div class="last-transactions ion-margin-top">
+      <h5>Останні транзакції</h5>
+
+      <p *ngIf="!transactions" class="ion-margin-bottom ion-margin-top" style="text-align: center;">Транзакції відсутні...</p>
+      <div class="transactions">
+      <div *ngFor="let transcation of transactions" class="transaction-item">
+          <div class="headline"><span class="date">{{ transcation.date_added }}</span><h5>{{transcation.comment}}</h5></div>
+          <div class="bottom-row">
+          <span class="status status-color-{{transcation.bg_color}}">{{ transcation.text_status }}</span>
+          <p class="transcation-amount">{{ transcation.amount }} <small>{{ plan_currency }}</small></p>
+          </div> 
+      </div>
+    </div>
+
+    </div>  
+  </div>  
+
 </ion-content>
