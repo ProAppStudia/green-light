@@ -1,6 +1,6 @@
 <ion-list *ngIf="categories$ | async as categories">
   <ion-item lines="none" *ngIf="categories.length === 0">
-    <ion-label>Немає категорій</ion-label>
+    <ion-label>{{ 'TEXT_NO_CATEGORIES' | translate }}</ion-label>
   </ion-item>
 
   <ion-accordion-group *ngIf="categories.length > 0">

@@ -48,16 +48,16 @@
   <div class="need-pay" *ngIf="!is_active_user">
     <img src="assets/icon/tab5_icon_emoji.svg" alt="Buy plan icon" class="buy-plan-img" />
     <div class="text-buy">
-      <p>Щоб почати заробляти кошти, будь ласка, придбайте тариф.</p>
+      <p>{{ 'BUY_PLAN_TO_START' | translate }}</p>
       <ion-button (click)="openRefDescription()" expand="block" color="primary" slot="center" class="ion-margin-top">
-        Про реферальну програму
+        {{ 'ABOUT_REF_PROG' | translate }}
         <ion-icon name="chevron-forward-outline"></ion-icon>
       </ion-button>
     </div>
   </div>
   <div class="need-auth" *ngIf="!is_auth_user">
     <ion-button (click)="openAuth()" expand="block" color="primary"> <ion-icon name="log-in-outline"></ion-icon>
-      Увійти в кабінет
+      {{ 'ENTER_TO_ACC' }}
     </ion-button>  
   </div>
   
@@ -67,21 +67,21 @@
       <span>{{ 'HELLO' | translate }}, {{ fullname }}!</span></div>
     <div class="card-top">
       <div class="balance-top">
-        <span class="text-amount">Ваш баланс</span>
+        <span class="text-amount">{{ 'YOUR_BALANCE' | translate }}</span>
         <span class="amount">{{ my_balance }} {{ plan_currency }}</span>
       </div>
       <div class="balance-bottom">
         <div class="left-section">
           <ion-icon name="add-outline"></ion-icon>
           <div class="text">
-            <small>Заробіток</small>
+            <small>{{ 'EARN_TEXT' | translate }}</small>
             <span>{{ earning_amount }} <small>{{ plan_currency }}</small></span>
           </div>
         </div>
         <div class="right-section">
           <ion-icon name="remove-outline"></ion-icon>
           <div class="text">
-            <small>Отримано</small>
+            <small>{{ 'PAYOUT_TEXT' | translate }}</small>
             <span>{{ payout_amount }} <small>{{ plan_currency }}</small></span>
           </div>
         </div>
@@ -89,9 +89,9 @@
     </div>
 
     <div class="last-transactions ion-margin-top">
-      <h5>Останні транзакції</h5>
+      <h5>{{ 'LATEST_TRANSACTIONS' | translate }}</h5>
 
-      <p *ngIf="!transactions" class="ion-margin-bottom ion-margin-top" style="text-align: center;">Транзакції відсутні...</p>
+      <p *ngIf="!transactions" class="ion-margin-bottom ion-margin-top" style="text-align: center;">{{ 'EMPTY_TRANSACTIONS' | translate }}</p>
       <div class="transactions">
       <div *ngFor="let transcation of transactions" class="transaction-item">
           <div class="headline"><span class="date">{{ transcation.date_added }}</span><h5>{{transcation.comment}}</h5></div>

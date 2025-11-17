@@ -12,6 +12,8 @@ import { map, switchMap, startWith } from 'rxjs/operators';
 import { AuthService } from 'src/app/services/auth.service';
 
 import { Router } from '@angular/router';
+//локалізація 
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 // Import Swiper modules
 import { register } from 'swiper/element/bundle';
@@ -31,7 +33,7 @@ interface Shop {
   templateUrl: 'tab2.page.html',
   styleUrls: ['tab2.page.scss'],
   standalone: true,
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonButton, IonIcon, IonSegment, IonSegmentButton, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, IonList, IonItem, FormsModule, CommonModule],
+  imports: [TranslateModule, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonButton, IonIcon, IonSegment, IonSegmentButton, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, IonList, IonItem, FormsModule, CommonModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class Tab2Page implements OnInit {
@@ -62,9 +64,11 @@ export class Tab2Page implements OnInit {
     private api: ApiService,
     private menu: MenuController,
     private router: Router,
-    private auth: AuthService
+    private auth: AuthService,
+    private translate: TranslateService
   ) {
     addIcons({ language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, searchOutline, globeOutline, languageOutline, listOutline, gridOutline });
+    translate.use('ua');
   }
 
   ngOnInit() {
@@ -89,6 +93,7 @@ export class Tab2Page implements OnInit {
     this.auth.getLanguage().then(lang_code => {
       if (lang_code !== null) {
         this.selectedLanguage = lang_code.toUpperCase();
+        this.translate.use(lang_code);
       }
     });
 
@@ -199,6 +204,7 @@ export class Tab2Page implements OnInit {
   selectLanguage(language: any) {
     this.auth.saveLanguage(language.context_key);
     this.selectedLanguage = language.context_key.toUpperCase();
+    this.translate.use(language.context_key);
   }
   
   selectCountry(country: any) {

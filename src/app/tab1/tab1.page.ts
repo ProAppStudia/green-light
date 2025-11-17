@@ -15,6 +15,8 @@ import { Router } from '@angular/router';
 
 import { ApiService } from '../services/api';
 import { AuthService } from 'src/app/services/auth.service';
+//локалізація 
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 // Import Swiper modules
 import { register } from 'swiper/element/bundle';
@@ -48,7 +50,7 @@ interface CategorizedDiscounts {
   templateUrl: 'tab1.page.html',
   styleUrls: ['tab1.page.scss'],
   standalone: true,
-  imports: [IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton, IonIcon, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, IonList, IonItem, FormsModule, CommonModule, CategoriesGridComponent], // Removed IonMenuButton
+  imports: [TranslateModule, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton, IonIcon, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, IonList, IonItem, FormsModule, CommonModule, CategoriesGridComponent], // Removed IonMenuButton
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class Tab1Page implements OnInit {
@@ -77,9 +79,11 @@ export class Tab1Page implements OnInit {
     private menu: MenuController, 
     private cdr: ChangeDetectorRef,
     private router: Router,
-    private auth: AuthService
+    private auth: AuthService,
+    private translate: TranslateService
   ) {
     addIcons({notificationsOutline,languageOutline,mapOutline,menuOutline,searchOutline,cart,globeOutline:globeOutlineIcon});
+    translate.use('ua');
   }
 
   openMenu() {
@@ -155,6 +159,7 @@ export class Tab1Page implements OnInit {
     this.auth.getLanguage().then(lang_code => {
       if (lang_code !== null) {
         this.selectedLanguage = lang_code.toUpperCase();
+        this.translate.use(lang_code);
       }
     });
     //new lines
@@ -205,6 +210,7 @@ export class Tab1Page implements OnInit {
   selectLanguage(language: any) {
     this.auth.saveLanguage(language.context_key);
     this.selectedLanguage = language.context_key.toUpperCase();
+    this.translate.use(language.context_key);
     this.ngOnInit(); // reload all data
   }
 

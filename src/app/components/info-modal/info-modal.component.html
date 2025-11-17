@@ -23,38 +23,38 @@
     </ion-card-header>
       <ion-list>
         <ion-list-header>
-      <ion-label>Інформація про користувача</ion-label>
+      <ion-label>{{ 'TEXT_ABOUT_CUSTOMER' | translate }}</ion-label>
       </ion-list-header>
       <ion-item>
-        <ion-label><b>Ім'я клієнта:</b> {{data.name}}</ion-label>
+        <ion-label><b>{{ 'TEXT_CUSTOMER_NAME' | translate }}:</b> {{data.name}}</ion-label>
       </ion-item>
       <ion-item>
-        <ion-label><b>Дата додавання:</b> {{data.date_added}}</ion-label>
+        <ion-label><b>{{ 'TEXT_DATE_ADDED' | translate }}:</b> {{data.date_added}}</ion-label>
       </ion-item>
       <ion-list-header>
-      <ion-label>Інформація про знижку</ion-label>
+      <ion-label>{{ 'TEXT_INFORMATION_ABOUT_DISCOUNT' | translate }}</ion-label>
       </ion-list-header>
       <ion-item>
-        <ion-label><b>Знижка:</b> <span class="sale-percent">-{{data.percent}}%</span></ion-label>
+        <ion-label><b>{{ 'TEXT_SALE_UCFIRST' | translate }}:</b> <span class="sale-percent">-{{data.percent}}%</span></ion-label>
       </ion-item>
       <ion-item>
-        <ion-label><b>Статус:</b> <span class="sale-status st{{data.status}}">{{ data.status == 1 ? 'Активна' : 'Вимкнена' }}</span></ion-label>
+        <ion-label><b>{{ 'TEXT_STATUS' | translate }}:</b> <span class="sale-status st{{data.status}}">{{ data.status == 1 ? 'Active' : 'Disabled' }}</span></ion-label>
       </ion-item>
       <ion-item>
-        <ion-label><b>Період дії:</b> {{ data.date_start }} - {{ data.date_end }}</ion-label>
+        <ion-label><b>{{ 'TEXT_DATE_PERIOD' | translate }}:</b> {{ data.date_start }} - {{ data.date_end }}</ion-label>
       </ion-item>
       <ion-item>
-        <ion-label><b>Це онлайн:</b> <span class="sale-online onli{{data.is_online}}">{{ data.is_online == 1 ? 'Так' : 'Ні' }}</span></ion-label>
+        <ion-label><b>{{ 'TEXT_IS_ONLINE' | translate }}:</b> <span class="sale-online onli{{data.is_online}}">{{ data.is_online == 1 ? 'Yes' : 'No' }}</span></ion-label>
       </ion-item>
       <ion-item>
-        <ion-label><b>Ідентифікатор знижки:</b> {{ data.discount_id }}</ion-label>
+        <ion-label><b>{{ 'TEXT_DISCOUNT_ID' | translate }}:</b> {{ data.discount_id }}</ion-label>
       </ion-item>
     </ion-list>
     </ion-card-content>
   </ion-card>
 
   <ion-text color="medium" *ngIf="!data">
-    Немає даних для відображення
+    {{ 'TEXT_NO_DATA' | translate }}
   </ion-text>
 
 </ion-content>

@@ -21,7 +21,7 @@
 
     <!-- Соцмережі -->
     <div *ngIf="shop_socials?.length" class="shop-socials ion-margin-top">
-      <h4>{{ shop_name }} в соціальних мережах:</h4>
+      <h4>{{ shop_name }} {{ 'TEXT_IN_SOCIALS' | translate }}:</h4>
       <div class="links">
       <ion-button
         *ngFor="let social of shop_socials"
@@ -46,7 +46,7 @@
   <!-- Знижки -->
   <ion-list *ngIf="discounts?.length">
     <ion-list-header>
-      <ion-label>Акційні пропозиції</ion-label>
+      <ion-label>{{ 'TEXT_SPECIALS_ITEMS' | translate }}</ion-label>
     </ion-list-header>
 
   <!----->
@@ -63,14 +63,14 @@
       <swiper-slide *ngFor="let discount of discounts">
         <ion-card class="slide-card">
           <img [src]="discount.image" class="slide-image" />
-          <div class="discount-badge">{{ discount.percent_raw }}% OFF</div>
+          <div class="discount-badge">{{ discount.percent_raw }}% {{ 'TEXT_SALE' | translate }}</div>
           <ion-card-header>
             <ion-card-title>{{ discount.name }}</ion-card-title>
             <ion-card-subtitle>{{ discount.address }}</ion-card-subtitle>
           </ion-card-header>
           <ion-card-content>
             <ion-button (click)="openDiscount(discount.discount_id)" expand="block" fill="solid" color="primary">
-              Go
+              {{ 'TEXT_OPEN' | translate }}
             </ion-button>
           </ion-card-content>
         </ion-card>
@@ -85,12 +85,12 @@
 
 
 <ng-template #notFound>
-    <p class="ion-text-center">Магазин не знайдено.</p>
+    <p class="ion-text-center">{{ 'TEXT_SHOP_NOT_FOUND' | translate }}</p>
 </ng-template>
 
 <ng-template #loadingTpl>
   <ion-content class="ion-padding ion-text-center">
     <ion-spinner name="crescent"></ion-spinner>
-    <p>Завантаження...</p>
+    <p>{{ 'TEXT_LOADING' | translate }}</p>
   </ion-content>
 </ng-template>

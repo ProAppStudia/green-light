@@ -47,79 +47,79 @@
 <ion-content [fullscreen]="true" class="ion-padding">
   <div *ngIf="currentView === 'main'">
   <div class="hello-block">
-    <h3>Привіт, {{ fullname }}!</h3>
+    <h3>{{ 'HELLO' | translate }}, {{ fullname }}!</h3>
   </div>
   <div class="buy-a-plan" *ngIf="!is_active_user">
-    <span>Придбайте тариф, щоб відчути всі переваги!</span>
-    <span class="amount"><small>Всього</small> {{ plan_amount }} {{ plan_currency }}</span>
-    <span class="ref-prog">Станьте учасником реферальної програми!</span>
+    <span>{{ 'BUY_PLAN_TO_EARN' | translate }}</span>
+    <span class="amount"><small>{{ 'TEXT_TOTAL' | translate }}</small> {{ plan_amount }} {{ plan_currency }}</span>
+    <span class="ref-prog">{{ 'BE_A_MEMBER' | translate }}</span>
   </div>
   <div class="links">
 
     <span *ngIf="!is_active_user" (click)="buyPlane()" class="btn-link btn-buy">
       <ion-icon name="flash-outline"></ion-icon>
-      <span>Придбати тариф</span>
+      <span>{{ 'BUY_PLANE' | translate }}</span>
     </span>
 
     <span (click)="switchView('edit')" class="btn-link">
       <ion-icon name="pencil-outline"></ion-icon>
-      <span>Редагувати профіль</span>
+      <span>{{ 'EDIT_PROFILE' | translate }}</span>
     </span>
     <span (click)="getMyTransaction()" class="btn-link">
       <ion-icon name="bar-chart-outline"></ion-icon>
-      <span>Мій баланс</span>
+      <span>{{ 'MY_BALANCE' | translate }}</span>
     </span>
     <span (click)="getMyPurchases()" class="btn-link">
       <ion-icon name="cart-outline"></ion-icon>
-      <span>Мої знижки</span>
+      <span>{{ 'MY_DISCOUNTS' | translate }}</span>
     </span>
     <span (click)="switchView('payout')" class="btn-link">
       <ion-icon name="star-outline"></ion-icon>
-      <span>Вивести кошти</span>
+      <span>{{ 'MAKE_PAYOUT' | translate }}</span>
     </span>
     <span (click)="openRefDescription()" class="btn-link">
       <ion-icon name="thumbs-up-outline"></ion-icon>
-      <span>Про реферальну програму</span>
+      <span>{{ 'ABOUT_REF_PROG' | translate }}</span>
     </span>
     <span (click)="logout()" class="btn-link">
       <ion-icon name="log-out-outline"></ion-icon>
-      <span>Вихід</span>
+      <span>{{ 'TEXT_LOG_OUT' | translate }}</span>
     </span>
     <span (click)="deleteAccount()" class="btn-link btn-danger">
       <ion-icon name="trash-outline"></ion-icon>
-      <span>Видалити обліковий запис</span>
+      <span>{{ 'TEXT_DEL_ACC' | translate }}</span>
     </span>
   </div>
   <div *ngIf="is_active_user" class="my-code dark-bg ion-margin-top">
-    <h4>Ваш реферальний код</h4>
+    <h4>{{ 'TEXT_YOUR_REF_CODE' | translate }}</h4>
     <span class="copy-code">
       <ion-icon (click)="copy(ref_code)" class="copy-icon" name="copy-outline"></ion-icon>
       {{ref_code}}</span>
-    <h4>Посилання</h4>
+    <h4>{{ 'TEXT_LINK' | translate }}</h4>
     <span class="copy-code">
       <ion-icon (click)="copy(ref_link)" class="copy-icon" name="copy-outline"></ion-icon>
       {{ ref_link }}</span>
-      <small *ngIf="!is_active_user"><br><br>Зверніть увагу. Щоб стати учасником реферальної програми потрібно придбати тариф.</small>
+      <small *ngIf="!is_active_user"><br><br>{{ 'TEXT_NOTICE_PLANE' | translate }}</small>
   </div>
   <div class="my-ref-count dark-bg with-icon ion-margin-top">
     <ion-icon name="people-outline"></ion-icon>
-    <h4>У вас <b>{{ count_referals }}</b> рефералів</h4>
+    <h4>{{ 'TEXT_YOU_HAVE' | translate }} <b>{{ count_referals }}</b> {{ 'TEXT_SUBSCRIBERS' | translate }}</h4>
   </div>
   <div class="my-balance dark-bg with-icon ion-margin-top">
     <ion-icon name="cash-outline"></ion-icon>
-    <h4>Ви накопичили {{ max_payout_amount }} {{ plan_currency }}</h4>
+    <h4>{{ 'TEXT_YOU_EARN' | translate }} {{ max_payout_amount }} {{ plan_currency }}</h4>
   </div>
 </div>
 <div *ngIf="currentView === 'edit'">
   <div class="hello-pages">
     <ion-icon (click)="switchView('main')" name="arrow-back-outline"></ion-icon>
-    <h3>Редагувати профіль</h3>
+    <h3>{{ 'EDIT_PROFILE' | translate }}</h3>
   </div>
 
   <div class="inner-content">
     <div class="input-item">
         <ion-input [(ngModel)]="formData.fullname" labelPlacement="floating" value="{{fullname}}">
-          <div slot="label">Повне ім'я <ion-text color="danger">*</ion-text></div>
+          <div slot="label">{{ 'TEXT_FULLNAME' | translate }} <ion-text color="danger">*</ion-text></div>
         </ion-input>
     </div>
     <div class="input-item">
@@ -129,20 +129,20 @@
     </div>
     <div class="input-item">
         <ion-input [(ngModel)]="formData.password" labelPlacement="floating" type="password" value="">
-          <div slot="label">Пароль</div>
+          <div slot="label">{{ 'TEXT_PASSWORD' | translate }}</div>
           <ion-input-password-toggle slot="end"></ion-input-password-toggle>
         </ion-input>
     </div>
     <div class="input-item">
         <ion-input [(ngModel)]="formData.confirm_password" labelPlacement="floating" type="password" value="">
-          <div slot="label">Повторіть пароль</div>
+          <div slot="label">{{ 'TEXT_CONFIRM_PASSWORD' | translate }}</div>
           <ion-input-password-toggle slot="end"></ion-input-password-toggle>
         </ion-input>
     </div>
     <div>
-    <small>Якщо ви не бажаєте змінити пароль - просто залиште поле порожнім</small>
+    <small>{{ 'TEXT_PASSWORD_NOTE' | translate }}</small>
     </div>
-    <ion-button (click)="updateProfile()" class="ion-margin-top">Зберегти</ion-button>
+    <ion-button (click)="updateProfile()" class="ion-margin-top">{{ 'TEXT_SAVE' | translate }}</ion-button>
   </div>
 
 </div>
@@ -150,10 +150,10 @@
 <div *ngIf="currentView === 'purchases'">
   <div class="hello-pages">
     <ion-icon (click)="switchView('main')" name="arrow-back-outline"></ion-icon>
-    <h3>Мої покупки</h3>
+    <h3>{{ 'TEXT_MY_PURCHASES' | translate }}</h3>
   </div>
   <div class="inner-content">
-    <ion-loading isOpen="showLoading" message="Завантаження..." duration="1000"></ion-loading>
+    <ion-loading isOpen="showLoading" message="{{ 'TEXT_LOADING' | translate }}" duration="1000"></ion-loading>
 
     <div class="my-purchases">
       <div *ngFor="let purchase of purchases" class="purchase-item">
@@ -166,8 +166,8 @@
             <span class="date">Період дії: {{purchase.date_start}} - {{purchase.date_end}}</span>
             <ion-buttons>
             <ion-button (click)="showPopup(purchase.qr, purchase.code)" fill="solid" color="primary" slot="start">QR</ion-button>
-            <ion-button (click)="openDiscount(purchase.id)" fill="solid" color="primary" slot="start">Відкрити</ion-button>
-            <ion-button (click)="deletePurchase(purchase.id)" fill="solid" slot="end" color="danger" size="small">Видалити</ion-button>
+            <ion-button (click)="openDiscount(purchase.id)" fill="solid" color="primary" slot="start">{{ 'TEXT_OPEN' | translate }}</ion-button>
+            <ion-button (click)="deletePurchase(purchase.id)" fill="solid" slot="end" color="danger" size="small">{{ 'TEXT_DELETE' | translate }}</ion-button>
             </ion-buttons>
           </div>
       </div>
@@ -175,7 +175,7 @@
 
     <div class="show-qr {{ popupClass }}">
       <div class="headline">
-        <span class="code">Код: <b>{{ popupCode }}</b></span>
+        <span class="code">{{ 'TEXT_CODE' | translate }}: <b>{{ popupCode }}</b></span>
         <ion-icon (click)="hidePopUp()" name="close-outline"></ion-icon>
       </div>
       <div class="img-box">
@@ -189,46 +189,46 @@
 <div *ngIf="currentView === 'payout'">
   <div class="hello-pages">
     <ion-icon (click)="switchView('main')" name="arrow-back-outline"></ion-icon>
-    <h3>Вивести кошти</h3>
+    <h3>{{ 'MAKE_PAYOUT' | translate }}</h3>
   </div>
   <div class="inner-content">
-    <h5>Максимальна сума для виводу: <span>{{ max_payout_amount }}</span> {{ plan_currency }}</h5>
-    <p>Будь ласка, вкажіть адресу свого гаманця {{ plan_currency }} в мережі {{ plan_currency_type }}, інакше кошти будуть втрачені.</p>
+    <h5>{{ 'TEXT_MAX_AMOUNT' | translate }}: <span>{{ max_payout_amount }}</span> {{ plan_currency }}</h5>
+    <p>{{ 'TEXT_NOTE_PAYOUT' | translate }} {{ plan_currency }} {{ 'TEXT_NOTE_PAYOUT_1' | translate }} {{ plan_currency_type }}, {{ 'TEXT_NOTE_PAYOUT_2' | translate }}.</p>
     <br>
     <div class="input-item">
         <ion-input [(ngModel)]="wallet_address" labelPlacement="floating" value="">
-          <div slot="label">Адреса гаманця <ion-text color="danger">*</ion-text></div>
+          <div slot="label">{{ 'TEXT_WALLET_ADDRESS' | translate }} <ion-text color="danger">*</ion-text></div>
         </ion-input>
     </div>
     <div class="input-item">
         <ion-input type="number" [(ngModel)]="wallet_amount" labelPlacement="floating" value="">
-          <div slot="label">Сума для виводу <ion-text color="danger">*</ion-text></div>
+          <div slot="label">{{ 'TEXT_AMOUNT_FOR_PAYOUT' | translate }} <ion-text color="danger">*</ion-text></div>
         </ion-input>
     </div>
   <br>
-  <ion-button (click)="createPayout()" class="ion-margin-top">Підтвердити</ion-button>
+  <ion-button (click)="createPayout()" class="ion-margin-top">{{ 'TEXT_APPLY' | translate }}</ion-button>
   </div>
 </div>
 
 <div *ngIf="currentView === 'balance'">
   <div class="hello-pages">
     <ion-icon (click)="switchView('main')" name="arrow-back-outline"></ion-icon>
-    <h3>Мій баланс</h3>
+    <h3>{{ 'MY_BALANCE' | translate }}</h3>
   </div>
 
   <div class="my-balance dark-bg with-icon ion-margin-top ion-margin-bottom">
     <ion-icon name="cash-outline"></ion-icon>
-    <h4>Ви накопичили {{ max_payout_amount }} {{ plan_currency }}</h4>
+    <h4>{{ 'TEXT_YOU_EARN' | translate }} {{ max_payout_amount }} {{ plan_currency }}</h4>
   </div>
 
   <div class="inner-content">
-    <p *ngIf="!is_active_user">Щоб взяти учать y реферальній програмі, потрібно придбати тариф.
-      <ion-text (click)="openRefDescription()" color="primary">Детальніше про програму <ion-icon name="chevron-forward-outline"></ion-icon></ion-text>
+    <p *ngIf="!is_active_user">{{ 'TEXT_NOTE_REF_PROG' | translate }}
+      <ion-text (click)="openRefDescription()" color="primary">{{ 'TEXT_NOTE_REF_DETAIL' | translate }} <ion-icon name="chevron-forward-outline"></ion-icon></ion-text>
     </p>
 
-    <p *ngIf="!transactions" class="ion-margin-bottom ion-margin-top" style="text-align: center;">Транзакції відсутні...</p>
+    <p *ngIf="!transactions" class="ion-margin-bottom ion-margin-top" style="text-align: center;">{{ 'EMPTY_TRANSACTIONS' | translate }}</p>
 
-    <h4 *ngIf="transactions" class="ion-margin-top ion-margin-bottom" style="text-align: center;">Останні транзакції</h4>
+    <h4 *ngIf="transactions" class="ion-margin-top ion-margin-bottom" style="text-align: center;">{{ 'LATEST_TRANSACTIONS' | translate }}</h4>
     <div class="transactions">
       <div *ngFor="let transcation of transactions" class="transaction-item">
           <div class="headline"><span class="date">{{ transcation.date_added }}</span><h5>{{transcation.comment}}</h5></div>

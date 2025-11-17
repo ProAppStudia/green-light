@@ -47,7 +47,7 @@
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">Каталог компаній</ion-title>
+      <ion-title size="large">{{ 'TEXT_CATALOG_COMPANIES' | translate }}</ion-title>
     </ion-toolbar>
   </ion-header>
 
@@ -57,7 +57,7 @@
       labelPlacement="stacked"
       fill="solid"
       [clearInput]="true"
-      placeholder="Пошук за назвою"
+      placeholder="{{ 'TEXT_SEARCH_BY_NAME' | translate }}"
       value=""
       (ionInput)="searchByKeyword($event)"
     >
@@ -69,7 +69,7 @@
   <!-- Shops Grid -->
   <div class="products-section" *ngIf="shops$ && shops$.length > 0; else noData">
   <div class="man-top ion-padding">
-      <div>Всього компаній: {{ count_shops }}</div>
+      <div>{{ 'TEXT_TOTAL_COMPANIES' | translate }}: {{ count_shops }}</div>
       <ion-buttons >
         <ion-button fill="outline" (click)="toggleView('list')" [color]="viewMode === 'list' ? 'dark' : 'medium'">
           <ion-icon name="list-outline"></ion-icon>
@@ -92,7 +92,7 @@
           <p class="product-description">{{ shop.shop_addresses }}</p>
           <div class="product-footer">
             <ion-button (click)="openShop(shop.shop_id)" fill="solid" size="small">
-              Go to Shop
+              {{ 'TEXT_OPEN' | translate }}
             </ion-button>
           </div>
         </ion-card-content>
@@ -100,7 +100,7 @@
     </div>
     <div class="ion-text-center ion-padding">
     <ion-button class="loadMoreButton" *ngIf="page < totalPages && !isLoading" (click)="loadMore()">
-      Показати ще
+      {{ 'TEXT_LOAD_MORE' | translate }}
     </ion-button>
     <ion-spinner *ngIf="isLoading"></ion-spinner>
   </div>
@@ -166,7 +166,7 @@
 </g>
 
 </svg>
-    <ion-label color="medium">Немає результатів</ion-label>
+    <ion-label color="medium">{{ 'TEXT_EMPTY_RESULT' | translate }}</ion-label>
     </div>
   </ng-template>
 </ion-content>

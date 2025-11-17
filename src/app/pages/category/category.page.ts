@@ -31,6 +31,8 @@ import { gridOutline, listOutline, languageOutline, mapOutline, notificationsOut
 import { Observable, BehaviorSubject, combineLatest, forkJoin, of } from 'rxjs';
 import { map, switchMap, startWith, tap } from 'rxjs/operators';
 //end header
+//локалізація 
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-category',
@@ -56,7 +58,8 @@ import { map, switchMap, startWith, tap } from 'rxjs/operators';
     IonCardSubtitle,
     IonButtons,
     IonIcon,
-    IonPopover
+    IonPopover,
+    TranslateModule
   ],
 })
 export class CategoryPage implements OnInit {
@@ -89,9 +92,11 @@ export class CategoryPage implements OnInit {
     private api: ApiService,
     private router: Router,
     private menu: MenuController, 
-    private auth: AuthService
+    private auth: AuthService,
+    private translate: TranslateService
   ) {
     addIcons({listOutline, gridOutline, languageOutline, mapOutline, notificationsOutline, menuOutline});
+    translate.use('ua');
   }
 
   ngOnInit() {
@@ -121,6 +126,7 @@ export class CategoryPage implements OnInit {
     this.auth.getLanguage().then(lang_code => {
       if (lang_code !== null) {
         this.selectedLanguage = lang_code.toUpperCase();
+        this.translate.use(lang_code);
       }
     });
 
@@ -169,7 +175,7 @@ export class CategoryPage implements OnInit {
           next: (res:any) => {
             if(res){
               this.products = [...this.products, ...res.discounts];
-              this.categoryTitle = res.name || 'Результати';
+              this.categoryTitle = res.name || this.translate.instant('TEXT_RESULTS');
               this.totalPages = res.total_pages || 1;
               this.total_discounts = res.discounts_count || 0;
             }
@@ -219,6 +225,7 @@ export class CategoryPage implements OnInit {
   selectLanguage(language: any) {
     this.auth.saveLanguage(language.context_key);
     this.selectedLanguage = language.context_key.toUpperCase();
+    this.translate.use(language.context_key);
     this.ngOnInit();
   }
   

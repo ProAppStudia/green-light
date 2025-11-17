@@ -14,6 +14,8 @@ import { ApiService } from '../services/api';
 import { InfoModalComponent } from 'src/app/components/info-modal/info-modal.component';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
+//локалізація 
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { registerPlugin } from '@capacitor/core';
 interface MyBarcodeScanner {
@@ -33,6 +35,7 @@ const BarcodeScanner = registerPlugin('BarcodeScanner') as MyBarcodeScanner;
   styleUrls: ['tab3.page.scss'],
   standalone: true,
   imports: [
+    TranslateModule,
     IonMenuButton,
     IonMenu,
     CommonModule,
@@ -71,9 +74,10 @@ export class Tab3Page {
     private router: Router,
     private auth: AuthService,
     private toastCtrl: ToastController,
+    private translate: TranslateService
   ) {
-
     addIcons({language, languageOutline, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline});
+    translate.use('ua');
   }
 
   ngOnInit(){
@@ -96,6 +100,7 @@ export class Tab3Page {
     this.auth.getLanguage().then(lang_code => {
       if (lang_code !== null) {
         this.selectedLanguage = lang_code.toUpperCase();
+        this.translate.use(lang_code);
       }
     });
 
@@ -146,13 +151,13 @@ export class Tab3Page {
       if (result?.hasContent && result.content) {
         this.checkQrOnServer(result.content);
       } else {
-        this.showAlert('QR-код не знайдено');
+        this.showAlert(this.translate.instant('TEXT_QR_NOT_FOUND'));
       }
     } catch (err) {
       console.error(err);
       this.isScanning = false;
       await BarcodeScanner.showBackground();
-      this.showAlert('Помилка при скануванні');
+      this.showAlert(this.translate.instant('TEXT_QR_ERROR_OCCURED'));
     }
   }
 
@@ -163,16 +168,16 @@ export class Tab3Page {
         if (res.success) {
           this.openModal(res.success);
         } else if(res.error) {
-          this.showAlert(res.error || 'Код не знайдено');
+          this.showAlert(res.error || this.translate.instant('TEXT_QR_CODE_NOT_FOUND'));
         }
       },
       error: (err) => {
         console.error('❌ Помилка HTTP:', err);
-        this.showAlert('Помилка з’єднання з сервером');
+        this.showAlert(this.translate.instant('TEXT_QR_CODE_ERROR_CONNECT'));
       },
     });
   } catch (e) {
-    this.showAlert('Неочікувана помилка');
+    this.showAlert(this.translate.instant('ERROR_OCCURED'));
   }
   
 }
@@ -185,13 +190,11 @@ export class Tab3Page {
       componentProps: { data },
     });
     await modal.present();
-    console.log('Modal is present, data:');
-    console.log(data);
   }
 
   async showAlert(message: string) {
     const alert = await this.alertCtrl.create({
-      header: 'Увага',
+      header: this.translate.instant('TEXT_PAY_ATTENTION'),
       message,
       buttons: ['OK'],
     });
@@ -203,7 +206,7 @@ export class Tab3Page {
     if (trimmed.length > 0) {
       this.checkQrOnServer(trimmed);
     } else {
-      this.showAlert('Введіть код для перевірки');
+      this.showAlert(this.translate.instant('TEXT_QR_ENTER_CODE'));
     }
   }
 
@@ -225,6 +228,8 @@ export class Tab3Page {
   selectLanguage(language: any) {
     this.auth.saveLanguage(language.context_key);
     this.selectedLanguage = language.context_key.toUpperCase();
+    // локалізація
+    this.translate.use(language.context_key);
   }
   
   selectCountry(country: any) {

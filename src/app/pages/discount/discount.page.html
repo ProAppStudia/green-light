@@ -3,7 +3,7 @@
     <ion-icon name="arrow-back-outline"></ion-icon>
   </ion-button>
 <span *ngIf="discount.percent" class="sale-badge">
-  Знижка<br> <span>-{{ discount.percent }}%</span>
+  {{ 'TEXT_SALE' | translate }}<br> <span>-{{ discount.percent }}%</span>
 </span>
   <ng-container *ngIf="discount; else notFound">
 
@@ -47,7 +47,7 @@
       </ion-card-header>
       <ion-card-content>
         <p *ngIf="discount.address" class="with-icon-text"><ion-icon name="map-outline"></ion-icon> {{ discount.address }}</p>
-        <p *ngIf="discount.date_end" class="with-icon-text"><ion-icon name="calendar-outline"></ion-icon> Період дії акції: {{ discount.date_start }} - {{ discount.date_end }}</p>
+        <p *ngIf="discount.date_end" class="with-icon-text"><ion-icon name="calendar-outline"></ion-icon> {{ 'TEXT_DISCOUNT_PERIOD' | translate }}: {{ discount.date_start }} - {{ discount.date_end }}</p>
         <p [innerHTML]="discount.description"></p>
       </ion-card-content>
     </ion-card>
@@ -69,7 +69,7 @@
       </div>
         <ion-button (click)="openShop(discount.shop_id)" fill="outline" expand="block">
           <ion-icon slot="start" name="bag-check-outline"></ion-icon>
-          Перейти до магазину</ion-button>
+          {{ 'TEXT_GO_TO_SHOP' | translate }}</ion-button>
       </ion-card-content>
     </ion-card>
   </ng-container>
@@ -81,7 +81,7 @@
 </ion-fab>
 
   <ng-template #notFound>
-    <p class="ion-text-center">Знижку не знайдено.</p>
+    <p class="ion-text-center">{{ 'TEXT_DISCOUNT_NOT_FOUND' | translate }}</p>
   </ng-template>
 
 </ion-content>
@@ -89,6 +89,6 @@
 <ng-template #loadingTpl>
   <ion-content class="ion-padding ion-text-center">
     <ion-spinner name="crescent"></ion-spinner>
-    <p>Завантаження...</p>
+    <p>{{ 'TEXT_LOADING' | translate }}</p>
   </ion-content>
 </ng-template>

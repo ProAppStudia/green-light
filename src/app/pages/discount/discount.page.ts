@@ -8,8 +8,11 @@ import { add, bagCheckOutline, callOutline, arrowBackOutline, chevronBackOutline
 import { IonicModule, LoadingController } from '@ionic/angular';
 import { ApiService } from '../../services/api';
 import { ActivatedRoute } from '@angular/router';
+import { AuthService } from 'src/app/services/auth.service';
 
 import { Router } from '@angular/router';
+//локалізація 
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { register } from 'swiper/element/bundle';
@@ -20,7 +23,7 @@ register();
   templateUrl: './discount.page.html',
   styleUrls: ['./discount.page.scss'],
   standalone: true,
-  imports: [IonLabel, IonThumbnail, IonFab, IonFabButton, IonCard, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonBackButton, IonButtons, IonButton, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, IonList, IonItem, IonIcon,IonSpinner],
+  imports: [TranslateModule, IonLabel, IonThumbnail, IonFab, IonFabButton, IonCard, IonContent, IonHeader, IonTitle, IonToolbar, CommonModule, FormsModule, IonBackButton, IonButtons, IonButton, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, IonList, IonItem, IonIcon,IonSpinner],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class DiscountPage implements OnInit {
@@ -36,7 +39,9 @@ export class DiscountPage implements OnInit {
     private loadingCtrl: LoadingController,
     private toastController: ToastController,
     private router: Router,
-    private location: Location
+    private location: Location,
+    private translate: TranslateService,
+    private auth: AuthService
   ) { 
     addIcons({ add, callOutline, bagCheckOutline, arrowBackOutline, chevronBackOutline, 
       chevronForwardOutline, mapOutline, calendarOutline, linkOutline, pricetagOutline});
@@ -63,6 +68,15 @@ export class DiscountPage implements OnInit {
         }
       });
     }
+    
+    this.auth.getLanguage().then(lang_code => {
+      if (lang_code !== null) {
+        this.translate.use(lang_code);
+      }else{
+        this.translate.use('ua');
+      }
+    });
+
   }
 
   addDiscountToMyList(discount_id:any){

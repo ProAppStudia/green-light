@@ -59,6 +59,7 @@ export class Tab5Page {
     addIcons({ language, logInOutline, chevronForwardOutline, languageOutline, mapOutline, menuOutline,notificationsOutline, addOutline, removeOutline});
      //translate.setDefaultLang('ua');
      translate.use('ua');
+     this.fullname = this.translate.instant('TEXT_USER');
   }
 
   async ngOnInit(){
@@ -86,6 +87,8 @@ export class Tab5Page {
     this.auth.getLanguage().then(lang_code => {
       if (lang_code !== null) {
         this.selectedLanguage = lang_code.toUpperCase();
+        // локалізація
+        this.translate.use(lang_code);
       }
     });
 
@@ -152,6 +155,8 @@ export class Tab5Page {
   selectLanguage(language: any) {
     this.auth.saveLanguage(language.context_key);
     this.selectedLanguage = language.context_key.toUpperCase();
+    // локалізація
+    this.translate.use(language.context_key);
   }
   
   selectCountry(country: any) {
@@ -165,7 +170,7 @@ openRefDescription(){
   if(this.ref_description_link){
     window.open(this.ref_description_link, '_system');
   }else{
-    this.showToast('Виникла помилка. Будь ласка, перегляньте наш сайт щоб ознайомитись із інформацією');
+    this.showToast(this.translate.instant('TEXT_ERROR_LINK'));
   }
 }
 

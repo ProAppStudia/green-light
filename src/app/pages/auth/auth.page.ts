@@ -12,6 +12,8 @@ import { ApiService } from 'src/app/services/api';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
 import { Preferences } from '@capacitor/preferences';
+//локалізація 
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-auth',
@@ -19,7 +21,7 @@ import { Preferences } from '@capacitor/preferences';
   templateUrl: './auth.page.html',
   styleUrls: ['./auth.page.scss'],
   imports: [
-    CommonModule, FormsModule,
+    TranslateModule, CommonModule, FormsModule,
     IonHeader, IonToolbar, IonTitle, IonContent, IonButtons,
     IonInput, IonButton, IonItem, IonLabel, IonText, IonIcon, IonCard
   ],
@@ -38,6 +40,7 @@ export class AuthPage {
     private router: Router,
     private auth:AuthService,
     private toastController: ToastController,
+    private translate: TranslateService
   ) {
     addIcons({ logInOutline, personAddOutline, arrowForwardOutline, closeOutline });
   }
@@ -49,8 +52,16 @@ export class AuthPage {
 
   //Для тесту, видалити токен
   ngOnInit() {
-    this.auth.logout();
-    console.log('token removed');
+    //this.auth.logout();
+    
+    this.auth.getLanguage().then(lang_code => {
+      if (lang_code !== null) {
+        this.translate.use(lang_code);
+      }else{
+        this.translate.use('ua');
+      }
+    });
+
   }
 
   async onSubmit() {
@@ -59,7 +70,7 @@ export class AuthPage {
 
     if (this.isLoginMode) {
       if(this.loginData.password == '' || this.loginData.username == ''){
-        this.presentToast('Перевірте поле логін та пароль', 'danger');
+        this.presentToast(this.translate.instant('TEXT_CHECK_LOGIN_DATA'), 'danger');
         this.loading = false;
       }else{
         console.log('Login '+this.loginData.username);
@@ -75,8 +86,7 @@ export class AuthPage {
             this.loading = false;
           },
           error: async (err) => {
-            console.error('Помилка сервера:', err);
-            this.presentToast('Помилка сервера...', 'danger');
+            this.presentToast(this.translate.instant('TEXT_QR_CODE_ERROR_CONNECT'), 'danger');
             this.loading = false;
           }
         });
@@ -85,7 +95,7 @@ export class AuthPage {
     } else {
       if (this.registerData.password !== this.registerData.password_confirm) {
         this.loading = false;
-        this.errorMessage = 'Passwords do not match';
+        this.errorMessage = this.translate.instant('TEXT_PASS_NO_MATCH');
         return;
       }
 
@@ -100,8 +110,7 @@ export class AuthPage {
             this.loading = false;
           },
           error: async (err) => {
-            console.error('Помилка сервера:', err);
-            this.presentToast('Помилка сервера...', 'danger');
+            this.presentToast(this.translate.instant('TEXT_QR_CODE_ERROR_CONNECT'), 'danger');
             this.loading = false;
           }
       });

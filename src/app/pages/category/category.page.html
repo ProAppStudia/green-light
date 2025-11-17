@@ -45,9 +45,9 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <h2>{{categoryTitle || 'Результати'}}</h2>
+  <h2>{{categoryTitle || 'Results'}}</h2>
   <div class="man-top">
-    <div>Всього знижок: {{ total_discounts }}</div>
+    <div>{{ 'TEXT_TOTAL_DISCOUNTS' | translate }}: {{ total_discounts }}</div>
     <ion-buttons >
       <ion-button fill="outline" (click)="toggleView('list')" [color]="viewMode === 'list' ? 'dark' : 'medium'">
         <ion-icon name="list-outline"></ion-icon>
@@ -70,7 +70,7 @@
       </ion-card-header>
       <ion-card-content>
         <ion-button (click)="openDiscount(discount.discount_id)" expand="block" fill="solid" color="primary">
-          Go
+          {{ 'TEXT_OPEN' | translate }}
         </ion-button>
       </ion-card-content>
     </ion-card>
@@ -79,12 +79,12 @@
   
 
   <ng-template #noData>
-    <ion-label style="text-align: center;" class="ion-margin-top" color="medium">Немає товарів</ion-label>
+    <ion-label style="text-align: center;" class="ion-margin-top" color="medium">{{ 'TEXT_EMPTY_RESULT' | translate }}</ion-label>
   </ng-template>
 
   <div class="ion-text-center ion-padding">
     <ion-button class="loadMoreButton" *ngIf="page < totalPages && !isLoading" (click)="loadMore()">
-      Показати ще
+      {{ 'TEXT_LOAD_MORE' | translate }}
     </ion-button>
     <ion-spinner *ngIf="isLoading"></ion-spinner>
   </div>
