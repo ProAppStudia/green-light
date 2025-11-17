@@ -21,6 +21,7 @@ import { registerPlugin } from '@capacitor/core';
 interface MyBarcodeScanner {
   checkPermissions(): Promise<{ camera: 'granted' | 'denied' | 'prompt' }>;
   requestPermissions(): Promise<{ camera: 'granted' | 'denied' | 'prompt' }>;
+  prepare(): Promise<void>;
   startScan(): Promise<{ hasContent: boolean; content?: string }>;
   hideBackground(): Promise<void>;
   showBackground(): Promise<void>;
@@ -139,11 +140,13 @@ export class Tab3Page {
       if (permission.camera !== 'granted') {
         await BarcodeScanner.requestPermissions();
       }
+      
 
       this.isScanning = true;
       document.body.classList.add('scanner-active');
       await BarcodeScanner.hideBackground();
-
+      
+      await BarcodeScanner.prepare(); // для Android 13+
       const result = await BarcodeScanner.startScan();
       this.isScanning = false;
       await BarcodeScanner.showBackground();
@@ -172,7 +175,7 @@ export class Tab3Page {
         }
       },
       error: (err) => {
-        console.error('❌ Помилка HTTP:', err);
+        console.error(' Помилка HTTP:', err);
         this.showAlert(this.translate.instant('TEXT_QR_CODE_ERROR_CONNECT'));
       },
     });

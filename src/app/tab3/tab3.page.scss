@@ -68,3 +68,7 @@ ion-button[fill="clear"] {
 ion-card {
   background: #fff;
 }
+.scanner-active {
+  --background: transparent !important;
+  background: transparent !important;
+}

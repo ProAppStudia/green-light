@@ -58,10 +58,10 @@
 
     <ion-button expand="block" color="success" (click)="onSubmit()" [disabled]="loading">
       <ion-icon slot="start" name="person-add-outline"></ion-icon>
-      {{ 'TEXT_REGISTER_BUTTON' }}
+      {{ 'TEXT_REGISTER_BUTTON' | translate }}
     </ion-button>
 
-    <ion-button fill="clear" expand="block" (click)="toggleMode()">{{ 'TEXT_LOG_IN' }}</ion-button>
+    <ion-button fill="clear" expand="block" (click)="toggleMode()">{{ 'TEXT_LOG_IN' | translate }}</ion-button>
 
     <ion-text color="danger" *ngIf="errorMessage">{{ errorMessage }}</ion-text>
   </ion-card>
