@@ -35,6 +35,7 @@ export class AuthService {
   // 🔹 Видалити токен (вихід)
   async logout() {
     await Preferences.remove({ key: 'auth_token' });
+    await Preferences.set({ key: 'last_logout', value: Date.now() + '' });
   }
 
   /*Інші записи які є сенс зберігати в застосунку*/

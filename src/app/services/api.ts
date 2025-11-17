@@ -45,11 +45,7 @@ export class ApiService {
 
   validateCode(code: string): Observable<any> {
     const url = `${this.baseUrl}?type=validate_code`;
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    });
-    return this.http.post(url, {code: code}, { headers });
+    return this.http.post(url, {code: code});
   }
 
   getItemsByCategoryId(category_id:number, page:number, limit:number){

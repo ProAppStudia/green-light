@@ -1,6 +1,6 @@
 import { ExploreContainerComponent } from '../explore-container/explore-container.component';
 import { Component, OnInit } from '@angular/core';
-import { IonLoading, IonHeader,IonFooter, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonButton, IonIcon, IonSegment, IonSegmentButton, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, IonList, IonItem, MenuController, IonInput, IonText, IonInputPasswordToggle } from '@ionic/angular/standalone';
+import { IonAlert, IonToast,IonLoading, IonHeader,IonFooter, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonButton, IonIcon, IonSegment, IonSegmentButton, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, IonList, IonItem, MenuController, IonInput, IonText, IonInputPasswordToggle } from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
@@ -10,7 +10,7 @@ import { ApiService } from '../services/api';
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { map, switchMap, startWith } from 'rxjs/operators';
 import { Preferences } from '@capacitor/preferences';
-import { ToastController, AlertController } from '@ionic/angular';
+import { ToastController, AlertController, ViewWillEnter } from '@ionic/angular';
 
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
@@ -21,7 +21,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   selector: 'app-tab4',
   templateUrl: 'tab4.page.html',
   styleUrls: ['tab4.page.scss'],
-  imports: [TranslateModule, IonLoading, IonInputPasswordToggle, IonInput, IonText, IonFooter, IonHeader, 
+  imports: [IonAlert, IonToast, TranslateModule, IonLoading, IonInputPasswordToggle, IonInput, IonText, IonFooter, IonHeader, 
     IonToolbar, IonTitle, IonContent, IonMenuButton, IonButton, IonSegment, IonSegmentButton, 
     IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, 
     IonList, IonItem, FormsModule, CommonModule, IonButtons, IonMenuButton, IonButton, IonIcon, 
@@ -86,6 +86,14 @@ export class Tab4Page {
       chevronForwardOutline});
       // локалізація
       translate.use('ua');
+  }
+
+  async ionViewWillEnter() {
+    const { value: token } = await Preferences.get({ key: 'auth_token' });
+    console.log('ionViewWillEnter+ '+token);
+    if (!token) {
+      this.router.navigate(['/auth'], { replaceUrl: true });
+    }
   }
 
   async ngOnInit() {

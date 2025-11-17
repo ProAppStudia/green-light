@@ -64,7 +64,7 @@
         <div class="shop-phones">
         <ion-chip *ngFor="let phone of discount.shop_phones">
           <ion-icon name="call-outline"></ion-icon>
-          <ion-label><a href="tel:{{ phone }}">{{ phone }}</a></ion-label>
+          <ion-label><a class="link" href="tel:{{ phone }}">{{ phone }}</a></ion-label>
         </ion-chip>
       </div>
         <ion-button (click)="openShop(discount.shop_id)" fill="outline" expand="block">

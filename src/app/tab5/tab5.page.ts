@@ -13,7 +13,7 @@ import { Router } from '@angular/router';
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { map, switchMap, startWith } from 'rxjs/operators';
 import { Preferences } from '@capacitor/preferences';
-import { ToastController, AlertController } from '@ionic/angular';
+import { ToastController, AlertController, ViewWillEnter } from '@ionic/angular';
 
 //локалізація 
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -60,6 +60,15 @@ export class Tab5Page {
      //translate.setDefaultLang('ua');
      translate.use('ua');
      this.fullname = this.translate.instant('TEXT_USER');
+  }
+
+  async ionViewWillEnter() {
+    const { value: token } = await Preferences.get({ key: 'auth_token' });
+    if (token) {
+      this.is_auth_user = true;
+    }
+    //for replace data
+    this.ngOnInit();
   }
 
   async ngOnInit(){

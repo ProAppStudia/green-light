@@ -9,25 +9,16 @@ import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { map, switchMap, startWith } from 'rxjs/operators';
 import { Preferences } from '@capacitor/preferences';
 import { FormsModule } from '@angular/forms';
-import { ToastController, IonicModule, AlertController, ModalController } from '@ionic/angular';
+import { ToastController, IonicModule, ModalController } from '@ionic/angular';
 import { ApiService } from '../services/api';
 import { InfoModalComponent } from 'src/app/components/info-modal/info-modal.component';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
 //локалізація 
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+// новий сканер 
+import { BarcodeScanner, BarcodeFormat } from '@capacitor-mlkit/barcode-scanning';
 
-import { registerPlugin } from '@capacitor/core';
-interface MyBarcodeScanner {
-  checkPermissions(): Promise<{ camera: 'granted' | 'denied' | 'prompt' }>;
-  requestPermissions(): Promise<{ camera: 'granted' | 'denied' | 'prompt' }>;
-  prepare(): Promise<void>;
-  startScan(): Promise<{ hasContent: boolean; content?: string }>;
-  hideBackground(): Promise<void>;
-  showBackground(): Promise<void>;
-  stopScan(): Promise<void>;
-}
-const BarcodeScanner = registerPlugin('BarcodeScanner') as MyBarcodeScanner;
 
 
 @Component({
@@ -70,7 +61,6 @@ export class Tab3Page {
   constructor(
     private api: ApiService,
     private modalCtrl: ModalController,
-    private alertCtrl: AlertController,
     private menu: MenuController,
     private router: Router,
     private auth: AuthService,
@@ -136,39 +126,37 @@ export class Tab3Page {
 
   async startScan() {
   try {
-    // 1. Підготовка сканера для Android 13+
-    await BarcodeScanner.prepare();
-
-    // 2. Перевірка дозволу камери
-    let permission = await BarcodeScanner.checkPermissions();
-    if (permission.camera !== 'granted') {
-      permission = await BarcodeScanner.requestPermissions();
-      if (permission.camera !== 'granted') {
-        this.showAlert('Доступ до камери відхилено');
+    // 1. Перевіряємо дозволи
+    const perm = await BarcodeScanner.checkPermissions();
+    if (perm.camera !== 'granted') {
+      const req = await BarcodeScanner.requestPermissions();
+      if (req.camera !== 'granted') {
+        this.presentToast(this.translate.instant('TEXT_CAMERA_PERMISSION_DENIED'), 'danger');
         return;
       }
     }
 
-    // 3. Запуск сканера
     this.isScanning = true;
-    document.body.classList.add('scanner-active');
-    await BarcodeScanner.hideBackground();
 
-    const result = await BarcodeScanner.startScan();
+    // 2. Запускаємо сканування
+    const result = await BarcodeScanner.scan();
 
     this.isScanning = false;
-    await BarcodeScanner.showBackground();
 
-    if (result?.hasContent && result.content) {
-      this.checkQrOnServer(result.content);
-    } else {
-      this.showAlert(this.translate.instant('TEXT_QR_NOT_FOUND'));
+    if (result?.barcodes?.length) {
+      const code = result.barcodes[0].rawValue;
+      if (code) {
+        this.checkQrOnServer(code);
+        return;
+      }
     }
+
+    this.presentToast(this.translate.instant('TEXT_QR_NOT_FOUND'), 'danger');
+    
   } catch (err) {
-    console.error(err);
+    console.error('MLKit scan error:', err);
     this.isScanning = false;
-    await BarcodeScanner.showBackground();
-    this.showAlert(this.translate.instant('TEXT_QR_ERROR_OCCURED'));
+    this.presentToast(this.translate.instant('TEXT_QR_ERROR_OCCURED'), 'danger');
   }
 }
 
@@ -180,16 +168,16 @@ export class Tab3Page {
         if (res.success) {
           this.openModal(res.success);
         } else if(res.error) {
-          this.showAlert(res.error || this.translate.instant('TEXT_QR_CODE_NOT_FOUND'));
+          this.presentToast(res.error || this.translate.instant('TEXT_QR_CODE_NOT_FOUND'), 'danger');
         }
       },
       error: (err) => {
         console.error(' Помилка HTTP:', err);
-        this.showAlert(this.translate.instant('TEXT_QR_CODE_ERROR_CONNECT'));
+        this.presentToast(this.translate.instant('TEXT_QR_CODE_ERROR_CONNECT'), 'danger');
       },
     });
   } catch (e) {
-    this.showAlert(this.translate.instant('ERROR_OCCURED'));
+    this.presentToast(this.translate.instant('ERROR_OCCURED'), 'danger');
   }
   
 }
@@ -204,21 +192,25 @@ export class Tab3Page {
     await modal.present();
   }
 
-  async showAlert(message: string) {
-    const alert = await this.alertCtrl.create({
-      header: this.translate.instant('TEXT_PAY_ATTENTION'),
-      message,
-      buttons: ['OK'],
+  async presentToast(message:string, color:string, delay: any = 3000) {
+    const toast = await this.toastCtrl.create({
+      message: message,
+      duration: delay,
+      position: 'bottom',
+      swipeGesture: 'vertical',
+      color: color
     });
-    await alert.present();
+
+    await toast.present();
   }
+
 
   submitManualCode() {
     const trimmed = this.manualCode.trim();
     if (trimmed.length > 0) {
       this.checkQrOnServer(trimmed);
     } else {
-      this.showAlert(this.translate.instant('TEXT_QR_ENTER_CODE'));
+      this.presentToast(this.translate.instant('TEXT_QR_ENTER_CODE'), 'danger');
     }
   }
 

@@ -103,5 +103,6 @@
   "TEXT_TAB_2": "Stores",
   "TEXT_TAB_3": "QR Scanner",
   "TEXT_TAB_4": "Profile",
-  "TEXT_TAB_5": "Earnings"
+  "TEXT_TAB_5": "Earnings",
+  "TEXT_CAMERA_PERMISSION_DENIED": "Access to camera is danied"
 }

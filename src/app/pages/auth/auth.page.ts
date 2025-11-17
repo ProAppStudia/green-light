@@ -124,6 +124,8 @@ export class AuthPage {
     this.router.navigate(['/tabs/tab1']);
   }
 
+  
+
   async presentToast(message:string, color:string, delay: any = 3000) {
     const toast = await this.toastController.create({
       message: message,

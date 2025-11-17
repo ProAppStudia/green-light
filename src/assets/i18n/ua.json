@@ -103,5 +103,6 @@
   "TEXT_TAB_2" : "Магазини",
   "TEXT_TAB_3" : "QR сканер",
   "TEXT_TAB_4" : "Профіль",
-  "TEXT_TAB_5" : "Заробіток"
+  "TEXT_TAB_5" : "Заробіток",
+  "TEXT_CAMERA_PERMISSION_DENIED": "Доступ до камери заборонено"
  }
