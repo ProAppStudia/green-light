@@ -87,8 +87,9 @@ export class Tab5Page {
     this.auth.getLanguage().then(lang_code => {
       if (lang_code !== null) {
         this.selectedLanguage = lang_code.toUpperCase();
-        // локалізація
         this.translate.use(lang_code);
+      }else{
+        this.translate.use('ua');
       }
     });
 

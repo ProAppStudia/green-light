@@ -135,34 +135,43 @@ export class Tab3Page {
   }
 
   async startScan() {
-    try {
-      const permission = await BarcodeScanner.checkPermissions();
+  try {
+    // 1. Підготовка сканера для Android 13+
+    await BarcodeScanner.prepare();
+
+    // 2. Перевірка дозволу камери
+    let permission = await BarcodeScanner.checkPermissions();
+    if (permission.camera !== 'granted') {
+      permission = await BarcodeScanner.requestPermissions();
       if (permission.camera !== 'granted') {
-        await BarcodeScanner.requestPermissions();
+        this.showAlert('Доступ до камери відхилено');
+        return;
       }
-      
-
-      this.isScanning = true;
-      document.body.classList.add('scanner-active');
-      await BarcodeScanner.hideBackground();
-      
-      await BarcodeScanner.prepare(); // для Android 13+
-      const result = await BarcodeScanner.startScan();
-      this.isScanning = false;
-      await BarcodeScanner.showBackground();
-
-      if (result?.hasContent && result.content) {
-        this.checkQrOnServer(result.content);
-      } else {
-        this.showAlert(this.translate.instant('TEXT_QR_NOT_FOUND'));
-      }
-    } catch (err) {
-      console.error(err);
-      this.isScanning = false;
-      await BarcodeScanner.showBackground();
-      this.showAlert(this.translate.instant('TEXT_QR_ERROR_OCCURED'));
     }
+
+    // 3. Запуск сканера
+    this.isScanning = true;
+    document.body.classList.add('scanner-active');
+    await BarcodeScanner.hideBackground();
+
+    const result = await BarcodeScanner.startScan();
+
+    this.isScanning = false;
+    await BarcodeScanner.showBackground();
+
+    if (result?.hasContent && result.content) {
+      this.checkQrOnServer(result.content);
+    } else {
+      this.showAlert(this.translate.instant('TEXT_QR_NOT_FOUND'));
+    }
+  } catch (err) {
+    console.error(err);
+    this.isScanning = false;
+    await BarcodeScanner.showBackground();
+    this.showAlert(this.translate.instant('TEXT_QR_ERROR_OCCURED'));
   }
+}
+
 
   async checkQrOnServer(code: string) {
   try {

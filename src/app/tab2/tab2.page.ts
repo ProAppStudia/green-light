@@ -142,7 +142,13 @@ export class Tab2Page implements OnInit {
         this.api.getAllActiveShops(this.keyword, this.page).subscribe({
           next: (res:any) => {
             if(res){
-              this.shops$ = [...this.shops$, ...res.shops];
+              if(this.keyword){
+               this.shops$ =  res.shops;
+              }else if(this.page == 1){
+                this.shops$ =  res.shops;
+              }else{
+                this.shops$ = [...this.shops$, ...res.shops];
+              }
               this.totalPages = res.total_pages || 1;
               this.count_shops = res.count_shops || 0;
             }
