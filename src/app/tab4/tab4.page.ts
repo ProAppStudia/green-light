@@ -69,6 +69,8 @@ export class Tab4Page {
 
   transactions:any | [];
 
+  showDelAccNototify = false;
+
 
   constructor(
     private api: ApiService,
@@ -91,6 +93,7 @@ export class Tab4Page {
   async ionViewWillEnter() {
     const { value: token } = await Preferences.get({ key: 'auth_token' });
     console.log('ionViewWillEnter+ '+token);
+    this.showDelAccNototify = false;
     if (!token) {
       this.router.navigate(['/auth'], { replaceUrl: true });
     }
@@ -102,7 +105,7 @@ export class Tab4Page {
     if (!token) {
       this.router.navigate(['/auth'], { replaceUrl: true });
     }
-
+    this.showDelAccNototify = false;
     //for header
     this.api.getAvailableLanguages().subscribe({
       next: (res:any) => {
@@ -347,40 +350,31 @@ logout(){
   this.router.navigate(['/tabs/tab1']);
 }
 
-async deleteAccount(){
-   const alert = await this.alertCtrl.create({
-    header: this.translate.instant('DEL_ACC_HEADER'),
-    message: this.translate.instant('DEL_ACC_DESC'),
-    buttons: [
-      {
-        text: this.translate.instant('TEXT_CANCEL'),
-        role: 'cancel',
-        cssClass: 'secondary',
-        handler: () => {
+showConfirmDeleteAccount(){
+  if(this.showDelAccNototify == true){
+    this.showDelAccNototify = false;
+  }else{
+    this.showDelAccNototify  = true;
+  }
+}
 
-        } 
-      },
-      {
-        text: this.translate.instant('TEXT_APPLY'),
-        cssClass: ['danger', 'red'],
-        handler: () => {
-          this.api.deleteAccount().subscribe({
-            next: (res:any) => {
-              if(typeof res.success != 'undefined'){
-                this.showToast(res.success, 'success', 5500);
-                this.logout();
-              }else if(typeof res.error != 'undefined'){
-                this.showToast(res.error, 'success');
-              }
-            }
-          });
+approvedDelAccount(){
+  this.api.deleteAccount().subscribe({
+      next: (res:any) => {
+        if(typeof res.success != 'undefined'){
+          this.showToast(res.success, 'success', 5500);
+          this.logout();
+        }else if(typeof res.error != 'undefined'){
+          this.showToast(res.error, 'success');
         }
       }
-    ]
   });
-
-  await alert.present();
 }
+
+cancelDelAccount(){
+  this.showDelAccNototify = false;
+}
+
 
 getMyTransaction(){
   this.switchView('balance');

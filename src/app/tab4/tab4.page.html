@@ -85,11 +85,20 @@
       <ion-icon name="log-out-outline"></ion-icon>
       <span>{{ 'TEXT_LOGOUT' | translate }}</span>
     </span>
-    <span (click)="deleteAccount()" class="btn-link btn-danger">
+    <span (click)="showConfirmDeleteAccount()" class="btn-link btn-danger">
       <ion-icon name="trash-outline"></ion-icon>
       <span>{{ 'TEXT_DEL_ACC' | translate }}</span>
     </span>
   </div>
+  <div class="deleteMyAccoutNotice" *ngIf="showDelAccNototify">
+    <h4>{{ 'DEL_ACC_HEADER' | translate }}</h4>
+    <p>{{ 'DEL_ACC_DESC' | translate }}</p>
+    <ion-buttons>
+      <ion-button slot="start" (click)="cancelDelAccount()" color="primary"> {{ 'TEXT_CANCEL' | translate }}</ion-button>
+      <ion-button slot="end" (click)="approvedDelAccount()" color="danger">{{ 'TEXT_APPLY' | translate }}</ion-button>
+    </ion-buttons>
+  </div>
+
   <div *ngIf="is_active_user" class="my-code dark-bg ion-margin-top">
     <h4>{{ 'TEXT_YOUR_REF_CODE' | translate }}</h4>
     <span class="copy-code">
