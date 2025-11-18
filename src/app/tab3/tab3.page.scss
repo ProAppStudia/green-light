@@ -72,3 +72,45 @@ ion-card {
   --background: transparent !important;
   background: transparent !important;
 }
+#result-block{
+  position:relative;
+
+  ion-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+}
+
+ion-card-content {
+  font-size: 14px;
+  line-height: 1.4;
+  background: #fff;
+}
+ion-list {
+    border-radius: 12px;
+}
+ion-list ion-list-header ion-label {
+    font-weight: 500;
+    font-size: 1.2rem;
+    color: #2fc74c;
+}
+img.discount-image {
+    display: block;
+    margin: auto;
+    border-radius: 12px;
+}
+ion-card-title {
+    text-align: center;
+    padding-bottom: 10px;
+}
+ion-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+}
+ b {
+    padding-right: 5px;
+}
+}
+ion-content {
+  --padding-bottom: 80px; /* або стільки, скільки висота твоїх табів */
+}

@@ -9,15 +9,17 @@ import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { map, switchMap, startWith } from 'rxjs/operators';
 import { Preferences } from '@capacitor/preferences';
 import { FormsModule } from '@angular/forms';
-import { ToastController, IonicModule, ModalController } from '@ionic/angular';
+import { ToastController, IonicModule, ViewWillEnter } from '@ionic/angular';
 import { ApiService } from '../services/api';
-import { InfoModalComponent } from 'src/app/components/info-modal/info-modal.component';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
 //локалізація 
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 // новий сканер 
 import { BarcodeScanner, BarcodeFormat } from '@capacitor-mlkit/barcode-scanning';
+
+//for debug 
+import { NgZone } from '@angular/core';
 
 
 
@@ -58,17 +60,25 @@ export class Tab3Page {
   manualCode = '';
   isScanning = false;
 
+  showResultBlock = false;
+  data:any | [];
+
   constructor(
     private api: ApiService,
-    private modalCtrl: ModalController,
     private menu: MenuController,
     private router: Router,
     private auth: AuthService,
     private toastCtrl: ToastController,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private ngZone: NgZone
   ) {
-    addIcons({language, languageOutline, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline});
+    addIcons({language, languageOutline, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, closeOutline});
     translate.use('ua');
+  }
+
+  async ionViewWillEnter() {
+    this.data = [];
+    this.showResultBlock = false;
   }
 
   ngOnInit(){
@@ -166,9 +176,13 @@ export class Tab3Page {
     this.api.validateCode(code).subscribe({
       next: (res) => {
         if (res.success) {
-          this.openModal(res.success);
+          this.presentToast('Success', 'success');
+          this.showResultBlock = true;
+          this.data = res.success;
+          this.manualCode = '';
         } else if(res.error) {
           this.presentToast(res.error || this.translate.instant('TEXT_QR_CODE_NOT_FOUND'), 'danger');
+          this.showResultBlock = false;
         }
       },
       error: (err) => {
@@ -182,15 +196,10 @@ export class Tab3Page {
   
 }
 
-
-  async openModal(data: any) {
-    
-    const modal = await this.modalCtrl.create({
-      component: InfoModalComponent,
-      componentProps: { data },
-    });
-    await modal.present();
-  }
+hideInfo(){
+   this.showResultBlock = false;
+   this.data = [];
+}
 
   async presentToast(message:string, color:string, delay: any = 3000) {
     const toast = await this.toastCtrl.create({
