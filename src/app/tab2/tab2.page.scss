@@ -3,7 +3,31 @@ ion-header {
   box-shadow: none;
   --box-shadow: none;
 }
+.search-bar-list {
+  
+  background: none;
+  margin: 10px 16px;
 
+}
+.search-bar-list ion-input {
+  --background: #585858;
+  --color: white;
+  --placeholder-color: rgba(255, 255, 255, 0.7);
+  border-radius: 10px;
+  padding: 8px 12px;
+  border-bottom: none;
+} 
+.man-top ion-button {
+    --background: rgba(255, 255, 255, 0.2);
+    --background-activated: rgba(255, 255, 255, 0.3);
+    --background-focused: rgba(255, 255, 255, 0.3);
+    --background-hover: rgba(255, 255, 255, 0.3);
+    --color: white;
+    --border-radius: 10px;
+    height: 40px;
+   
+    min-width: 40px; /* Ensure it's at least 40px wide */
+}
 .header-container {
   background-color: #2e2e2e;
   padding: 16px;
@@ -64,13 +88,13 @@ ion-header {
     margin-bottom: 65px;
   }
     ion-card {
-    background: #fff;
+    background: #2e2e2e;
     margin-bottom: 15px;
     border-radius: 15px;
   }
   ion-card-content {
     padding: 0 16px 16px 16px;
-    background: white;
+    
 
     ion-button {
       --border-radius: 10px;

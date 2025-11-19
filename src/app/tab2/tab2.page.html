@@ -3,9 +3,7 @@
     <div class="header-top">
       <img src="assets/icon/logo/Logo_GreenLight_White_G.png" alt="GreenLight Logo" class="header-logo-img" />
       <div class="header-icons">
-        <ion-button>
-          <ion-icon slot="icon-only" name="notifications-outline"></ion-icon>
-        </ion-button>
+        
         <ion-button id="language-popover-button" (click)="isLanguageOpen = true">
           <ion-icon slot="start" name="language-outline"></ion-icon>
           <ion-label>{{ selectedLanguage }}</ion-label>
@@ -51,8 +49,8 @@
     </ion-toolbar>
   </ion-header>
 
-  <ion-list>
-  <ion-item>
+  <ion-list class="search-bar-list">
+ 
     <ion-input
       labelPlacement="stacked"
       fill="solid"
@@ -62,7 +60,7 @@
       (ionInput)="searchByKeyword($event)"
     >
     </ion-input>
-  </ion-item>
+  
   </ion-list>
 
 
@@ -71,10 +69,10 @@
   <div class="man-top ion-padding">
       <div>{{ 'TEXT_TOTAL_COMPANIES' | translate }}: {{ count_shops }}</div>
       <ion-buttons >
-        <ion-button fill="outline" (click)="toggleView('list')" [color]="viewMode === 'list' ? 'dark' : 'medium'">
+        <ion-button fill="outline" (click)="toggleView('list')" [color]="viewMode === 'list' ? 'light' : 'medium'">
           <ion-icon name="list-outline"></ion-icon>
         </ion-button>
-        <ion-button fill="outline" (click)="toggleView('grid')" [color]="viewMode === 'grid' ? 'dark' : 'medium'">
+        <ion-button fill="outline" (click)="toggleView('grid')" [color]="viewMode === 'grid' ? 'light' : 'medium'">
           <ion-icon name="grid-outline"></ion-icon>
         </ion-button>
       </ion-buttons>
