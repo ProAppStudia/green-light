@@ -114,3 +114,23 @@ ion-button {
 ion-content {
   --padding-bottom: 80px; /* або стільки, скільки висота твоїх табів */
 }
+div#my-qr {
+    position: fixed;
+    top: 60px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    text-align: center;
+    padding: 30px;
+}
+div#my-qr span.close {
+    position: absolute;
+    top: 30px;
+    right: 20px;
+    background: #F44336;
+    padding: 5px;
+    border-radius: 6px;
+    color: #fff;
+    line-height: 1px;
+}

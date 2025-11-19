@@ -83,6 +83,37 @@
     </ion-card-content>
   </ion-card>
 
+  <ion-card class="ion-margin-top">
+    <ion-card-header>
+      <ion-card-title>Мій QR код</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <p *ngIf="my_qr_code_notice" class="notice">{{ my_qr_code_notice }}</p>
+      <ion-item *ngIf="my_qr_code_text">
+        <span class="my-code"> {{ my_qr_code_text }} <ion-icon (click)="copy(my_qr_code_text)" class="copy-icon" name="copy-outline"></ion-icon></span>
+      </ion-item>
+      <ion-button
+        expand="block"
+        color="secondary"
+        class="ion-margin-top"
+        (click)="showMyQr()">
+        {{ 'TEXT_OPEN' | translate }} QR
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <div id="my-qr" *ngIf="is_show_qr">
+    <span (click)="showMyQr()" class="close">
+      <ion-icon name="close-outline"></ion-icon>
+    </span>
+    <p *ngIf="my_qr_code_notice" class="notice">{{ my_qr_code_notice }}</p>
+
+    <img src="{{ my_qr_code_url }}" >
+
+    <p class="text-code">{{ my_qr_code_text }}</p>
+  </div>
+
+
   <div id="result-block" *ngIf="showResultBlock">
     <ion-card *ngIf="data">
     <ion-card-content>

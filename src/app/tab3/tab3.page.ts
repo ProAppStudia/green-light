@@ -63,6 +63,11 @@ export class Tab3Page {
   showResultBlock = false;
   data:any | [];
 
+  my_qr_code_url: any | '';
+  my_qr_code_text: any | '';
+  my_qr_code_notice: any | '';
+  is_show_qr = false;
+
   constructor(
     private api: ApiService,
     private menu: MenuController,
@@ -72,13 +77,15 @@ export class Tab3Page {
     private translate: TranslateService,
     private ngZone: NgZone
   ) {
-    addIcons({language, languageOutline, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, closeOutline});
+    addIcons({language, languageOutline, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, closeOutline, copyOutline});
     translate.use('ua');
   }
 
   async ionViewWillEnter() {
     this.data = [];
     this.showResultBlock = false;
+    this.is_show_qr = false;
+    this.loadMyQrCode();
   }
 
   ngOnInit(){
@@ -131,7 +138,50 @@ export class Tab3Page {
       }
     });
     //end for header
+    this.loadMyQrCode();
+  }
 
+
+  loadMyQrCode(){
+    this.api.getMyQrCode().subscribe({
+      next: (res:any) => {
+        if(typeof res.error != 'undefined'){
+          this.presentToast(res.error, 'danger');
+          this.my_qr_code_url = '';
+          this.my_qr_code_text = '';
+        }else if(typeof res.success != 'undefined'){
+          this.my_qr_code_url = res.my_qr_code;
+          this.my_qr_code_text = res.my_qr_code_text;
+          if(res.err_notice){
+            this.my_qr_code_notice = res.err_notice;
+          }
+        }
+      }
+    });
+  }
+
+  copy(text:any){
+    navigator.clipboard.writeText(text)
+    .then(() => {
+      this.presentToast(this.translate.instant('COPIED'), 'success');
+    })
+    .catch(err => {
+      this.presentToast(this.translate.instant('ERROR_OCCURED'), 'danger');
+    });
+  }
+
+  showMyQr(){
+
+    if(this.my_qr_code_url){
+      if(this.is_show_qr == true){
+        this.is_show_qr = false;
+      }else{
+        this.is_show_qr = true;
+      }
+    }else{
+      this.is_show_qr = false;
+      this.presentToast(this.translate.instant('BUY_PLAN_TO_EARN'), 'danger');
+    }
   }
 
   async startScan() {

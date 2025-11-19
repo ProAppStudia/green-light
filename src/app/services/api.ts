@@ -68,6 +68,10 @@ export class ApiService {
     const url = `${this.baseUrl}?type=get_my_earnings`;
     return this.http.get(url);
   }
+  getMyQrCode(){
+    const url = `${this.baseUrl}?type=get_my_qr_code`;
+    return this.http.get(url);
+  }
 
   getAvailableLanguages(){
     const cacheKey = 'languages';
