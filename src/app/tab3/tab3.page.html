@@ -46,6 +46,61 @@
 
 <ion-content [fullscreen]="true">
    
+
+  <div id="result-block" *ngIf="showResultBlock">
+    <ion-card *ngIf="data">
+    <ion-card-content>
+      <ion-button (click)="hideInfo()" size="small" slot="end" fill="solid" color="danger">
+      <ion-icon slot="icon-only" ios="close-outline" md="close-outline"></ion-icon>
+    </ion-button>
+       <img
+      [src]="data.discount_image"
+      alt="{{ data.discount_image }}"
+      class="discount-image {{ data.user_id > 0 ? 'is_check_icon' : '' }}"
+    />
+    <ion-card-header *ngIf="data.discount_name">
+      <ion-card-title>{{ data.discount_name || 'Title' }}</ion-card-title>
+    </ion-card-header>
+    <ion-card-header *ngIf="data.custom_title">
+      <ion-card-title>{{ data.custom_title }}</ion-card-title>
+    </ion-card-header>
+      <ion-list>
+        <ion-list-header>
+      <ion-label>{{ 'TEXT_ABOUT_CUSTOMER' | translate }}</ion-label>
+      </ion-list-header>
+      <ion-item>
+        <ion-label><b>{{ 'TEXT_CUSTOMER_NAME' | translate }}:</b> {{data.name}}</ion-label>
+      </ion-item>
+      <ion-item *ngIf="data.date_added">
+        <ion-label><b>{{ 'TEXT_DATE_ADDED' | translate }}:</b> {{data.date_added}}</ion-label>
+      </ion-item>
+      <ion-list-header *ngIf="data.percent">
+      <ion-label>{{ 'TEXT_INFORMATION_ABOUT_DISCOUNT' | translate }}</ion-label>
+      </ion-list-header>
+      <ion-item *ngIf="data.percent">
+        <ion-label><b>{{ 'TEXT_SALE_UCFIRST' | translate }}:</b> <span class="sale-percent">-{{data.percent}}%</span></ion-label>
+      </ion-item>
+      <ion-item *ngIf="data.status && data.status >= 0">
+        <ion-label><b>{{ 'TEXT_STATUS' | translate }}:</b> <span class="sale-status st{{data.status}}">{{ data.status == 1 ? 'Active' : 'Disabled' }}</span></ion-label>
+      </ion-item>
+      <ion-item *ngIf="data.date_start">
+        <ion-label><b>{{ 'TEXT_DATE_PERIOD' | translate }}:</b> {{ data.date_start }} - {{ data.date_end }}</ion-label>
+      </ion-item>
+      <ion-item *ngIf="data.is_online && data.is_online >= 0">
+        <ion-label><b>{{ 'TEXT_IS_ONLINE' | translate }}:</b> <span class="sale-online onli{{data.is_online}}">{{ data.is_online == 1 ? 'Yes' : 'No' }}</span></ion-label>
+      </ion-item>
+      <ion-item *ngIf="data.discount_id">
+        <ion-label><b>{{ 'TEXT_DISCOUNT_ID' | translate }}:</b> {{ data.discount_id }}</ion-label>
+      </ion-item>
+    </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-text color="medium" *ngIf="!data">
+    {{ 'TEXT_NO_DATA' | translate }}
+  </ion-text>
+  </div>
+
   <ion-card>
     <ion-card-header>
       <ion-card-title>{{ 'TEXT_SCAN_QR' | translate }}</ion-card-title>
@@ -114,55 +169,6 @@
   </div>
 
 
-  <div id="result-block" *ngIf="showResultBlock">
-    <ion-card *ngIf="data">
-    <ion-card-content>
-      <ion-button (click)="hideInfo()" size="small" slot="end" fill="solid" color="danger">
-      <ion-icon slot="icon-only" ios="close-outline" md="close-outline"></ion-icon>
-    </ion-button>
-       <img
-      [src]="data.dicount_image"
-      alt="{{ data.discount_name }}"
-      class="discount-image"
-    />
-    <ion-card-header>
-      <ion-card-title>{{ data.discount_name || 'Title' }}</ion-card-title>
-    </ion-card-header>
-      <ion-list>
-        <ion-list-header>
-      <ion-label>{{ 'TEXT_ABOUT_CUSTOMER' | translate }}</ion-label>
-      </ion-list-header>
-      <ion-item>
-        <ion-label><b>{{ 'TEXT_CUSTOMER_NAME' | translate }}:</b> {{data.name}}</ion-label>
-      </ion-item>
-      <ion-item>
-        <ion-label><b>{{ 'TEXT_DATE_ADDED' | translate }}:</b> {{data.date_added}}</ion-label>
-      </ion-item>
-      <ion-list-header>
-      <ion-label>{{ 'TEXT_INFORMATION_ABOUT_DISCOUNT' | translate }}</ion-label>
-      </ion-list-header>
-      <ion-item>
-        <ion-label><b>{{ 'TEXT_SALE_UCFIRST' | translate }}:</b> <span class="sale-percent">-{{data.percent}}%</span></ion-label>
-      </ion-item>
-      <ion-item>
-        <ion-label><b>{{ 'TEXT_STATUS' | translate }}:</b> <span class="sale-status st{{data.status}}">{{ data.status == 1 ? 'Active' : 'Disabled' }}</span></ion-label>
-      </ion-item>
-      <ion-item>
-        <ion-label><b>{{ 'TEXT_DATE_PERIOD' | translate }}:</b> {{ data.date_start }} - {{ data.date_end }}</ion-label>
-      </ion-item>
-      <ion-item>
-        <ion-label><b>{{ 'TEXT_IS_ONLINE' | translate }}:</b> <span class="sale-online onli{{data.is_online}}">{{ data.is_online == 1 ? 'Yes' : 'No' }}</span></ion-label>
-      </ion-item>
-      <ion-item>
-        <ion-label><b>{{ 'TEXT_DISCOUNT_ID' | translate }}:</b> {{ data.discount_id }}</ion-label>
-      </ion-item>
-    </ion-list>
-    </ion-card-content>
-  </ion-card>
-
-  <ion-text color="medium" *ngIf="!data">
-    {{ 'TEXT_NO_DATA' | translate }}
-  </ion-text>
-  </div>
+  
 
 </ion-content>
