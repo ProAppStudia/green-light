@@ -72,6 +72,8 @@ ion-button[fill="clear"] {
 }
 ion-card {
   background: #2e2e2e; /* Adjusted for dark theme */
+  border-radius: 12px; /* Added rounded corners */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Added subtle shadow */
 }
 .scanner-active {
   --background: transparent !important;
@@ -92,15 +94,23 @@ ion-card-content {
   color: var(--ion-color-light); /* Adjusted for dark theme */
 
   ion-item {
-    --background: var(--ion-color-dark); /* Darker background for input item */
+    --background: #3a3a3a; /* Slightly lighter dark background for input item */
     --color: var(--ion-color-light); /* Lighter text color */
-    border-radius: 8px;
-    margin-bottom: 10px;
+    --border-radius: 10px;
+    margin-bottom: 15px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.3); /* Inner shadow for depth */
+    padding-left: 10px; /* Add some padding inside the item */
+  }
+
+  ion-label {
+    color: var(--ion-color-medium); /* Placeholder color */
+    font-size: 0.9em;
   }
 
   ion-input {
     --color: var(--ion-color-light); /* Lighter text color for input */
     --placeholder-color: var(--ion-color-medium); /* Adjusted placeholder color */
+    padding-left: 5px; /* Align input text with label */
   }
 }
 ion-list {
@@ -116,8 +126,11 @@ img.discount-image {
     margin: auto;
     border-radius: 12px;
 }
+ion-card-header {
+  text-align: center;
+}
+
 ion-card-title {
-    text-align: center;
     padding-bottom: 10px;
 }
 ion-button {
