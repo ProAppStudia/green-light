@@ -1,3 +1,43 @@
+ion-list {
+  background: #585858;
+}
+
+ion-accordion-group {
+  background: #585858;
+}
+
+ion-accordion {
+  --background: #585858;
+  --background-expanded: #585858; // Ensure expanded content also has the background
+}
+
+ion-accordion .ion-padding[slot="content"] {
+  background: #585858;
+}
+
+ion-accordion .ion-padding[slot="content"] ion-item {
+  --background: #585858;
+}
+
+ion-item {
+  --background: #585858; // Set background for ion-item
+  // Restore default Ionic padding for ion-item
+  // The ion-item itself is already a flex container for its slots,
+  // and aligns items vertically by default.
+}
+
+.category-header-content {
+  display: flex;
+  align-items: center;
+  flex-grow: 1; /* Take up available space */
+  height: 100%; /* Ensure it fills the ion-item height */
+  // Remove explicit padding, let ion-item handle it
+}
+
+:host {
+  background: #585858;
+}
+
 .category-icon {
   width: 24px; /* Adjust size as needed */
   height: 24px; /* Adjust size as needed */

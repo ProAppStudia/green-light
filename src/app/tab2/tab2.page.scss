@@ -9,6 +9,14 @@ ion-header {
   margin: 10px 16px;
 
 }
+.img-shop {
+  border-radius: 15px;
+  padding: 16px;
+  display: block; /* Ensure the image behaves as a block element */
+  width: 100%; /* Make the image fill the width of its container */
+  height: auto; /* Maintain aspect ratio */
+  object-fit: cover; /* Ensure the image covers the area without distortion */
+}
 .search-bar-list ion-input {
   --background: #585858;
   --color: white;
@@ -133,4 +141,8 @@ ion-header {
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.products-section {
+  padding-bottom: 80px; /* Add bottom padding to create space above the navigation bar */
 }

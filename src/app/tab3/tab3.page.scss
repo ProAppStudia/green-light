@@ -1,3 +1,8 @@
+ion-content {
+  --background: #3a3a3a !important;
+  background: #3a3a3a !important;
+}
+
 /*for header*/ 
 ion-header {
   box-shadow: none;
@@ -41,11 +46,11 @@ ion-header {
   align-items: center;
 
   ion-button {
-    --background: rgba(255, 255, 255, 0.2);
-    --background-activated: rgba(255, 255, 255, 0.3);
-    --background-focused: rgba(255, 255, 255, 0.3);
-    --background-hover: rgba(255, 255, 255, 0.3);
-    --color: white;
+    --background: rgba(0, 0, 0, 0.2); /* Darker semi-transparent background */
+    --background-activated: rgba(0, 0, 0, 0.3);
+    --background-focused: rgba(0, 0, 0, 0.3);
+    --background-hover: rgba(0, 0, 0, 0.3);
+    --color: var(--ion-color-light); /* Lighter color for text */
     --border-radius: 10px;
     height: 40px;
    
@@ -54,7 +59,7 @@ ion-header {
 }
 
 ion-toolbar {
-  --background: rgba(255, 255, 255, 0.95);
+  --background: var(--ion-background-color); /* Adjusted for dark theme */
   --border-color: transparent;
 }
 
@@ -66,7 +71,7 @@ ion-button[fill="clear"] {
   }
 }
 ion-card {
-  background: #fff;
+  background: #2e2e2e; /* Adjusted for dark theme */
 }
 .scanner-active {
   --background: transparent !important;
@@ -83,7 +88,20 @@ ion-card {
 ion-card-content {
   font-size: 14px;
   line-height: 1.4;
-  background: #fff;
+  background: #2e2e2e; /* Adjusted for dark theme */
+  color: var(--ion-color-light); /* Adjusted for dark theme */
+
+  ion-item {
+    --background: var(--ion-color-dark); /* Darker background for input item */
+    --color: var(--ion-color-light); /* Lighter text color */
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+
+  ion-input {
+    --color: var(--ion-color-light); /* Lighter text color for input */
+    --placeholder-color: var(--ion-color-medium); /* Adjusted placeholder color */
+  }
 }
 ion-list {
     border-radius: 12px;
@@ -91,7 +109,7 @@ ion-list {
 ion-list ion-list-header ion-label {
     font-weight: 500;
     font-size: 1.2rem;
-    color: #2fc74c;
+    color: var(--ion-color-light); /* Adjusted for dark theme */
 }
 img.discount-image {
     display: block;
@@ -120,7 +138,7 @@ div#my-qr {
     left: 0px;
     width: 100%;
     height: 100%;
-    background: #fff;
+    background: var(--ion-background-color); /* Adjusted for dark theme */
     text-align: center;
     padding: 30px;
 }

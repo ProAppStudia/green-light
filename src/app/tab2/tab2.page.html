@@ -81,7 +81,7 @@
     <div class="products-grid" [ngClass]="{'grid-view': viewMode === 'grid', 'list-view': viewMode === 'list'}">
       <ion-card *ngFor="let shop of shops$" class="product-card">
         <span class="count-special" *ngIf="shop.count_discount">{{ shop.count_discount }} Акцій</span>
-        <img [src]="shop.shop_logo" [alt]="shop.shop_name" />
+        <img class="img-shop" [src]="shop.shop_logo" [alt]="shop.shop_name" />
         <ion-card-header>
           <ion-card-subtitle>{{ shop.category }}</ion-card-subtitle>
           <ion-card-title>{{ shop.shop_name }}</ion-card-title>

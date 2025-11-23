@@ -1,3 +1,8 @@
+ion-content {
+  --background: #2e2e2e !important;
+  background: #2e2e2e !important;
+}
+
 .shop-logo {
   width: 120px;
   height: 120px;
@@ -6,11 +11,12 @@
   margin: 0 auto;
   display: block;
   box-shadow: 0 0 8px rgba(0,0,0,0.15);
+  padding: 10px; /* Added padding */
 }
 
 .shop-address {
   font-size: 14px;
-  color: #c2c2c2;
+  color: var(--ion-color-medium); /* Adjusted for dark theme */
   margin: 8px 0;
 }
 
@@ -51,7 +57,7 @@ swiper-slide {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   position: relative;
-  background-color: white;
+  background-color: #2e2e2e; /* Adjusted for dark theme */
 
   .slide-image {
     width: 100%;
@@ -73,12 +79,12 @@ swiper-slide {
 
   ion-card-header {
     padding: 12px 16px;
-    background: white;
+    background: #2e2e2e; /* Adjusted for dark theme */
 
     ion-card-title {
       font-size: 1.2em;
       font-weight: 700;
-      color: var(--ion-color-dark);
+      color: var(--ion-color-light); /* Adjusted for dark theme */
     }
 
     ion-card-subtitle {
@@ -89,7 +95,7 @@ swiper-slide {
 
   ion-card-content {
     padding: 0 16px 16px 16px;
-    background: white;
+    background: #2e2e2e; /* Adjusted for dark theme */
 
     ion-button {
       --border-radius: 10px;
@@ -117,25 +123,25 @@ swiper-slide {
   }
 }
 .shop-header img.shop-logo {
-    background: #fff;
+    background: #2e2e2e; /* Adjusted for dark theme */
 }
 ion-card {
-    background: #fff;
+    background: #2e2e2e; /* Adjusted for dark theme */
     border-radius: 15px;
 }
 ion-button.back-btn {
-position: absolute;
-    left: 0px;
-    top: 0px;
-    z-index: 5;
-    color: #000;
-    background: rgba(255, 255, 255, 0.568627451);
-    border-radius: 10px;
-    border-top-left-radius: 0px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  z-index: 5;
+  color: var(--ion-color-light); /* Adjusted for dark theme */
+  background: rgba(0, 0, 0, 0.568627451); /* Adjusted for dark theme */
+  border-radius: 10px;
+  border-top-left-radius: 0px;
 }
 ion-list-header {
     font-size: 1.5rem;
-    color: #212529;
+    color: var(--ion-color-light); /* Adjusted for dark theme */
 }
 .shop-socials .links {
   display: flex;
@@ -144,6 +150,10 @@ ion-list-header {
 }
 .shop-socials .links img {
     max-width: 32px;
+    filter: invert(1) hue-rotate(180deg); /* Invert colors for dark theme */
+}
+.shop-socials ion-button {
+  --background: transparent; /* Make button background transparent */
 }
 a.link{
   color:#2fc74c !important;
