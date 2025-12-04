@@ -136,7 +136,20 @@ ion-content {
     border-radius: 15px;
     margin-bottom: 15px;
     box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2); /* Adjusted shadow */
-    text-align: center;
+    
+}
+.my-ref-count.dark-bg.with-icon b {
+    color: #2fc74b;
+    font-size: 22px;
+}
+.headline h5 {
+    font-size: 14px;
+}
+.transaction-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 0;
+    border-bottom: 1px solid #606060;
 }
 .with-icon.dark-bg {
     display: flex;
@@ -220,15 +233,13 @@ ion-content {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 10px;
+   
 }
 .transactions .bottom-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #ddd;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
+
 }
 .transactions .transaction-item:last-child .bottom-row {
   border: 0px;
@@ -238,7 +249,7 @@ ion-content {
     padding: 5px 10px;
     background: #e7e7e7;
     border-radius: 10px;
-    font-size:.9rem;
+    font-size:12px;
 }
 .transactions span.status.status-color-warning {
     background: #FF9800;
@@ -443,15 +454,13 @@ span.copy-code ion-icon {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 10px;
+   
 }
 .transactions .bottom-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #ddd;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
+
 }
 .strelka {
     background: none;

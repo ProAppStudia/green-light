@@ -106,9 +106,9 @@
       <p *ngIf="!transactions" class="ion-margin-bottom ion-margin-top" style="text-align: center;">{{ 'EMPTY_TRANSACTIONS' | translate }}</p>
       <div class="transactions">
       <div *ngFor="let transcation of transactions" class="transaction-item">
-          <div class="headline"><span class="date">{{ transcation.date_added }}</span><h5>{{transcation.comment}}</h5></div>
+          <div class="headline"><span class="date">{{ transcation.date_added }}</span><h5>{{transcation.comment}}</h5> <span class="status status-color-{{transcation.bg_color}}">{{ transcation.text_status }}</span></div>
           <div class="bottom-row">
-          <span class="status status-color-{{transcation.bg_color}}">{{ transcation.text_status }}</span>
+          
           <p class="transcation-amount">{{ transcation.amount }} <small>{{ plan_currency }}</small></p>
           </div> 
       </div>
@@ -140,7 +140,7 @@
       <ion-icon name="log-out-outline"></ion-icon>
       <span>{{ 'TEXT_LOGOUT' | translate }}</span>
     </span>
-    <span (click)="showConfirmDeleteAccount()" class="btn-link btn-danger">
+    <span (click)="showConfirmDeleteAccount()" class="btn-link">
       <ion-icon name="trash-outline"></ion-icon>
       <span>{{ 'TEXT_DEL_ACC' | translate }}</span>
     </span>
