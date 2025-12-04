@@ -30,6 +30,49 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
+  <div class="my-earnings" *ngIf="is_active_user">
+    <div class="hello-text">
+      <img src="assets/icon/tab5_icon_hi.svg">
+      <span>{{ 'HELLO' | translate }}, {{ fullname }}!</span></div>
+    <div class="card-top">
+      <div class="balance-top">
+        <span class="text-amount">{{ 'YOUR_BALANCE' | translate }}</span>
+        <span class="amount">{{ my_balance }} {{ plan_currency }}</span>
+      </div>
+      <div class="balance-bottom">
+        <div class="left-section">
+          <ion-icon name="add-outline"></ion-icon>
+          <div class="text">
+            <small>{{ 'EARN_TEXT' | translate }}</small>
+            <span>{{ earning_amount }} <small>{{ plan_currency }}</small></span>
+          </div>
+        </div>
+        <div class="right-section">
+          <ion-icon name="remove-outline"></ion-icon>
+          <div class="text">
+            <small>{{ 'PAYOUT_TEXT' | translate }}</small>
+            <span>{{ payout_amount }} <small>{{ plan_currency }}</small></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="last-transactions ion-margin-top">
+      <h5>{{ 'LATEST_TRANSACTIONS' | translate }}</h5>
+
+      <p *ngIf="!transactions" class="ion-margin-bottom ion-margin-top" style="text-align: center;">{{ 'EMPTY_TRANSACTIONS' | translate }}</p>
+      <div class="transactions">
+      <div *ngFor="let transcation of transactions" class="transaction-item">
+          <div class="headline"><span class="date">{{ transcation.date_added }}</span><h5>{{transcation.comment}}</h5></div>
+          <div class="bottom-row">
+          <span class="status status-color-{{transcation.bg_color}}">{{ transcation.text_status }}</span>
+          <p class="transcation-amount">{{ transcation.amount }} <small>{{ plan_currency }}</small></p>
+          </div> 
+      </div>
+    </div>
+
+    </div>  
+  </div> 
   <div *ngIf="currentView === 'main'">
   <div class="hello-block">
     <h3>{{ 'HELLO' | translate }}, {{ fullname }}!</h3>
@@ -236,5 +279,21 @@
 
   </div>
 </div>
-
+<div class="need-pay" *ngIf="!is_active_user">
+    <img src="assets/icon/tab5_icon_emoji.svg" alt="Buy plan icon" class="buy-plan-img" />
+    <div class="text-buy">
+      <p>{{ 'BUY_PLAN_TO_START' | translate }}</p>
+      <ion-button (click)="openRefDescription()" expand="block" color="primary" slot="center" class="ion-margin-top">
+        {{ 'ABOUT_REF_PROG' | translate }}
+        <ion-icon name="chevron-forward-outline"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+  <div class="need-auth" *ngIf="!is_auth_user">
+    <ion-button (click)="openAuth()" expand="block" color="primary"> <ion-icon name="log-in-outline"></ion-icon>
+      {{ 'ENTER_TO_ACC' | translate }}
+    </ion-button>  
+  </div>
+  
+   
 </ion-content>

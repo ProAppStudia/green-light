@@ -4,7 +4,7 @@ import { IonAlert, IonToast,IonLoading, IonHeader,IonFooter, IonToolbar, IonTitl
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
-import { language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, searchOutline, globeOutline, languageOutline, listOutline, gridOutline, pencilOutline, barChartOutline, cartOutline, logOutOutline, trashOutline, flashOffOutline, flashOutline, copyOutline, peopleOutline, cashOutline, arrowBackOutline, starOutline, closeOutline, thumbsUpOutline, chevronForwardOutline } from 'ionicons/icons';
+import { language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, searchOutline, globeOutline, languageOutline, listOutline, gridOutline, pencilOutline, barChartOutline, cartOutline, logOutOutline, trashOutline, flashOffOutline, flashOutline, copyOutline, peopleOutline, cashOutline, arrowBackOutline, starOutline, closeOutline, thumbsUpOutline, chevronForwardOutline, addOutline, removeOutline, logInOutline } from 'ionicons/icons';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ApiService } from '../services/api';
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
@@ -25,7 +25,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     IonToolbar, IonTitle, IonContent, IonMenuButton, IonButton, IonSegment, IonSegmentButton, 
     IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, 
     IonList, IonItem, FormsModule, CommonModule, IonButtons, IonMenuButton, IonButton, IonIcon, 
-    ExploreContainerComponent],
+    ExploreContainerComponent, IonLabel, IonList, IonItem, IonPopover, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonButton, IonIcon],
 })
 export class Tab4Page {
   //for header 
@@ -66,8 +66,11 @@ export class Tab4Page {
   ref_link: any | '';
   is_active_user:any | false;
   ref_description_link:any | '';
-
+  is_auth_user: any | false;
   transactions:any | [];
+  my_balance:any | 0;
+  earning_amount:any | 0;
+  payout_amount:any | 0;
 
   showDelAccNototify = false;
 
@@ -85,18 +88,22 @@ export class Tab4Page {
       searchOutline, globeOutline, languageOutline, pencilOutline, barChartOutline, listOutline, 
       cartOutline, logOutOutline, trashOutline, flashOutline, copyOutline, peopleOutline, 
       cashOutline, arrowBackOutline, starOutline, closeOutline, thumbsUpOutline,
-      chevronForwardOutline});
+      chevronForwardOutline, addOutline, removeOutline, logInOutline});
       // локалізація
       translate.use('ua');
+      this.fullname = this.translate.instant('TEXT_USER');
   }
 
   async ionViewWillEnter() {
     const { value: token } = await Preferences.get({ key: 'auth_token' });
-    console.log('ionViewWillEnter+ '+token);
     this.showDelAccNototify = false;
-    if (!token) {
+    if (token) {
+      this.is_auth_user = true;
+    } else {
+      this.is_auth_user = false;
       this.router.navigate(['/auth'], { replaceUrl: true });
     }
+    this.ngOnInit();
   }
 
   async ngOnInit() {
@@ -179,6 +186,21 @@ export class Tab4Page {
       }
     });
 
+    this.api.getMyEarnings().subscribe({
+      next: (res:any) => {
+        this.ref_description_link = res.ref_description_link;
+        this.is_auth_user = Boolean(res.is_auth);
+        this.is_active_user = Boolean(res.is_active_user);
+        this.plan_currency = res.plan_currency;
+        this.fullname = res.fullname;
+        if(res.transactions){
+          this.transactions = res.transactions;
+        }
+        this.my_balance = res.my_balance;
+        this.payout_amount = res.payout_amount;
+        this.earning_amount = res.earning_amount;
+      }
+    });
   }
 
   //for header 
@@ -391,6 +413,10 @@ getMyTransaction(){
     }
   });
 
+}
+
+openAuth(){
+  this.router.navigate(['/auth'], { replaceUrl: true });
 }
 
 

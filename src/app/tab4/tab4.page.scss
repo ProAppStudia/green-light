@@ -253,3 +253,175 @@ ion-content {
     text-align: center;
     margin-top: 0px;
 }
+ion-content {
+  --padding-bottom: 80px; /* або стільки, скільки висота твоїх табів */
+}
+/*for header*/ 
+ion-header {
+  box-shadow: none;
+  --box-shadow: none;
+}
+
+.header-container {
+  background-color: #2e2e2e;
+  padding: 16px;
+  color: white;
+  transition: all 0.3s ease-out;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+
+  &.scrolled {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  &.hidden .header-bottom {
+    transform: translateY(-100%);
+    opacity: 0;
+    height: 0;
+    padding: 0;
+    margin: 0;
+  }
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-logo-img {
+  height: 40px;
+}
+
+.header-icons {
+  display: flex;
+  align-items: center;
+
+  ion-button {
+    --background: rgba(255, 255, 255, 0.2);
+    --background-activated: rgba(255, 255, 255, 0.3);
+    --background-focused: rgba(255, 255, 255, 0.3);
+    --background-hover: rgba(255, 255, 255, 0.3);
+    --color: white;
+    --border-radius: 10px;
+    height: 40px;
+   
+    min-width: 40px; /* Ensure it's at least 40px wide */
+  }
+}
+.need-pay {
+    padding: 25px;
+    text-align: center;
+}
+.need-pay img.buy-plan-img {
+    max-width: 170px;
+}
+
+.card-top {
+    border-radius: 20px;
+    padding: 15px 20px;
+    color: #fff;
+    background: #008dc4;
+    background: linear-gradient(90deg, rgba(0, 141, 196, 1) 0%, rgba(87, 199, 133, 1) 50%, rgba(163, 237, 83, 1) 100%);
+    box-shadow: 0px 10px 15px #0000002e;
+    max-width: 400px;
+    display: block;
+    margin: auto;
+}
+.my-earnings .hello-text img {
+    max-width: 25px;
+    vertical-align: middle;
+    margin-right: 5px;
+}
+.my-earnings .hello-text {
+    text-align: center;
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 15px;
+}
+.card-top .balance-top span {
+    text-align: center;
+    display: block;
+    margin-bottom: 10px;
+}
+.card-top .balance-top span.amount {
+    font-weight: 700;
+    font-size: 2.2rem;
+}
+.card-top .balance-bottom > div{
+  width:50%;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.card-top .balance-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+.card-top .balance-bottom ion-icon {
+    background: #fff;
+    color: #4CAF50;
+    font-size: 1.5rem;
+    border-radius: 50%;
+}
+.card-top .right-section ion-icon {
+    color: #F44336;
+}
+.card-top .balance-bottom .text span {
+    display: block;
+    font-weight: 700;
+}
+.card-top .balance-bottom .right-section {
+    justify-content: end;
+}
+.last-transactions {
+        background: #2e2e2e;
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0px 10px 15px #0000002e;
+}
+.last-transactions h5 {
+    text-align: center;
+    margin-top: 0px;
+}
+.transaction-item .headline h5, .transactions .bottom-row p{
+  margin: 0px;
+}
+.transaction-item .headline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+.transactions .bottom-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+}
+.transactions .transaction-item:last-child .bottom-row {
+  border: 0px;
+  margin-bottom: 0px;
+}
+.transactions span.status {
+    padding: 5px 10px;
+    background: #e7e7e7;
+    border-radius: 10px;
+    font-size:.9rem;
+}
+.transactions span.status.status-color-warning {
+    background: #FF9800;
+    color: #fff;
+}
+.transactions span.status.status-color-success {
+    background: #8BC34A;
+    color: #fff;
+}
+.transactions span.status.status-color-danger {
+    background: #F44336;
+    color: #fff;
+}
