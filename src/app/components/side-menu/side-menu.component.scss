@@ -1,26 +1,46 @@
 ion-list {
-  background: #585858;
+      background: none;
+    bkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: none;
+    padding: 10px 10px;
 }
 
 ion-accordion-group {
-  background: #585858;
+ 
+  backdrop-filter: blur(10px); /* Frosted glass blur effect */
+ 
+  border-radius: 10px;
 }
 
 ion-accordion {
-  --background: #585858;
-  --background-expanded: #585858; // Ensure expanded content also has the background
+  --background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+  --background-expanded: rgba(255, 255, 255, 0.05); /* Ensure expanded content also has the background */
+  backdrop-filter: blur(10px); /* Frosted glass blur effect */
+  
+  border-radius: 10px;
+  margin: 5px 0;
 }
 
 ion-accordion .ion-padding[slot="content"] {
-  background: #585858;
+  background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+  backdrop-filter: blur(10px); /* Frosted glass blur effect */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
+  border-radius: 10px;
 }
 
 ion-accordion .ion-padding[slot="content"] ion-item {
-  --background: #585858;
+  --background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+  backdrop-filter: blur(10px); /* Frosted glass blur effect */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
+  border-radius: 10px;
 }
 
 ion-item {
-  --background: #585858; // Set background for ion-item
+  --background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+  backdrop-filter: blur(10px); /* Frosted glass blur effect */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
+  border-radius: 10px;
   // Restore default Ionic padding for ion-item
   // The ion-item itself is already a flex container for its slots,
   // and aligns items vertically by default.
@@ -35,7 +55,7 @@ ion-item {
 }
 
 :host {
-  background: #585858;
+  background: transparent; /* Host should be transparent to show global background */
 }
 
 .category-icon {

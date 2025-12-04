@@ -2,10 +2,13 @@ ion-card {
     padding: 25px;
     border-radius: 15px;
     margin: 25px;
-    background: #2e2e2e;
+    background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+    backdrop-filter: blur(10px); /* Frosted glass blur effect */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2); /* Adjusted shadow */
 }
 ion-content {
-  --background: #2e2e2e;
+  --background: transparent; /* Ensure content background is transparent to show global background */
 }
 .close-auth {
     display: flex;

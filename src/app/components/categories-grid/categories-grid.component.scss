@@ -7,7 +7,9 @@
 
 .category-card {
   text-align: center;
-  --background: var(--ion-color-light);
+  --background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+  backdrop-filter: blur(10px); /* Frosted glass blur effect */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
   border-radius: 10px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   margin: 0; /* Remove default ion-card margin */

@@ -4,12 +4,15 @@ ion-header {
 }
 
 ion-content {
+  --background: transparent; /* Ensure content background is transparent to show global background */
   --padding-top: 24px;
   --padding-bottom: 100px;
 }
 
 .header-container {
-  background-color: #2e2e2e;
+  background: rgb(58 58 58 / 69%);
+  backdrop-filter: blur(10px); /* Frosted glass blur effect */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
   padding: 16px;
   color: white;
   transition: all 0.3s ease-out;
@@ -65,7 +68,9 @@ ion-content {
 .search-bar {
   display: flex;
   align-items: center;
-  background-color: #585858;
+  background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+  backdrop-filter: blur(10px); /* Frosted glass blur effect */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
   border-radius: 10px;
   padding: 8px 12px;
   margin-top: 16px;
@@ -114,7 +119,9 @@ swiper-slide {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   position: relative;
-  background-color: #2e2e2e;
+  background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+  backdrop-filter: blur(10px); /* Frosted glass blur effect */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
 
   .slide-image {
     width: 100%;
@@ -206,6 +213,9 @@ ion-item-divider {
   overflow: hidden;
   position: relative;
   color: white;
+  background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+  backdrop-filter: blur(10px); /* Frosted glass blur effect */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
 
   img {
     width: 100%;
@@ -253,7 +263,9 @@ ion-item-divider {
     top: calc(100% - 15px);
     width: 100%;
     text-align: center;
-    background: #2e2e2e;
+    background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+    backdrop-filter: blur(10px); /* Frosted glass blur effect */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
     left: 0px;
     border-bottom-left-radius: 15px;
     border-bottom-right-radius: 15px;
@@ -269,7 +281,9 @@ ion-item-divider {
   left: 0;
   max-height: 300px;
   overflow-y: auto;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+  backdrop-filter: blur(10px); /* Frosted glass blur effect */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
   border-radius: 8px;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
   z-index: 1000;

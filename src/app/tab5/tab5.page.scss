@@ -1,4 +1,5 @@
 ion-content {
+  --background: transparent; /* Ensure content background is transparent to show global background */
   --padding-bottom: 80px; /* або стільки, скільки висота твоїх табів */
 }
 /*for header*/ 
@@ -8,7 +9,9 @@ ion-header {
 }
 
 .header-container {
-  background-color: #2e2e2e;
+  background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+  backdrop-filter: blur(10px); /* Frosted glass blur effect */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
   padding: 16px;
   color: white;
   transition: all 0.3s ease-out;
@@ -67,9 +70,10 @@ ion-header {
     border-radius: 20px;
     padding: 15px 20px;
     color: #fff;
-    background: #008dc4;
-    background: linear-gradient(90deg, rgba(0, 141, 196, 1) 0%, rgba(87, 199, 133, 1) 50%, rgba(163, 237, 83, 1) 100%);
-    box-shadow: 0px 10px 15px #0000002e;
+    background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+    backdrop-filter: blur(10px); /* Frosted glass blur effect */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2); /* Adjusted shadow */
     max-width: 400px;
     display: block;
     margin: auto;
@@ -122,10 +126,12 @@ ion-header {
     justify-content: end;
 }
 .last-transactions {
-        background: #2e2e2e;
+    background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+    backdrop-filter: blur(10px); /* Frosted glass blur effect */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
     padding: 15px;
     border-radius: 15px;
-    box-shadow: 0px 10px 15px #0000002e;
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2); /* Adjusted shadow */
 }
 .last-transactions h5 {
     text-align: center;

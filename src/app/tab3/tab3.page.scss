@@ -1,6 +1,6 @@
 ion-content {
-  --background: #3a3a3a !important;
-  background: #3a3a3a !important;
+  --background: transparent !important; /* Ensure content background is transparent to show global background */
+  background: transparent !important;
 }
 
 /*for header*/ 
@@ -10,7 +10,9 @@ ion-header {
 }
 
 .header-container {
-  background-color: #2e2e2e;
+  background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+  backdrop-filter: blur(10px); /* Frosted glass blur effect */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
   padding: 16px;
   color: white;
   transition: all 0.3s ease-out;
@@ -46,10 +48,11 @@ ion-header {
   align-items: center;
 
   ion-button {
-    --background: rgba(0, 0, 0, 0.2); /* Darker semi-transparent background */
-    --background-activated: rgba(0, 0, 0, 0.3);
-    --background-focused: rgba(0, 0, 0, 0.3);
-    --background-hover: rgba(0, 0, 0, 0.3);
+    --background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+   
+    --background-activated: rgba(255, 255, 255, 0.3);
+    --background-focused: rgba(255, 255, 255, 0.3);
+    --background-hover: rgba(255, 255, 255, 0.3);
     --color: var(--ion-color-light); /* Lighter color for text */
     --border-radius: 10px;
     height: 40px;
@@ -72,7 +75,9 @@ ion-button[fill="clear"] {
   }
 }
 ion-card {
-  background: #2e2e2e; /* Adjusted for dark theme */
+  background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+  backdrop-filter: blur(10px); /* Frosted glass blur effect */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
   border-radius: 12px; /* Added rounded corners */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Added subtle shadow */
 }
@@ -91,11 +96,15 @@ ion-card {
 ion-card-content {
   font-size: 14px;
   line-height: 1.4;
-  background: #2e2e2e; /* Adjusted for dark theme */
+  background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+  backdrop-filter: blur(10px); /* Frosted glass blur effect */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
   color: var(--ion-color-light); /* Adjusted for dark theme */
 
   ion-item {
-    --background: #3a3a3a; /* Slightly lighter dark background for input item */
+    --background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+    backdrop-filter: blur(10px); /* Frosted glass blur effect */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
     --color: var(--ion-color-light); /* Lighter text color */
     --border-radius: 10px;
     margin-bottom: 15px;
@@ -113,8 +122,12 @@ ion-card-content {
     --placeholder-color: var(--ion-color-medium); /* Adjusted placeholder color */
     padding-left: 5px; /* Align input text with label */
   }
+  
 }
 ion-list {
+    background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+    backdrop-filter: blur(10px); /* Frosted glass blur effect */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
     border-radius: 12px;
 }
 ion-list ion-list-header ion-label {
@@ -152,7 +165,7 @@ div#my-qr {
     left: 0px;
     width: 100%;
     height: 100%;
-    background: var(--ion-background-color); /* Adjusted for dark theme */
+    background: transparent; /* Ensure background is transparent to show global background */
     text-align: center;
     padding: 30px;
 }
@@ -168,4 +181,8 @@ div#my-qr span.close {
 }
 img.discount-image.is_check_icon {
     max-width: 64px;
+}
+ion-item.item-lines-default {
+    --background: #393939;
+    border-radius: 16px;
 }

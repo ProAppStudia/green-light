@@ -1,20 +1,28 @@
 ion-card {
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+  backdrop-filter: blur(10px); /* Frosted glass blur effect */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
 }
 
 ion-card-content {
   font-size: 14px;
   line-height: 1.4;
-  background: #fff;
+  background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+  backdrop-filter: blur(10px); /* Frosted glass blur effect */
+  border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
 }
 ion-list {
     border-radius: 12px;
+    background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+    backdrop-filter: blur(10px); /* Frosted glass blur effect */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
 }
 ion-list ion-list-header ion-label {
     font-weight: 500;
     font-size: 1.2rem;
-    color: #2fc74c;
+    color: var(--ion-color-light); /* Adjusted for dark theme */
 }
 img.discount-image {
     display: block;
