@@ -19,23 +19,10 @@
             </ion-content>
           </ng-template>
         </ion-popover>
-        <ion-button id="country-popover-button" (click)="isCountryOpen = true">
-          <ion-icon slot="start" name="map-outline"></ion-icon>
-          <ion-label>{{ selectedCountry }}</ion-label>
-        </ion-button>
-        <ion-popover trigger="country-popover-button" [isOpen]="isCountryOpen" (didDismiss)="isCountryOpen = false">
-          <ng-template>
-            <ion-content>
-              <ion-list>
-                <ion-item *ngFor="let country of countries$" button (click)="selectCountry(country); isCountryOpen = false">
-                  {{ country.name }}
-                </ion-item>
-              </ion-list>
-            </ion-content>
-          </ng-template>
-        </ion-popover>
-        <ion-button (click)="openMenu()">
-          <ion-icon slot="icon-only" name="menu-outline"></ion-icon>
+       
+        
+        <ion-button (click)="switchView('edit')" class="menu-button-green">
+          <ion-icon slot="person-outline" name="menu-outline"></ion-icon>
         </ion-button>
       </div>
     </div>

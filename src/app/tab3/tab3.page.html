@@ -19,10 +19,7 @@
             </ion-content>
           </ng-template>
         </ion-popover>
-        <ion-button id="country-popover-button" (click)="isCountryOpen = true">
-          <ion-icon slot="start" name="map-outline"></ion-icon>
-          <ion-label>{{ selectedCountry }}</ion-label>
-        </ion-button>
+       
         <ion-popover trigger="country-popover-button" [isOpen]="isCountryOpen" (didDismiss)="isCountryOpen = false">
           <ng-template>
             <ion-content>
@@ -34,9 +31,7 @@
             </ion-content>
           </ng-template>
         </ion-popover>
-        <ion-button (click)="openMenu()" class="menu-button-green">
-          <ion-icon slot="icon-only" name="menu-outline"></ion-icon>
-        </ion-button>
+       
       </div>
     </div>
   </div>
