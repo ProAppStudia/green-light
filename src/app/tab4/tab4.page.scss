@@ -3,9 +3,14 @@ ion-header {
   box-shadow: none;
   --box-shadow: none;
 }
-
+ion-content {
+ --background: radial-gradient(circle at top left, #1f3d26, #3a3a3a 70%),
+                radial-gradient(circle at bottom right, #3a3a3a, #3a3a3a 80%);
+}
 .header-container {
-  background-color: #2e2e2e;
+  background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+  backdrop-filter: blur(10px); /* Frosted glass blur effect */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.202); /* Subtle border */
   padding: 16px;
   color: white;
   transition: all 0.3s ease-out;
@@ -61,13 +66,14 @@ ion-footer {
     text-align: center;
 }
 .buy-a-plan {
-    background: #474747;
-    background: linear-gradient(39deg, rgba(71, 71, 71, 1) 0%, rgba(47, 199, 76, 1) 100%);
+    background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+    backdrop-filter: blur(10px); /* Frosted glass blur effect */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
     padding: 10px 15px;
     border-radius: 15px;
     margin-bottom: 15px;
     color: #fff;
-    box-shadow: 0px 10px 15px #00000047;
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2); /* Adjusted shadow */
     text-align: center;
 }
 .buy-a-plan span.amount small{
@@ -95,7 +101,9 @@ span.btn-link.btn-buy {
 span.btn-link {
     display: block;
     margin: 10px 0px;
-    background: #2e2e2e;
+    background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+    backdrop-filter: blur(10px); /* Frosted glass blur effect */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
     padding: 10px 15px;
     border-radius: 10px;
 }
@@ -119,14 +127,14 @@ ion-content {
   margin-top: 0px;
 }
 .dark-bg {
-    background: #474747;
-    background: linear-gradient(39deg, rgb(71, 71, 71) 0%, rgb(47, 199, 76) 100%);
+    background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+    backdrop-filter: blur(10px); /* Frosted glass blur effect */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
     color: #fff;
     padding: 10px 15px;
     border-radius: 15px;
     margin-bottom: 15px;
-    color: #fff;
-    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2784313725);
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2); /* Adjusted shadow */
     text-align: center;
 }
 .with-icon.dark-bg {
@@ -146,10 +154,12 @@ ion-content {
     gap: 15px;
 }
 .inner-content {
-    background: #2e2e2e;
+    background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+    backdrop-filter: blur(10px); /* Frosted glass blur effect */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
     padding: 10px 15px;
     border-radius: 15px;
-    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2784313725);
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2); /* Adjusted shadow */
 }
 
 .purchase-item {
@@ -263,7 +273,7 @@ ion-header {
 }
 
 .header-container {
-  background-color: #2e2e2e;
+  background-color: #2e2e2eb8;
   padding: 16px;
   color: white;
   transition: all 0.3s ease-out;
@@ -321,13 +331,15 @@ ion-header {
 .card-top {
     border-radius: 20px;
     padding: 15px 20px;
-    color: #fff;
-    background: #008dc4;
-    background: linear-gradient(90deg, rgba(0, 141, 196, 1) 0%, rgba(87, 199, 133, 1) 50%, rgba(163, 237, 83, 1) 100%);
-    box-shadow: 0px 10px 15px #0000002e;
+    color: #252525;
+    background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+    backdrop-filter: blur(10px); /* Frosted glass blur effect */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2); /* Adjusted shadow */
     max-width: 400px;
     display: block;
     margin: auto;
+    background: radial-gradient(circle at 20% 0%, rgba(255, 255, 255, 0.7) 0, rgba(255, 255, 255, 0) 55%), radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.3) 0, rgba(255, 255, 255, 0) 55%), linear-gradient(135deg, #f3ff9c 0%, #c7ff5b 30%, #8dd92b 65%, #6ab323 100%);
 }
 .my-earnings .hello-text img {
     max-width: 25px;
@@ -341,13 +353,20 @@ ion-header {
     margin-bottom: 15px;
 }
 .card-top .balance-top span {
-    text-align: center;
-    display: block;
+    display: flex;
     margin-bottom: 10px;
+    align-items: center;
 }
 .card-top .balance-top span.amount {
     font-weight: 700;
     font-size: 2.2rem;
+}
+.text-amount ion-icon {
+    margin-right: 10px;
+    padding: 10px;
+    background: #2e2e2e;
+    color: white;
+    border-radius: 50%;
 }
 .card-top .balance-bottom > div{
   width:50%;
@@ -377,10 +396,12 @@ ion-header {
     justify-content: end;
 }
 .last-transactions {
-        background: #2e2e2e;
+    background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+    backdrop-filter: blur(10px); /* Frosted glass blur effect */
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
     padding: 15px;
     border-radius: 15px;
-    box-shadow: 0px 10px 15px #0000002e;
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2); /* Adjusted shadow */
 }
 .last-transactions h5 {
     text-align: center;
