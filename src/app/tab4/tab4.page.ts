@@ -4,7 +4,7 @@ import { IonAlert, IonToast,IonLoading, IonHeader,IonFooter, IonToolbar, IonTitl
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
-import { language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, searchOutline, globeOutline, languageOutline, listOutline, gridOutline, pencilOutline, barChartOutline, cartOutline, logOutOutline, trashOutline, flashOffOutline, flashOutline, copyOutline, peopleOutline, cashOutline, arrowBackOutline, starOutline, closeOutline, thumbsUpOutline, chevronForwardOutline, addOutline, removeOutline, logInOutline } from 'ionicons/icons';
+import { language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, searchOutline, globeOutline, languageOutline, listOutline, gridOutline, pencilOutline, barChartOutline, cartOutline, logOutOutline, trashOutline, flashOffOutline, flashOutline, copyOutline, peopleOutline, cashOutline, arrowBackOutline, starOutline, closeOutline, thumbsUpOutline, chevronForwardOutline, addOutline, removeOutline, logInOutline, arrowForwardOutline, personOutline } from 'ionicons/icons';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ApiService } from '../services/api';
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
@@ -88,7 +88,7 @@ export class Tab4Page {
       searchOutline, globeOutline, languageOutline, pencilOutline, barChartOutline, listOutline, 
       cartOutline, logOutOutline, trashOutline, flashOutline, copyOutline, peopleOutline, 
       cashOutline, arrowBackOutline, starOutline, closeOutline, thumbsUpOutline,
-      chevronForwardOutline, addOutline, removeOutline, logInOutline});
+      chevronForwardOutline, addOutline, removeOutline, logInOutline, arrowForwardOutline, personOutline });
       // локалізація
       translate.use('ua');
       this.fullname = this.translate.instant('TEXT_USER');

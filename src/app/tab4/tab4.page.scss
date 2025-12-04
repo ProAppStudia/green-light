@@ -86,6 +86,7 @@ ion-footer {
     font-size: 1.9rem;
     font-weight: 700;
     line-height: 47px;
+    
 }
 .buy-a-plan span.ref-prog {
     font-weight: 100;
@@ -354,12 +355,21 @@ ion-header {
 }
 .card-top .balance-top span {
     display: flex;
-    margin-bottom: 10px;
+    
     align-items: center;
+        justify-content: space-between;
 }
+.menu-button-payout {
+    --background: #2e2e2ec9;
+    --border-radius: 50px;
+    font-size: 10px;
+    --border: 1px solid #000;
+}
+
 .card-top .balance-top span.amount {
     font-weight: 700;
     font-size: 2.2rem;
+    margin-bottom: 10px;
 }
 .text-amount ion-icon {
     margin-right: 10px;
@@ -380,17 +390,36 @@ ion-header {
     justify-content: space-around;
 }
 .card-top .balance-bottom ion-icon {
-    background: #fff;
-    color: #4CAF50;
+    background: #2e2e2e;
+    color: #fff;
     font-size: 1.5rem;
     border-radius: 50%;
 }
 .card-top .right-section ion-icon {
-    color: #F44336;
+    color: #fff;
+}
+.copy-code {
+    padding: 15px;
+    border: 3px dotted #2fc74c;
+    border-radius: 50px;
+    margin-top: 10px;
+    background: #2e2e2e75;
+    font-size: 14px;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
 }
 .card-top .balance-bottom .text span {
     display: block;
     font-weight: 700;
+}
+span.copy-code ion-icon {
+    margin-right: 10px;
+}
+.ref-about {
+    display: flex;
+    gap: 10px;
 }
 .card-top .balance-bottom .right-section {
     justify-content: end;
@@ -423,6 +452,12 @@ ion-header {
     border-bottom: 1px solid #ddd;
     margin-bottom: 15px;
     padding-bottom: 10px;
+}
+.strelka {
+    background: none;
+    transform: rotate(320deg);
+    margin-right: 0 !important;
+    margin-left: 10px;
 }
 .transactions .transaction-item:last-child .bottom-row {
   border: 0px;

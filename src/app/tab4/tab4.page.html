@@ -22,7 +22,7 @@
        
         
         <ion-button (click)="switchView('edit')" class="menu-button-green">
-          <ion-icon slot="person-outline" name="menu-outline"></ion-icon>
+          <ion-icon slot="" name="person-outline"></ion-icon>
         </ion-button>
       </div>
     </div>
@@ -30,6 +30,8 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
+  
+  <div *ngIf="currentView === 'main'">
   <div class="my-earnings" *ngIf="is_active_user">
     <div class="hello-text">
       <img src="assets/icon/tab5_icon_hi.svg">
@@ -37,7 +39,21 @@
     <div class="card-top">
       <div class="balance-top">
         
-        <span class="text-amount"><ion-icon  name="cash-outline"></ion-icon> {{ 'YOUR_BALANCE' | translate }}</span>
+        <span class="text-amount">
+          <span class="text-amount-1">
+          <ion-icon  name="cash-outline"></ion-icon> {{ 'YOUR_BALANCE' | translate }}
+          </span>
+        <span class="withdwor">
+           <ion-button (click)="switchView('payout')" class="menu-button-payout">
+          
+          {{ 'MAKE_PAYOUT' | translate }}
+          <ion-icon name="arrow-forward-outline" class="strelka"></ion-icon>
+        </ion-button>
+         </span>
+
+        
+
+        </span>
         <span class="amount">{{ my_balance }} {{ plan_currency }}</span>
       </div>
       <div class="balance-bottom">
@@ -69,10 +85,20 @@
       {{ ref_link }}</span>
       <small *ngIf="!is_active_user"><br><br>{{ 'TEXT_NOTICE_PLANE' | translate }}</small>
   </div>
-  <div class="my-ref-count dark-bg with-icon ion-margin-top">
+
+  <div class="ref-about">
+  <div class="my-ref-count dark-bg with-icon ">
     <ion-icon name="people-outline"></ion-icon>
-    <h4>{{ 'TEXT_YOU_HAVE' | translate }} <b>{{ count_referals }}</b> {{ 'TEXT_SUBSCRIBERS' | translate }}</h4>
+    <span>{{ 'TEXT_YOU_HAVE' | translate }} <b>{{ count_referals }}</b> {{ 'TEXT_SUBSCRIBERS' | translate }}</span>
+  
   </div>
+  <span (click)="openRefDescription()" class="my-ref-count dark-bg with-icon ">
+      
+      <span>{{ 'ABOUT_REF_PROG' | translate }}</span>
+       <ion-icon name="arrow-forward-outline" class="strelka"></ion-icon>
+    </span>
+</div>
+
   </div>
     <div class="last-transactions ion-margin-top">
       <h5>{{ 'LATEST_TRANSACTIONS' | translate }}</h5>
@@ -90,8 +116,6 @@
 
     </div>  
   </div> 
-  <div *ngIf="currentView === 'main'">
-  
   <div class="buy-a-plan" *ngIf="!is_active_user">
     <span>{{ 'BUY_PLAN_TO_EARN' | translate }}</span>
     <span class="amount"><small>{{ 'TEXT_TOTAL' | translate }}</small> {{ plan_amount }} {{ plan_currency }}</span>
@@ -104,26 +128,14 @@
       <span>{{ 'BUY_PLANE' | translate }}</span>
     </span>
 
-    <span (click)="switchView('edit')" class="btn-link">
-      <ion-icon name="pencil-outline"></ion-icon>
-      <span>{{ 'EDIT_PROFILE' | translate }}</span>
-    </span>
-    <span (click)="getMyTransaction()" class="btn-link">
-      <ion-icon name="bar-chart-outline"></ion-icon>
-      <span>{{ 'MY_BALANCE' | translate }}</span>
-    </span>
+    
+    
     <span (click)="getMyPurchases()" class="btn-link">
       <ion-icon name="cart-outline"></ion-icon>
       <span>{{ 'MY_DISCOUNTS' | translate }}</span>
     </span>
-    <span (click)="switchView('payout')" class="btn-link">
-      <ion-icon name="star-outline"></ion-icon>
-      <span>{{ 'MAKE_PAYOUT' | translate }}</span>
-    </span>
-    <span (click)="openRefDescription()" class="btn-link">
-      <ion-icon name="thumbs-up-outline"></ion-icon>
-      <span>{{ 'ABOUT_REF_PROG' | translate }}</span>
-    </span>
+    
+    
     <span (click)="logout()" class="btn-link">
       <ion-icon name="log-out-outline"></ion-icon>
       <span>{{ 'TEXT_LOGOUT' | translate }}</span>
@@ -225,7 +237,7 @@
     <h3>{{ 'MAKE_PAYOUT' | translate }}</h3>
   </div>
   <div class="inner-content">
-    <h5>111{{ 'TEXT_MAX_AMOUNT' | translate }}: <span>{{ max_payout_amount }}</span> {{ plan_currency }}</h5>
+    <h5>{{ 'TEXT_MAX_AMOUNT' | translate }}: <span>{{ max_payout_amount }}</span> {{ plan_currency }}</h5>
     <p>{{ 'TEXT_NOTE_PAYOUT' | translate }} {{ plan_currency }} {{ 'TEXT_NOTE_PAYOUT_1' | translate }} {{ plan_currency_type }}, {{ 'TEXT_NOTE_PAYOUT_2' | translate }}.</p>
     <br>
     <div class="input-item">
