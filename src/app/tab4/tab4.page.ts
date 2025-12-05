@@ -253,6 +253,9 @@ export class Tab4Page {
 
 switchView(view: 'main' | 'edit' | 'balance' | 'purchases' | 'payout') {
   this.currentView = view;
+  if(view == 'main'){
+    this.hidePopUp(); // to close qr window
+  }
 }
 updateProfile(){
   //

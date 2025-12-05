@@ -49,3 +49,22 @@ body {
   --background-hover: var(--ion-color-primary-tint);
   --color: var(--ion-color-primary-contrast);
 }
+
+/*fix problem with safe area*/
+
+ion-header,
+ion-toolbar {
+  padding-top: env(safe-area-inset-top);
+}
+ion-tab-bar {
+  padding-bottom: env(safe-area-inset-bottom);
+  height: calc(56px + env(safe-area-inset-bottom));
+}
+ion-content {
+  --padding-top: env(safe-area-inset-top);
+  --padding-bottom: env(safe-area-inset-bottom);
+}
+:root {
+  --ion-safe-area-top: env(safe-area-inset-top);
+  --ion-safe-area-bottom: env(safe-area-inset-bottom);
+}
