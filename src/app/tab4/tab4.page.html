@@ -4,21 +4,6 @@
       <img src="assets/icon/logo/Logo_GreenLight_White_G.png" alt="GreenLight Logo" class="header-logo-img" />
       <div class="header-icons">
         
-        <ion-button id="language-popover-button" (click)="isLanguageOpen = true">
-          <ion-icon slot="start" name="language-outline"></ion-icon>
-          <ion-label>{{ selectedLanguage }}</ion-label>
-        </ion-button>
-        <ion-popover trigger="language-popover-button" [isOpen]="isLanguageOpen" (didDismiss)="isLanguageOpen = false">
-          <ng-template>
-            <ion-content>
-              <ion-list>
-                <ion-item *ngFor="let language of languages$" button (click)="selectLanguage(language); isLanguageOpen = false">
-                  {{ language.name }}
-                </ion-item>
-              </ion-list>
-            </ion-content>
-          </ng-template>
-        </ion-popover>
        
         
         <ion-button (click)="switchView('edit')" class="menu-button-green">
