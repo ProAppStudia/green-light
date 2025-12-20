@@ -1,6 +1,7 @@
 ion-content {
-  --background: transparent; /* Ensure content background is transparent to show global background */
+  --background: transparent !important; /* Ensure content background is transparent to show global background */
   --padding-bottom: 80px; /* або стільки, скільки висота твоїх табів */
+  --padding-top: 20px; /* Додано відступ зверху */
 }
 /*for header*/ 
 ion-header {
@@ -175,4 +176,34 @@ ion-header {
 .transactions span.status.status-color-danger {
     background: #F44336;
     color: #fff;
+}
+
+/* Animated background for cryptocurrency theme - new style */
+.animated-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(47, 199, 76, 0.4) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(0, 141, 196, 0.4) 0%, transparent 50%),
+    linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+  background-size: 200% 200%, 200% 200%, 100% 100%; /* Adjust background size for gradients */
+  background-position: 0% 0%, 100% 100%, 0% 0%; /* Initial positions */
+  overflow: hidden;
+  animation: gradientShift 20s infinite alternate;
+  /* Removed filter: blur(50px); from the main container */
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 0%, 100% 100%, 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%, 0% 0%, 50% 50%;
+  }
+  100% {
+    background-position: 0% 0%, 100% 100%, 0% 0%;
+  }
 }
