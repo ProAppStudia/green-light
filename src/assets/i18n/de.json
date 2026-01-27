@@ -104,5 +104,19 @@
   "TEXT_TAB_3": "QR-Scanner",
   "TEXT_TAB_4": "Profil",
   "TEXT_TAB_5": "Verdienst",
-  "TEXT_CAMERA_PERMISSION_DENIED": "Access to camera is danied"
+  "TEXT_CAMERA_PERMISSION_DENIED": "Access to camera is danied", 
+
+  "GLC_TEXT_NOTE_1": "Wenn Sie gerade ein Paket bezahlt haben, warten Sie bitte einen Moment, bis das System für Sie eine Wallet erstellt und diese gutschreibt ",
+  "GLC_TEXT_NOTE_2": "Wenn Sie noch kein Teilnehmer unseres Programms sind, ist jetzt der perfekte Zeitpunkt, um beizutreten :)",
+  "TEXT_DETAILS": "Details",
+  "GLC_TEXT_DETAILS": "Mehr über GLC",
+  "GLC_TEXT_WALLET_ADDRESS": "Wallet-Adresse",
+  "GLC_TEXT_WALLET_CHAIN": "Wallet-Netzwerk",
+  "GLC_TEXT_YOUR_BALANCE": "Ihr Kontostand",
+  "GLC_TEXT_YOUR_BALANCE_IN": "Ihr Kontostand in",
+  "GLC_TEXT_LAST_UPDATED": "Zuletzt aktualisiert",
+  "GLC_TEXT_TOTAL_SUPPLY": "Gesamtmenge der ausgegebenen Coins",
+  "GLC_TEXT_LATEST_TRANSACTIONS": "Neueste Kryptowährungs-Transaktionen",
+  "GLC_TEXT_AMOUNT": "Betrag",
+  "GLC_TEXT_TX_ID": "Transaktions-ID"
 }

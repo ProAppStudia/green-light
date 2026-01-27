@@ -104,5 +104,19 @@
   "TEXT_TAB_3" : "QR сканер",
   "TEXT_TAB_4" : "Профіль",
   "TEXT_TAB_5" : "Заробіток",
-  "TEXT_CAMERA_PERMISSION_DENIED": "Доступ до камери заборонено"
+  "TEXT_CAMERA_PERMISSION_DENIED": "Доступ до камери заборонено",
+
+  "GLC_TEXT_NOTE_1" : "Якщо Ви щойно оплатили пакет - зачекайте трішки, щоб система створила для вас гаманець та нарахувала",
+  "GLC_TEXT_NOTE_2" : "Якщо Ви ще не учасник нашої програми - саме час доєднатись :)",
+  "TEXT_DETAILS" : "Детальніше",
+  "GLC_TEXT_DETAILS" : "Детальніше про GLC",
+  "GLC_TEXT_WALLET_ADDRESS" : "Адреса гаманця", 
+  "GLC_TEXT_WALLET_CHAIN" : "Мережа гаманця", 
+  "GLC_TEXT_YOUR_BALANCE" : "Ваш баланс",
+  "GLC_TEXT_YOUR_BALANCE_IN" : "Ваш баланс в",
+  "GLC_TEXT_LAST_UPDATED" : "Останнє оновлення", 
+  "GLC_TEXT_TOTAL_SUPPLY" : "Всього монет випущено",
+  "GLC_TEXT_LATEST_TRANSACTIONS" : "Останні транзакції криптовалюти",
+  "GLC_TEXT_AMOUNT" : "Кількість",
+  "GLC_TEXT_TX_ID" : "Ідентифікатор транзакції"
  }

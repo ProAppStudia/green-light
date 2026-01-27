@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { IonItem, IonList, IonPopover, IonLabel, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonButton, IonIcon,MenuController } from '@ionic/angular/standalone';
+import { IonListHeader,IonItem, IonList, IonPopover, IonLabel, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonButton, IonIcon,MenuController } from '@ionic/angular/standalone';
 import { ExploreContainerComponent } from '../explore-container/explore-container.component';
 import { addIcons } from 'ionicons';
-import { addOutline, chevronForwardOutline, language, languageOutline, logInOutline, mapOutline, menuOutline, notifications, notificationsOutline, removeOutline } from 'ionicons/icons';
+import { addOutline, chevronForwardOutline, closeOutline, copyOutline, language, languageOutline, logInOutline, mapOutline, menuOutline, notifications, notificationsOutline, openOutline, removeOutline, settingsOutline, walletOutline } from 'ionicons/icons';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -22,7 +22,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   selector: 'app-tab5',
   templateUrl: 'tab5.page.html',
   styleUrls: ['tab5.page.scss'],
-  imports: [TranslateModule, CommonModule, IonLabel, IonList, IonItem, IonPopover,IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonButton, IonIcon, ExploreContainerComponent]
+  imports: [IonListHeader,TranslateModule, CommonModule, IonLabel, IonList, IonItem, IonPopover,IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonButton, IonIcon, ExploreContainerComponent]
 })
 export class Tab5Page {
   //for header 
@@ -46,6 +46,17 @@ export class Tab5Page {
   my_balance:any | 0;
   earning_amount:any | 0;
   payout_amount:any | 0;
+  glc_balance = 0;
+  balance_usdt = 0;
+  wallet_address = '';
+  wallet_chain = '';
+  total_supply = '';
+  balance_updated_at = '';
+  glc_coin_symbol = 'GLC';
+  glc_price_usdt = 0;
+  glc_transactions:any | [];
+  glc_token_mint_amount = 1000;
+  crypto_description_link = '';
 
   constructor(
     private api: ApiService,
@@ -56,7 +67,7 @@ export class Tab5Page {
     private alertCtrl: AlertController,
     private translate: TranslateService
   ) {
-    addIcons({ language, logInOutline, chevronForwardOutline, languageOutline, mapOutline, menuOutline,notificationsOutline, addOutline, removeOutline});
+    addIcons({ settingsOutline,copyOutline,closeOutline,chevronForwardOutline,walletOutline,openOutline,language, logInOutline, languageOutline, mapOutline, menuOutline,notificationsOutline, addOutline, removeOutline});
      //translate.setDefaultLang('ua');
      translate.use('ua');
      this.fullname = this.translate.instant('TEXT_USER');
@@ -76,6 +87,8 @@ export class Tab5Page {
     if (token) {
       this.is_auth_user = true;
     }
+
+    this.about_crypto_display = false;
 
     //for header
     this.api.getAvailableLanguages().subscribe({
@@ -139,6 +152,37 @@ export class Tab5Page {
         if(res.transactions){
           this.transactions = res.transactions;
         }
+        if(res.balance_glc){
+          this.glc_balance = res.balance_glc;
+        }
+        if(res.wallet_address){
+          this.wallet_address = res.wallet_address;
+        }
+        if(res.balance_updated_at){
+          this.balance_updated_at = res.balance_updated_at;
+        }
+        if(res.total_supply){
+          this.total_supply = res.total_supply;
+        }
+        if(res.wallet_chain){
+          this.wallet_chain = res.wallet_chain;
+        }
+        if(res.glc_coin_symbol){
+          this.glc_coin_symbol = res.glc_coin_symbol;
+        }
+        if(res.balance_usdt){
+          this.balance_usdt = res.balance_usdt;
+        }
+        if(res.glc_price_usdt){
+          this.glc_price_usdt = res.glc_price_usdt;
+        }
+        if(res.glc_transactions){
+          this.glc_transactions = res.glc_transactions;
+        }
+        if(res.glc_token_mint_amount){
+          this.glc_token_mint_amount = res.glc_token_mint_amount;
+        }
+        this.crypto_description_link = res.crypto_description_link;
         this.my_balance = res.my_balance;
         this.payout_amount = res.payout_amount;
         this.earning_amount = res.earning_amount;
@@ -147,9 +191,27 @@ export class Tab5Page {
 
   }
 
+  openCryptoDescription(){
+    if(this.crypto_description_link){
+      window.open(this.crypto_description_link, '_system');
+    }else{
+      this.showToast(this.translate.instant('TEXT_ERROR_LINK'));
+    }
+  }
+
   //for header 
   openMenu() {
     this.menu.open('main-menu'); // 'main-menu' is the ID of the ion-menu
+  }
+
+
+
+  about_crypto_display = false;
+  setAboutStyle(style:true | false){
+    if(style == true && this.about_crypto_display == true){
+      style = false; // if customer clicked on button for close
+    }
+    this.about_crypto_display = style;
   }
 
   onScroll(event: any) {
@@ -187,6 +249,16 @@ openRefDescription(){
 openAuth(){
   this.router.navigate(['/auth'], { replaceUrl: true });
 }
+
+copy(text:any){
+    navigator.clipboard.writeText(text)
+    .then(() => {
+      this.showToast(this.translate.instant('COPIED'));
+    })
+    .catch(err => {
+      this.showToast(this.translate.instant('ERROR_OCCURED'));
+    });
+  }
 
 async showToast(text:any, color:any='light', duration:any=2000) {
   const toast = await this.toastCtrl.create({

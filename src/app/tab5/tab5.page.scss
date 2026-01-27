@@ -207,3 +207,77 @@ ion-header {
     background-position: 0% 0%, 100% 100%, 0% 0%;
   }
 }
+.glc-button {
+    border-radius: 20px;
+    padding: 15px 20px;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2);
+    margin: 20px auto;
+    display: flex;
+    justify-content: space-between;
+}
+.about-glc-token {
+    border-radius: 20px;
+    padding: 15px 20px;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2);
+    margin: 20px auto;
+    display: block;
+}
+.about-glc-token .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.ab-item span.heading {
+    font-weight: 500;
+    font-size: 14px;
+    color: #a0a0a0;
+    display: block;
+}
+.ab-item {
+    border-bottom: 1px solid #5b5b5b;
+    margin-bottom: 10px;
+}
+.about-c-transactions > h5{
+    text-align: center;
+}
+.transactions-glc .transaction-item span.date {
+    font-weight: 100;
+}
+.transactions-glc .transaction-item p.transcation-id {
+    margin: 0px;
+    font-size: 12px;
+}
+.transactions-glc .transaction-item p.transcation-amount {
+    margin: 7px 0px;
+}
+.transactions-glc .transaction-item:last-child {
+    border-bottom: 1px solid transparent;
+}
+.transactions-glc .transaction-item {
+    border-bottom: 1px solid #5b5b5b;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
+}
+.text-note-with-icon {
+    display: flex;
+    align-items: center;
+}
+.text-note-with-icon > ion-icon {
+    width: 80px;
+    margin-right: 10px;
+}
+.text-note-with-icon > p {
+    margin: 0px;
+    font-size: 14px;
+    font-weight: 300;
+}

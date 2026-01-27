@@ -57,6 +57,64 @@
       </div>
     </div>
 
+    <div (click)="setAboutStyle(true)" class="glc-button ion-margin-top">
+      <span>Green Light Coin <ion-icon name="chevron-forward-outline"></ion-icon></span> <span><ion-icon name="wallet-outline"></ion-icon> {{ glc_balance }} {{ glc_coin_symbol }}</span>
+    </div>
+
+    <div class="about-glc-token" *ngIf="about_crypto_display">
+      <div class="header">
+        <h4>GLC coin</h4>
+        <span (click)="setAboutStyle(false)" class="close-about"><ion-icon name="close-outline"></ion-icon></span>
+      </div>
+      <div *ngIf="wallet_address == ''" class="note-empty-wallet">
+        <div class="text-note-with-icon">
+        <ion-icon name="settings-outline"></ion-icon>
+        <p>{{ 'GLC_TEXT_NOTE_1' | translate }} {{ glc_token_mint_amount }} {{ glc_coin_symbol }}. <br>
+          {{ 'GLC_TEXT_NOTE_2' | translate }}
+          <br>
+          <ion-button size="small" (click)="openCryptoDescription()">{{ 'GLC_TEXT_DETAILS' | translate}}  <ion-icon slot="end" name="open-outline"></ion-icon></ion-button>
+        </p>
+        
+        </div>
+      </div>
+      <div class="about-body" *ngIf="wallet_address">
+        <div class="ab-item">
+          <span class="heading">{{ 'GLC_TEXT_WALLET_ADDRESS' | translate }}</span>
+          <p>{{ wallet_address }} <ion-icon name="copy-outline" (click)="copy(wallet_address)"></ion-icon></p>
+        </div>
+        <div class="ab-item">
+          <span class="heading">{{ 'GLC_TEXT_WALLET_CHAIN' | translate }}</span>
+          <p>{{ wallet_chain }}</p>
+        </div>
+        <div class="ab-item">
+          <span class="heading">{{ 'GLC_TEXT_YOUR_BALANCE' | translate }}</span>
+          <p><b>{{ glc_balance }} </b> <small>{{ glc_coin_symbol }}</small></p>
+        </div>
+        <div class="ab-item">
+          <span class="heading">{{ 'GLC_TEXT_YOUR_BALANCE_IN' | translate }} USDT</span>
+          <p><b>{{ balance_usdt }} </b> <small>USDT</small></p>
+        </div>
+        <div class="ab-item">
+          <span class="heading">{{ 'GLC_TEXT_LAST_UPDATED' | translate }}</span>
+          <p><b>{{ balance_updated_at }}</b> </p>
+        </div>
+        <div class="ab-item">
+          <span class="heading">{{ 'GLC_TEXT_TOTAL_SUPPLY' | translate }}</span>
+          <p><b>{{ total_supply }} </b> <small>{{ glc_coin_symbol }}</small></p>
+        </div>
+        <div class="about-c-transactions" *ngIf="glc_transactions">
+          <h5>{{ 'GLC_TEXT_LATEST_TRANSACTIONS' | translate }}</h5>
+          <div class="transactions-glc">
+          <div *ngFor="let transcation of glc_transactions" class="transaction-item">
+              <div class="headline"><h5>{{transcation.type}}</h5> <span class="date">{{ transcation.date }}</span></div>
+              <p class="transcation-amount">{{ 'GLC_TEXT_AMOUNT' | translate }}: {{ transcation.amount }} </p>
+              <p class="transcation-id">{{ 'GLC_TEXT_TX_ID' | translate }}: {{ transcation.tx }} <ion-icon name="copy-outline" (click)="copy(transcation.tx)"></ion-icon></p>
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+
     <div class="last-transactions ion-margin-top">
       <h5>{{ 'LATEST_TRANSACTIONS' | translate }}</h5>
 
@@ -70,7 +128,6 @@
           </div> 
       </div>
     </div>
-
     </div>  
   </div>  
 
