@@ -90,7 +90,7 @@
           <span class="heading">{{ 'GLC_TEXT_YOUR_BALANCE' | translate }}</span>
           <p><b>{{ glc_balance }} </b> <small>{{ glc_coin_symbol }}</small></p>
         </div>
-        <div class="ab-item">
+        <div class="ab-item" *ngIf="balance_usdt">
           <span class="heading">{{ 'GLC_TEXT_YOUR_BALANCE_IN' | translate }} USDT</span>
           <p><b>{{ balance_usdt }} </b> <small>USDT</small></p>
         </div>
