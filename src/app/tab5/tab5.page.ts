@@ -80,6 +80,7 @@ export class Tab5Page {
     }
     //for replace data
     this.ngOnInit();
+    this.getHeadHeight();
   }
 
   async ngOnInit(){
@@ -269,5 +270,14 @@ async showToast(text:any, color:any='light', duration:any=2000) {
   });
   await toast.present();
 }
+
+head_height = 85;
+getHeadHeight(){
+  const headerElement = document.querySelector('ion-header');
+  if (headerElement && Number(headerElement.offsetHeight) > 40) {
+    this.head_height = Number(headerElement.offsetHeight) + 10;
+  }
+}
+
 
 }
