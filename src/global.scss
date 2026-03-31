@@ -50,21 +50,62 @@ body {
   --color: var(--ion-color-primary-contrast);
 }
 
+/* Попоовер: прозорий фон пунктів, білий текст */
+ion-popover {
+  --background: rgba(45, 45, 45, 0.97);
+  --backdrop-opacity: 0.4;
+}
+ion-popover ion-content {
+  --background: transparent;
+}
+ion-popover ion-list {
+  background: transparent !important;
+  --background: transparent;
+}
+ion-popover ion-item {
+  --background: transparent;
+  --background-hover: rgba(255, 255, 255, 0.08);
+  --background-activated: rgba(255, 255, 255, 0.12);
+  --color: white;
+  --border-color: rgba(255, 255, 255, 0.08);
+}
+
 /*fix problem with safe area*/
 
-ion-header,
+/* ion-toolbar (стандартний) отримує відступ зверху.
+   Кастомні .header-container самі керують своїм padding-top. */
 ion-toolbar {
   padding-top: env(safe-area-inset-top);
 }
-ion-tab-bar {
-  padding-bottom: env(safe-area-inset-bottom);
-  height: calc(56px + env(safe-area-inset-bottom));
-}
+
+/* Tab bar керується з tabs.page.scss з урахуванням safe-area */
+
 ion-content {
-  --padding-top: env(safe-area-inset-top);
-  --padding-bottom: env(safe-area-inset-bottom);
+  /* Базовий відступ знизу = висота tab bar + safe area.
+     Сторінки можуть перевизначити через власний --padding-bottom */
+  --padding-bottom: calc(70px + env(safe-area-inset-bottom));
 }
+
 :root {
   --ion-safe-area-top: env(safe-area-inset-top);
   --ion-safe-area-bottom: env(safe-area-inset-bottom);
+}
+
+/* Глобальний -webkit- префікс для backdrop-filter (Android/старий iOS) */
+ion-tab-bar,
+.header-container,
+.slide-card,
+.search-bar,
+.search-results,
+.no-results,
+.dark-bg,
+.buy-a-plan,
+.inner-content,
+.last-transactions,
+.card-top,
+.glc-button,
+.about-glc-token,
+.btn-link,
+.ion-card-frosted {
+  -webkit-backdrop-filter: blur(10px);
 }

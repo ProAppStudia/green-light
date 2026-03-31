@@ -39,10 +39,11 @@ ion-header {
     min-width: 40px; /* Ensure it's at least 40px wide */
 }
 .header-container {
-  background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
-  backdrop-filter: blur(10px); /* Frosted glass blur effect */
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
-  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: calc(var(--ion-safe-area-top, 0px) + 10px) 16px 16px;
   color: white;
   transition: all 0.3s ease-out;
   border-bottom-left-radius: 20px;
@@ -148,5 +149,5 @@ ion-header {
 }
 
 .products-section {
-  padding-bottom: 80px; /* Add bottom padding to create space above the navigation bar */
+  padding-bottom: calc(70px + env(safe-area-inset-bottom) + 10px);
 }

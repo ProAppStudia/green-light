@@ -25,10 +25,11 @@
 ion-card-title {
   font-size: 0.8em;
   font-weight: bold;
-  color: var(--ion-color-dark);
+  color: white;
+  --color: white;
   padding-top: 5px;
-  white-space: normal; /* Allow text to wrap */
-  word-wrap: break-word; /* Break long words */
+  white-space: normal;
+  word-wrap: break-word;
 }
 
 ion-card-header {

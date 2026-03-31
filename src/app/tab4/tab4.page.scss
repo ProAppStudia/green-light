@@ -8,10 +8,11 @@ ion-content {
                 radial-gradient(circle at bottom right, #3a3a3a, #3a3a3a 80%);
 }
 .header-container {
-  background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
-  backdrop-filter: blur(10px); /* Frosted glass blur effect */
-  border-bottom: 1px solid rgba(255, 255, 255, 0.202); /* Subtle border */
-  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.202);
+  padding: calc(var(--ion-safe-area-top, 0px) + 10px) 16px 16px;
   color: white;
   transition: all 0.3s ease-out;
   border-bottom-left-radius: 20px;
@@ -121,7 +122,7 @@ span.btn-link.btn-danger {
 }
 
 ion-content {
-  --padding-bottom: 80px; /* або стільки, скільки висота твоїх табів */
+  --padding-bottom: calc(70px + env(safe-area-inset-bottom));
 }
 
 .dark-bg > h4:first-child {
@@ -276,7 +277,7 @@ ion-content {
     margin-top: 0px;
 }
 ion-content {
-  --padding-bottom: 80px; /* або стільки, скільки висота твоїх табів */
+  --padding-bottom: calc(70px + env(safe-area-inset-bottom));
 }
 /*for header*/ 
 ion-header {
@@ -286,7 +287,7 @@ ion-header {
 
 .header-container {
   background-color: #2e2e2eb8;
-  padding: 16px;
+  padding: calc(var(--ion-safe-area-top, 0px) + 10px) 16px 16px;
   color: white;
   transition: all 0.3s ease-out;
   border-bottom-left-radius: 20px;

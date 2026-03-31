@@ -92,11 +92,21 @@ export class Tab1Page implements OnInit {
 
   onScroll(event: any) {
     const scrollTop = event.detail.scrollTop;
-    if (scrollTop > this.lastScrollTop && scrollTop > 10) {
+    const delta = scrollTop - this.lastScrollTop;
+
+    if (delta > 5 && scrollTop > 60) {
+      // Прокрутка вниз — ховаємо search bar
       this.hideHeader = true;
-    } else {
+    } else if (delta < -30) {
+      // Прокрутка вгору мінімум на 30px — показуємо (iOS bounce дає delta ~1-5, ігноруємо)
       this.hideHeader = false;
     }
+
+    if (scrollTop <= 0) {
+      // Верх сторінки — завжди показуємо
+      this.hideHeader = false;
+    }
+
     this.lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
     this.isScrolled = scrollTop > 0;
   }

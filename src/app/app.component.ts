@@ -29,11 +29,18 @@ export class AppComponent {
   async initializeApp() {
     await this.platform.ready();
 
-    // Статусбар НЕ перекриває контент
-    await StatusBar.setOverlaysWebView({ overlay: false });
+    // iOS: хедер заходить під статус-бар (header extends to top),
+    // safe-area-inset-top в CSS відсуває контент нижче іконок статус-бару.
+    // Android: статус-бар НЕ перекриває контент, задаємо колір фону.
+    if (this.platform.is('ios')) {
+      await StatusBar.setOverlaysWebView({ overlay: true });
+    } else {
+      await StatusBar.setOverlaysWebView({ overlay: false });
+      await StatusBar.setBackgroundColor({ color: '#3a3a3a' });
+    }
 
-    // Опціонально — зробити темний або світлий текст
-    await StatusBar.setStyle({ style: Style.Dark });
+    // Світлі іконки статус-бару (для темного фону)
+    await StatusBar.setStyle({ style: Style.Light });
 
     await this.pushService.initialize();
     await this.realtimeService.connect();

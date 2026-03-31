@@ -1,6 +1,6 @@
 ion-content {
   --background: transparent !important; /* Ensure content background is transparent to show global background */
-  --padding-bottom: 80px; /* або стільки, скільки висота твоїх табів */
+  --padding-bottom: calc(70px + env(safe-area-inset-bottom));
   --padding-top: 20px; /* Додано відступ зверху */
 }
 /*for header*/ 
@@ -10,10 +10,11 @@ ion-header {
 }
 
 .header-container {
-  background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
-  backdrop-filter: blur(10px); /* Frosted glass blur effect */
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
-  padding: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: calc(var(--ion-safe-area-top, 0px) + 10px) 16px 16px;
   color: white;
   transition: all 0.3s ease-out;
   border-bottom-left-radius: 20px;
