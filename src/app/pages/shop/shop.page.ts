@@ -6,7 +6,6 @@ import { IonBadge, IonListHeader, IonChip, IonLabel, IonThumbnail, ToastControll
 import { Location } from '@angular/common';
 import { addIcons } from 'ionicons';
 import { add, bagCheckOutline, callOutline, arrowBackOutline, chevronBackOutline } from 'ionicons/icons';
-import { IonicModule, LoadingController } from '@ionic/angular';
 import { ApiService } from '../../services/api';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
@@ -17,6 +16,7 @@ import { Router } from '@angular/router';
 
 //локалізація 
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { switchMap } from 'rxjs/operators';
 
 // Import Swiper modules
 import { register } from 'swiper/element/bundle';
@@ -43,11 +43,11 @@ export class ShopPage implements OnInit {
   shop:any;
   discounts:any;
   loading = true;
+  logoLoaded = false;
 
   constructor(
     private route: ActivatedRoute,
     private api: ApiService,
-    private loadingCtrl: LoadingController,
     private toastController: ToastController,
     private router: Router,
     private location: Location,
@@ -58,43 +58,7 @@ export class ShopPage implements OnInit {
   }
 
   ngOnInit() {
-
-    this.shop_id = this.route.snapshot.paramMap.get('id') || '';
-    if(this.shop_id){
-
-      this.api.getShopById(this.shop_id).subscribe({
-        next: async (res:any) => {
-          
-          if(typeof res.error != 'undefined'){
-            this.presentToast(res.error, 'danger');
-            this.router.navigate(['/tabs/tab1']);
-          }else{
-            this.shop = res. shop|| '';
-            this.shop_name = res.shop.shop_name;
-            this.shop_logo = res.shop.shop_logo;
-            this.shop_addresses = res.shop.shop_addresses;
-            this.shop_phones = res.shop.shop_phones;
-            this.shop_socials = res.shop.shop_socials;
-            this.shop_description = res.shop.shop_description;
-            this.discounts = res.discounts;
-
-          }
-          this.loading = false;
-          
-        },
-        error: async (err) => {
-          console.error('Помилка завантаження товару:', err);
-          this.presentToast(this.translate.instant('TEXT_ERROR_LOAD_DISCOUNT'), 'danger');
-          this.loading = false;
-        }
-      });
-
-      this.loading = false;
-    }else{
-      this.loading = false;
-    }
-
-  this.auth.getLanguage().then(lang_code => {
+    this.auth.getLanguage().then(lang_code => {
       if (lang_code !== null) {
         this.translate.use(lang_code);
       }else{
@@ -102,6 +66,49 @@ export class ShopPage implements OnInit {
       }
     });
 
+    this.route.paramMap.pipe(
+      switchMap((params) => {
+        this.shop_id = params.get('id') || '';
+        this.loading = true;
+        this.logoLoaded = false;
+        this.shop = null;
+        this.shop_name = '';
+        this.shop_logo = '';
+        this.shop_addresses = [];
+        this.shop_phones = [];
+        this.shop_socials = [];
+        this.shop_description = '';
+        this.discounts = [];
+        return this.api.getShopById(this.shop_id);
+      })
+    ).subscribe({
+      next: async (res: any) => {
+        if (typeof res.error !== 'undefined') {
+          this.presentToast(res.error, 'danger');
+          this.router.navigate(['/tabs/tab1']);
+        } else {
+          this.shop = res.shop || null;
+          this.shop_name = res.shop?.shop_name || '';
+          this.shop_logo = res.shop?.shop_logo || '';
+          this.shop_addresses = res.shop?.shop_addresses || [];
+          this.shop_phones = res.shop?.shop_phones || [];
+          this.shop_socials = res.shop?.shop_socials || [];
+          this.shop_description = res.shop?.shop_description || '';
+          this.discounts = res.discounts || [];
+
+          if (!this.shop_logo) {
+            this.logoLoaded = true;
+          }
+        }
+
+        this.loading = false;
+      },
+      error: async (err) => {
+        console.error('Помилка завантаження товару:', err);
+        this.presentToast(this.translate.instant('TEXT_ERROR_LOAD_DISCOUNT'), 'danger');
+        this.loading = false;
+      }
+    });
   }
 
 

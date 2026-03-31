@@ -162,23 +162,69 @@ ion-content {
 }
 div#my-qr {
     position: fixed;
-    top: 60px;
-    left: 0px;
-    width: 100%;
-    height: 100%;
-    background: transparent; /* Ensure background is transparent to show global background */
-    text-align: center;
-    padding: 30px;
+    inset: 0;
+    z-index: 1200;
+    display: grid;
+    place-items: center;
+    padding: 24px;
 }
+
+div#my-qr .qr-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(11, 13, 12, 0.74);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+div#my-qr .qr-sheet {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 420px);
+    padding: 20px 18px 18px;
+    border-radius: 24px;
+    background: rgba(48, 50, 49, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.28);
+    text-align: center;
+}
+
 div#my-qr span.close {
     position: absolute;
-    top: 30px;
-    right: 20px;
-    background: #F44336;
-    padding: 5px;
-    border-radius: 6px;
+    top: 14px;
+    right: 14px;
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #ff4b3e;
+    border-radius: 12px;
     color: #fff;
-    line-height: 1px;
+    line-height: 1;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+div#my-qr img {
+    display: block;
+    width: min(100%, 320px);
+    margin: 0 auto 14px;
+    padding: 14px;
+    border-radius: 22px;
+    background: #fff;
+}
+
+div#my-qr .notice {
+    margin: 0 44px 16px 0;
+    color: rgba(255, 255, 255, 0.82);
+    line-height: 1.45;
+}
+
+div#my-qr .text-code {
+    margin: 0;
+    color: #fff;
+    font-weight: 600;
+    letter-spacing: 0.03em;
 }
 img.discount-image.is_check_icon {
     max-width: 64px;

@@ -5,7 +5,6 @@ import { IonLabel, IonThumbnail, ToastController, IonFab, IonFabButton, IonConte
 import { Location } from '@angular/common';
 import { addIcons } from 'ionicons';
 import { add, bagCheckOutline, callOutline, arrowBackOutline, chevronBackOutline, chevronForwardOutline, mapOutline, calendarOutline, linkOutline, pricetag, pricetagOutline } from 'ionicons/icons';
-import { IonicModule, LoadingController } from '@ionic/angular';
 import { ApiService } from '../../services/api';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from 'src/app/services/auth.service';
@@ -15,6 +14,7 @@ import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { switchMap } from 'rxjs/operators';
 import { register } from 'swiper/element/bundle';
 register();
 
@@ -32,11 +32,11 @@ export class DiscountPage implements OnInit {
   discount: any = null;
   discount_name: any;
   loading = true;
+  firstImageLoaded = false;
 
   constructor(
     private route: ActivatedRoute,
     private api: ApiService,
-    private loadingCtrl: LoadingController,
     private toastController: ToastController,
     private router: Router,
     private location: Location,
@@ -47,28 +47,7 @@ export class DiscountPage implements OnInit {
       chevronForwardOutline, mapOutline, calendarOutline, linkOutline, pricetagOutline});
   }
 
-  async ngOnInit() {
-    this.discount_id = this.route.snapshot.paramMap.get('id') || '';
-    if (this.discount_id) {
-      const loader = await this.loadingCtrl.create({ message: 'Завантаження товару...' });
-      await loader.present();
-
-      this.api.getDiscountById(this.discount_id).subscribe({
-        next: async (res:any) => {
-          console.log('Товар:', res);
-          this.discount = res.discount || '';
-          this.discount_name = res.discount.name;
-          this.loading = false;
-          await loader.dismiss();
-        },
-        error: async (err) => {
-          console.error('Помилка завантаження товару:', err);
-          await loader.dismiss();
-          this.loading = false;
-        }
-      });
-    }
-    
+  ngOnInit() {
     this.auth.getLanguage().then(lang_code => {
       if (lang_code !== null) {
         this.translate.use(lang_code);
@@ -77,6 +56,28 @@ export class DiscountPage implements OnInit {
       }
     });
 
+    this.route.paramMap.pipe(
+      switchMap((params) => {
+        this.discount_id = params.get('id') || '';
+        this.loading = true;
+        this.discount = null;
+        this.firstImageLoaded = false;
+        return this.api.getDiscountById(this.discount_id);
+      })
+    ).subscribe({
+      next: (res: any) => {
+        this.discount = res?.discount || null;
+        this.discount_name = res?.discount?.name || '';
+        this.loading = false;
+        if (!this.discount?.images?.length) {
+          this.firstImageLoaded = true;
+        }
+      },
+      error: (err) => {
+        console.error('Помилка завантаження товару:', err);
+        this.loading = false;
+      }
+    });
   }
 
   addDiscountToMyList(discount_id:any){
@@ -116,6 +117,12 @@ export class DiscountPage implements OnInit {
 
   goBack() {
     this.location.back();
+  }
+
+  onHeroImageLoad(index: number) {
+    if (index === 0) {
+      this.firstImageLoaded = true;
+    }
   }
 
 }

@@ -1,68 +1,82 @@
-<ion-content class="ion-padding">
- <div class="close-auth"> 
-  <ion-buttons slot="end">
-    <ion-button color="light" (click)="goHome()"><ion-icon name="close-outline"></ion-icon></ion-button>
-  </ion-buttons>
-</div>
-  <ion-card *ngIf="isLoginMode">
+<ion-content class="auth-content">
+  <div class="auth-shell">
+    <div class="auth-sheet">
+      <div class="sheet-handle"></div>
 
-    <img src="assets/icon/logo/Logo_GreenLight_White_G.png" alt="GreenLight Logo" class="header-logo-img" />
+      <div class="close-auth"> 
+        <ion-buttons>
+          <ion-button color="light" (click)="goHome()"><ion-icon name="close-outline"></ion-icon></ion-button>
+        </ion-buttons>
+      </div>
 
-    <ion-item>
-      <ion-label position="floating">Email</ion-label>
-      <ion-input type="email" [(ngModel)]="loginData.username"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label position="floating">{{ 'TEXT_PASSWORD' | translate}}</ion-label>
-      <ion-input type="password" [(ngModel)]="loginData.password"></ion-input>
-    </ion-item>
+      <div class="auth-head">
+        <img src="assets/icon/logo/Logo_GreenLight_White_G.png" alt="GreenLight Logo" class="header-logo-img" />
+        <h1>{{ isLoginMode ? ('TEXT_LOG_IN' | translate) : ('TEXT_CREATE_ACCOUNT' | translate) }}</h1>
+        <p>{{ isLoginMode ? ('ENTER_TO_ACC' | translate) : ('TEXT_SIGN_UP' | translate) }}</p>
+      </div>
 
-    <ion-button expand="block" color="primary" (click)="onSubmit()" [disabled]="loading">
-      <ion-icon slot="start" name="log-in-outline"></ion-icon>
-      {{ 'TEXT_LOG_IN' | translate }}
-    </ion-button>
+      <ion-card *ngIf="isLoginMode">
+        <ion-item>
+          <ion-input type="email" [(ngModel)]="loginData.username" labelPlacement="floating">
+            <div slot="label">Email</div>
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input type="password" [(ngModel)]="loginData.password" labelPlacement="floating">
+            <div slot="label">{{ 'TEXT_PASSWORD' | translate}}</div>
+          </ion-input>
+        </ion-item>
 
-    <ion-button fill="clear" expand="block" (click)="toggleMode()">{{ 'TEXT_SIGN_UP' | translate }}</ion-button>
+        <ion-button expand="block" color="primary" (click)="onSubmit()" [disabled]="loading">
+          <ion-icon slot="start" name="log-in-outline"></ion-icon>
+          {{ 'TEXT_LOG_IN' | translate }}
+        </ion-button>
 
-    <ion-text color="danger" *ngIf="errorMessage">{{ errorMessage }}</ion-text>
+        <ion-button fill="clear" expand="block" (click)="toggleMode()">{{ 'TEXT_SIGN_UP' | translate }}</ion-button>
 
-    <ion-text color="medium">
-      <a (click)="openForgotPassword()">{{ 'TEXT_FORGOT_PASS' | translate }}</a>
-    </ion-text>
-  </ion-card>
+        <ion-text color="danger" *ngIf="errorMessage">{{ errorMessage }}</ion-text>
 
-  <ion-card *ngIf="!isLoginMode">
-    <ion-item class="register-header">
-      <h4>{{ 'TEXT_CREATE_ACCOUNT' | translate }}</h4>
-    </ion-item>
-    <ion-item>
-      <ion-label position="floating">{{ 'TEXT_FULLNAME' | translate }}</ion-label>
-      <ion-input type="text" [(ngModel)]="registerData.fullname"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label position="floating">Email</ion-label>
-      <ion-input type="email" [(ngModel)]="registerData.email"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label position="floating">{{ 'TEXT_REF_CODE' | translate }}</ion-label>
-      <ion-input type="text" [(ngModel)]="registerData.referral_code"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label position="floating">{{ 'TEXT_PASSWORD' | translate }}</ion-label>
-      <ion-input type="password" [(ngModel)]="registerData.password"></ion-input>
-    </ion-item>
-    <ion-item>
-      <ion-label position="floating">{{ 'TEXT_CONFIRM_PASSWORD' | translate }}</ion-label>
-      <ion-input type="password" [(ngModel)]="registerData.password_confirm"></ion-input>
-    </ion-item>
+        <ion-text color="medium" class="helper-link">
+          <a (click)="openForgotPassword()">{{ 'TEXT_FORGOT_PASS' | translate }}</a>
+        </ion-text>
+      </ion-card>
 
-    <ion-button expand="block" color="success" (click)="onSubmit()" [disabled]="loading">
-      <ion-icon slot="start" name="person-add-outline"></ion-icon>
-      {{ 'TEXT_REGISTER_BUTTON' | translate }}
-    </ion-button>
+      <ion-card *ngIf="!isLoginMode">
+        <ion-item>
+          <ion-input type="text" [(ngModel)]="registerData.fullname" labelPlacement="floating">
+            <div slot="label">{{ 'TEXT_FULLNAME' | translate }}</div>
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input type="email" [(ngModel)]="registerData.email" labelPlacement="floating">
+            <div slot="label">Email</div>
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input type="text" [(ngModel)]="registerData.referral_code" labelPlacement="floating">
+            <div slot="label">{{ 'TEXT_REF_CODE' | translate }}</div>
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input type="password" [(ngModel)]="registerData.password" labelPlacement="floating">
+            <div slot="label">{{ 'TEXT_PASSWORD' | translate }}</div>
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-input type="password" [(ngModel)]="registerData.password_confirm" labelPlacement="floating">
+            <div slot="label">{{ 'TEXT_CONFIRM_PASSWORD' | translate }}</div>
+          </ion-input>
+        </ion-item>
 
-    <ion-button fill="clear" expand="block" (click)="toggleMode()">{{ 'TEXT_LOG_IN' | translate }}</ion-button>
+        <ion-button expand="block" color="success" (click)="onSubmit()" [disabled]="loading">
+          <ion-icon slot="start" name="person-add-outline"></ion-icon>
+          {{ 'TEXT_REGISTER_BUTTON' | translate }}
+        </ion-button>
 
-    <ion-text color="danger" *ngIf="errorMessage">{{ errorMessage }}</ion-text>
-  </ion-card>
+        <ion-button fill="clear" expand="block" (click)="toggleMode()">{{ 'TEXT_LOG_IN' | translate }}</ion-button>
+
+        <ion-text color="danger" *ngIf="errorMessage">{{ errorMessage }}</ion-text>
+      </ion-card>
+    </div>
+  </div>
 </ion-content>

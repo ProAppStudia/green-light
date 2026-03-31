@@ -1,37 +1,152 @@
+.auth-content {
+  --background: transparent;
+}
+
+.auth-shell {
+  min-height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding: calc(var(--ion-safe-area-top, 0px) + 12px) 12px calc(12px + var(--ion-safe-area-bottom, 0px));
+}
+
+.auth-sheet {
+  width: min(100%, 520px);
+  max-height: 100%;
+  overflow: auto;
+  border-radius: 28px;
+  background:
+    linear-gradient(180deg, rgba(73, 73, 73, 0.96) 0%, rgba(44, 44, 44, 0.98) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  backdrop-filter: blur(18px);
+  padding: 10px 14px 16px;
+}
+
+.sheet-handle {
+  width: 44px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.28);
+  margin: 2px auto 10px;
+}
+
+.auth-head {
+  text-align: center;
+  padding: 4px 8px 12px;
+}
+
+.auth-head h1 {
+  margin: 0;
+  color: #fff;
+  font-size: 1.7rem;
+  font-weight: 800;
+  line-height: 1.05;
+}
+
+.auth-head p {
+  margin: 8px 0 0;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.98rem;
+}
+
 ion-card {
-    padding: 25px;
-    border-radius: 15px;
-    margin: 25px;
-    background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
-    backdrop-filter: blur(10px); /* Frosted glass blur effect */
-    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
-    box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2); /* Adjusted shadow */
+  padding: 22px 18px 18px;
+  border-radius: 22px;
+  margin: 0;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: none;
 }
-ion-content {
-  --background: transparent; /* Ensure content background is transparent to show global background */
-}
+
 .close-auth {
-    display: flex;
-    justify-content: end;
+  display: flex;
+  justify-content: end;
+  margin-bottom: 4px;
 }
-ion-item.item {
-    margin-bottom: 10px;
-    border-radius: 10px;
+
+.close-auth ion-button {
+  --background: rgba(255, 255, 255, 0.08);
+  --background-hover: rgba(255, 255, 255, 0.14);
+  --background-focused: rgba(255, 255, 255, 0.14);
+  --background-activated: rgba(255, 255, 255, 0.14);
+  --border-radius: 14px;
+  --border-width: 1px;
+  --border-style: solid;
+  --border-color: rgba(255, 255, 255, 0.08);
+  width: 42px;
+  height: 42px;
+  margin: 0;
 }
+
+ion-item {
+  margin-bottom: 12px;
+  border-radius: 14px;
+  --background: rgba(255, 255, 255, 0.06);
+  --border-color: transparent;
+  --highlight-color-focused: rgba(47, 199, 76, 0.8);
+  --padding-start: 12px;
+  --padding-end: 12px;
+  --min-height: 52px;
+  --inner-padding-end: 8px;
+  backdrop-filter: blur(8px);
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+ion-item:focus-within {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(47, 199, 76, 0.4);
+  transform: translateY(-1px);
+}
+
+ion-label[position='floating'] {
+  color: rgba(255, 255, 255, 0.68) !important;
+  font-weight: 500;
+}
+
+ion-input {
+  --color: #fff;
+  --placeholder-color: rgba(255, 255, 255, 0.45);
+
+  font-size: 0.98rem;
+}
+
 img.header-logo-img {
-    margin-bottom: 35px;
-    max-width: 200px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
+  margin-bottom: 22px;
+  max-width: 180px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
-ion-item.register-header {
-    background: transparent;
-    --background: transparent;
-    color: #fff;
-    text-align: center;
+
+ion-button[expand='block'] {
+  min-height: 48px;
+  --border-radius: 14px;
+  font-weight: 700;
+  margin-top: 6px;
 }
-ion-item.register-header h4 {
-    width: 100%;
-    text-align: center;
+
+.helper-link {
+  display: block;
+  text-align: center;
+  margin-top: 10px;
+}
+
+.helper-link a {
+  color: rgba(255, 255, 255, 0.68);
+  text-decoration: none;
+}
+
+@media (min-width: 768px) {
+  .auth-shell {
+    align-items: center;
+    padding: 24px;
+  }
+
+  .auth-sheet {
+    border-radius: 30px;
+  }
 }

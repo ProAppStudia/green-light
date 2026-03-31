@@ -122,7 +122,58 @@ span.btn-link.btn-danger {
 }
 
 ion-content {
-  --padding-bottom: calc(70px + env(safe-area-inset-bottom));
+  --padding-bottom: calc(110px + env(safe-area-inset-bottom));
+}
+
+.profile-scroll-body {
+  padding-bottom: calc(36px + env(safe-area-inset-bottom));
+}
+
+.guest-profile {
+  min-height: calc(100vh - 220px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 0 calc(24px + env(safe-area-inset-bottom));
+}
+
+.guest-card {
+  width: 100%;
+  max-width: 420px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 22px;
+  padding: 28px 20px;
+  box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.2);
+}
+
+.guest-card h2 {
+  margin: 0 0 10px;
+  color: #fff;
+  font-size: 1.6rem;
+}
+
+.guest-card p {
+  margin: 0 0 22px;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.guest-icon {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 18px;
+  border-radius: 22px;
+  display: grid;
+  place-items: center;
+  background: rgba(47, 199, 76, 0.16);
+  border: 1px solid rgba(47, 199, 76, 0.32);
+}
+
+.guest-icon ion-icon {
+  color: #2fc74c;
+  font-size: 2rem;
 }
 
 .dark-bg > h4:first-child {
@@ -277,7 +328,7 @@ ion-content {
     margin-top: 0px;
 }
 ion-content {
-  --padding-bottom: calc(70px + env(safe-area-inset-bottom));
+  --padding-bottom: calc(110px + env(safe-area-inset-bottom));
 }
 /*for header*/ 
 ion-header {

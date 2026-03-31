@@ -9,7 +9,7 @@ import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { map, switchMap, startWith } from 'rxjs/operators';
 import { Preferences } from '@capacitor/preferences';
 import { FormsModule } from '@angular/forms';
-import { ToastController, IonicModule, ViewWillEnter } from '@ionic/angular';
+import { ToastController, IonicModule, NavController } from '@ionic/angular';
 import { ApiService } from '../services/api';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
@@ -73,6 +73,7 @@ export class Tab3Page {
     private api: ApiService,
     private menu: MenuController,
     private router: Router,
+    private navCtrl: NavController,
     private auth: AuthService,
     private toastCtrl: ToastController,
     private translate: TranslateService,
@@ -283,7 +284,7 @@ hideInfo(){
   }
 
   openAuth() {
-    this.router.navigate(['/auth'], { replaceUrl: true });
+    this.navCtrl.navigateForward('/auth', { animated: false });
   }
 
   //for header

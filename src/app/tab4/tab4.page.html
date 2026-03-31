@@ -15,7 +15,8 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="ion-padding">
-  
+  <ng-container *ngIf="is_auth_user; else guestProfile">
+  <div class="profile-scroll-body">
   <div *ngIf="currentView === 'main'">
   <div class="my-earnings" *ngIf="is_active_user">
     <div class="hello-text">
@@ -279,11 +280,22 @@
       </ion-button>
     </div>
   </div>
-  <div class="need-auth" *ngIf="!is_auth_user">
-    <ion-button (click)="openAuth()" expand="block" color="primary"> <ion-icon name="log-in-outline"></ion-icon>
-      {{ 'ENTER_TO_ACC' | translate }}
-    </ion-button>  
   </div>
-  
-   
+  </ng-container>
+
+  <ng-template #guestProfile>
+    <div class="guest-profile">
+      <div class="guest-card">
+        <div class="guest-icon">
+          <ion-icon name="person-outline"></ion-icon>
+        </div>
+        <h2>{{ 'ENTER_TO_ACC' | translate }}</h2>
+        <p>{{ 'TEXT_LOG_IN' | translate }} / {{ 'TEXT_SIGN_UP' | translate }}</p>
+        <ion-button (click)="openAuth()" expand="block" color="primary">
+          <ion-icon slot="start" name="log-in-outline"></ion-icon>
+          {{ 'TEXT_LOG_IN' | translate }}
+        </ion-button>
+      </div>
+    </div>
+  </ng-template>
 </ion-content>

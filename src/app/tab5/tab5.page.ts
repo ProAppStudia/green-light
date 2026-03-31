@@ -1,19 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import { IonListHeader,IonItem, IonList, IonPopover, IonLabel, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonButton, IonIcon,MenuController } from '@ionic/angular/standalone';
-import { ExploreContainerComponent } from '../explore-container/explore-container.component';
+import { Component } from '@angular/core';
+import { IonHeader, IonContent, IonButton, IonIcon, MenuController } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { addOutline, chevronForwardOutline, closeOutline, copyOutline, language, languageOutline, logInOutline, mapOutline, menuOutline, notifications, notificationsOutline, openOutline, removeOutline, settingsOutline, walletOutline } from 'ionicons/icons';
-import { FormsModule } from '@angular/forms';
+import { addOutline, arrowForwardOutline, chevronForwardOutline, closeOutline, copyOutline, diamondOutline, language, languageOutline, logInOutline, mapOutline, menuOutline, notificationsOutline, openOutline, peopleOutline, removeOutline, rocketOutline, settingsOutline, storefrontOutline, walletOutline } from 'ionicons/icons';
 import { CommonModule } from '@angular/common';
 
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ApiService } from '../services/api';
 import { AuthService } from 'src/app/services/auth.service';
-import { Router } from '@angular/router';
-import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
-import { map, switchMap, startWith } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { Preferences } from '@capacitor/preferences';
-import { ToastController, AlertController, ViewWillEnter } from '@ionic/angular';
+import { ToastController, AlertController, NavController } from '@ionic/angular';
 
 //локалізація 
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -22,7 +17,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   selector: 'app-tab5',
   templateUrl: 'tab5.page.html',
   styleUrls: ['tab5.page.scss'],
-  imports: [IonListHeader,TranslateModule, CommonModule, IonLabel, IonList, IonItem, IonPopover,IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonButton, IonIcon, ExploreContainerComponent]
+  imports: [TranslateModule, CommonModule, IonHeader, IonContent, IonButton, IonIcon]
 })
 export class Tab5Page {
   //for header 
@@ -61,13 +56,13 @@ export class Tab5Page {
   constructor(
     private api: ApiService,
     private menu: MenuController,
-    private router: Router,
+    private navCtrl: NavController,
     private auth: AuthService,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
     private translate: TranslateService
   ) {
-    addIcons({ settingsOutline,copyOutline,closeOutline,chevronForwardOutline,walletOutline,openOutline,language, logInOutline, languageOutline, mapOutline, menuOutline,notificationsOutline, addOutline, removeOutline});
+    addIcons({ settingsOutline, copyOutline, closeOutline, chevronForwardOutline, walletOutline, openOutline, language, logInOutline, languageOutline, mapOutline, menuOutline, notificationsOutline, addOutline, removeOutline, diamondOutline, peopleOutline, arrowForwardOutline, storefrontOutline, rocketOutline });
      //translate.setDefaultLang('ua');
      translate.use('ua');
      this.fullname = this.translate.instant('TEXT_USER');
@@ -248,7 +243,7 @@ openRefDescription(){
 }
 
 openAuth(){
-  this.router.navigate(['/auth'], { replaceUrl: true });
+  this.navCtrl.navigateForward('/auth', { animated: false });
 }
 
 copy(text:any){

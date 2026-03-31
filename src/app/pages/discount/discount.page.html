@@ -1,13 +1,27 @@
-<ion-content [fullscreen]="true" *ngIf="!loading; else loadingTpl" class="ion-padding">
-<ion-button fill="clear" class="back-btn" (click)="goBack()">
-    <ion-icon name="arrow-back-outline"></ion-icon>
-  </ion-button>
-<span *ngIf="discount.percent" class="sale-badge">
-  {{ 'TEXT_SALE' | translate }}<br> <span>-{{ discount.percent }}%</span>
-</span>
+<ion-header class="ion-no-border" *ngIf="!loading && discount">
+  <div class="discount-header">
+    <ion-button fill="clear" class="back-btn" (click)="goBack()">
+      <ion-icon name="arrow-back-outline"></ion-icon>
+    </ion-button>
+    <div class="header-title-wrap">
+      <span class="header-kicker">{{ 'TEXT_SALES' | translate }}</span>
+      <h1>{{ discount.name }}</h1>
+    </div>
+  </div>
+</ion-header>
+
+<ion-content class="discount-content" *ngIf="!loading; else loadingTpl">
+  <ng-template #notFound>
+    <p class="ion-text-center page-state">{{ 'TEXT_DISCOUNT_NOT_FOUND' | translate }}</p>
+  </ng-template>
+
   <ng-container *ngIf="discount; else notFound">
 
-  <div class="slider-wrapper" *ngIf="discount.images">
+    <div class="slider-wrapper" *ngIf="discount.images?.length" [class.hero-ready]="firstImageLoaded">
+      <div class="hero-placeholder"></div>
+      <span *ngIf="discount.percent" class="sale-badge">
+        {{ 'TEXT_SALE' | translate }}<br> <span>-{{ discount.percent }}%</span>
+      </span>
       <swiper-container
         slides-per-view="1"
         centered-slides="true"
@@ -18,8 +32,14 @@
         loop="true"
         style="--swiper-pagination-color: #fff;"
       >
-        <swiper-slide *ngFor="let image of discount.images">
-          <img [src]="image" class="slide-image" alt="{{ discount.name }}" />
+        <swiper-slide *ngFor="let image of discount.images; let index = index">
+          <img
+            [src]="image"
+            class="slide-image"
+            alt="{{ discount.name }}"
+            [attr.loading]="index === 0 ? 'eager' : 'lazy'"
+            (load)="onHeroImageLoad(index)"
+          />
         </swiper-slide>
       </swiper-container>
 
@@ -35,59 +55,58 @@
     </div>
 
 
-    <ion-card class="card-about">
+    <div class="page-content">
+      <ion-card class="card-about">
 
-      <ion-card-header>
-        <ion-card-title>{{ discount.name }}</ion-card-title>
-        <ion-card-subtitle>
-          <span *ngIf="discount.category_id" (click)="openCategory(discount.category_id)" class="category-link"><ion-icon name="link-outline"></ion-icon> {{ discount.category }}</span>
-          <span *ngIf="discount.shop_name" class="shop_name_top"><ion-icon name="pricetag-outline"></ion-icon> {{ discount.shop_name }}</span>
-        </ion-card-subtitle>
-        <ion-card-subtitle></ion-card-subtitle>
-      </ion-card-header>
-      <ion-card-content>
-        <p *ngIf="discount.address" class="with-icon-text"><ion-icon name="map-outline"></ion-icon> {{ discount.address }}</p>
-        <p *ngIf="discount.date_end" class="with-icon-text"><ion-icon name="calendar-outline"></ion-icon> {{ 'TEXT_DISCOUNT_PERIOD' | translate }}: {{ discount.date_start }} - {{ discount.date_end }}</p>
-        <p [innerHTML]="discount.description"></p>
-      </ion-card-content>
-    </ion-card>
+        <ion-card-header>
+          <ion-card-title>{{ discount.name }}</ion-card-title>
+          <ion-card-subtitle>
+            <span *ngIf="discount.category_id" (click)="openCategory(discount.category_id)" class="category-link"><ion-icon name="link-outline"></ion-icon> {{ discount.category }}</span>
+            <span *ngIf="discount.shop_name" class="shop_name_top"><ion-icon name="pricetag-outline"></ion-icon> {{ discount.shop_name }}</span>
+          </ion-card-subtitle>
+          <ion-card-subtitle></ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          <p *ngIf="discount.address" class="with-icon-text"><ion-icon name="map-outline"></ion-icon> {{ discount.address }}</p>
+          <p *ngIf="discount.date_end" class="with-icon-text"><ion-icon name="calendar-outline"></ion-icon> {{ 'TEXT_DISCOUNT_PERIOD' | translate }}: {{ discount.date_start }} - {{ discount.date_end }}</p>
+          <p [innerHTML]="discount.description"></p>
+        </ion-card-content>
+      </ion-card>
+  
+      <ng-container *ngIf="discount.shop_id">
+        <ion-card class="card-shop">
+          <img class="shop-logo" *ngIf="discount.shop_logo" [src]="discount.shop_logo" alt="{{ discount.shop_name }}">
+          <ion-card-header>
+            <ion-card-title>{{ discount.shop_name }}</ion-card-title>
+            <ion-card-subtitle>{{ discount.shop_addresses }}</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="shop-phones">
+              <ion-chip *ngFor="let phone of discount.shop_phones">
+                <ion-icon name="call-outline"></ion-icon>
+                <ion-label><a class="link" href="tel:{{ phone }}">{{ phone }}</a></ion-label>
+              </ion-chip>
+            </div>
+            <ion-button (click)="openShop(discount.shop_id)" fill="outline" expand="block">
+              <ion-icon slot="start" name="bag-check-outline"></ion-icon>
+              {{ 'TEXT_GO_TO_SHOP' | translate }}</ion-button>
+          </ion-card-content>
+        </ion-card>
+      </ng-container>
+    </div>
+
+    <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+      <ion-fab-button (click)="addDiscountToMyList(discount.discount_id)">
+        <ion-icon name="add"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+
   </ng-container>
- 
-  <ng-container *ngIf="discount.shop_id; else notFound">
-    <ion-card class="card-shop">
-      <img class="shop-logo" *ngIf="discount.shop_logo" [src]="discount.shop_logo" alt="{{ discount.shop_name }}">
-      <ion-card-header>
-        <ion-card-title>{{ discount.shop_name }}</ion-card-title>
-        <ion-card-subtitle>{{ discount.shop_addresses }}</ion-card-subtitle>
-      </ion-card-header>
-      <ion-card-content>
-        <div class="shop-phones">
-        <ion-chip *ngFor="let phone of discount.shop_phones">
-          <ion-icon name="call-outline"></ion-icon>
-          <ion-label><a class="link" href="tel:{{ phone }}">{{ phone }}</a></ion-label>
-        </ion-chip>
-      </div>
-        <ion-button (click)="openShop(discount.shop_id)" fill="outline" expand="block">
-          <ion-icon slot="start" name="bag-check-outline"></ion-icon>
-          {{ 'TEXT_GO_TO_SHOP' | translate }}</ion-button>
-      </ion-card-content>
-    </ion-card>
-  </ng-container>
-
-<ion-fab slot="fixed" vertical="bottom" horizontal="end">
-  <ion-fab-button (click)="addDiscountToMyList(discount.discount_id)">
-    <ion-icon name="add"></ion-icon>
-  </ion-fab-button>
-</ion-fab>
-
-  <ng-template #notFound>
-    <p class="ion-text-center">{{ 'TEXT_DISCOUNT_NOT_FOUND' | translate }}</p>
-  </ng-template>
 
 </ion-content>
 
 <ng-template #loadingTpl>
-  <ion-content class="ion-padding ion-text-center">
+  <ion-content class="discount-content ion-padding ion-text-center loading-content">
     <ion-spinner name="crescent"></ion-spinner>
     <p>{{ 'TEXT_LOADING' | translate }}</p>
   </ion-content>

@@ -7,8 +7,6 @@ import {
   IonHeader,
   IonToolbar,
   IonTitle,
-  IonList,
-  IonItem,
   IonLabel,
   IonButton,
   IonSpinner,
@@ -19,17 +17,15 @@ import {
   IonCardSubtitle,
   IonButtons,
   IonIcon,
-  IonPopover,
   MenuController
 } from '@ionic/angular/standalone';
 import { ApiService } from 'src/app/services/api';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
 import { addIcons } from 'ionicons';
-import { gridOutline, listOutline, languageOutline, mapOutline, notificationsOutline, menuOutline } from 'ionicons/icons';
+import { gridOutline, listOutline, languageOutline, mapOutline, notificationsOutline, menuOutline, searchOutline } from 'ionicons/icons';
 //for header
-import { Observable, BehaviorSubject, combineLatest, forkJoin, of } from 'rxjs';
-import { map, switchMap, startWith, tap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 //end header
 //локалізація 
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -45,8 +41,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     IonHeader,
     IonToolbar,
     IonTitle,
-    IonList,
-    IonItem,
     IonLabel,
     IonButton,
     IonSpinner,
@@ -58,7 +52,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
     IonCardSubtitle,
     IonButtons,
     IonIcon,
-    IonPopover,
     TranslateModule
   ],
 })
@@ -77,15 +70,18 @@ export class CategoryPage implements OnInit {
   //end for header
   categoryId: string | any;
   searchQuery: string | null = null;
+  keyword = '';
   viewMode: 'grid' | 'list' = 'list'; // за замовчуванням 1 у ряд
 
   products: any[] = [];
+  filteredProducts: any[] = [];
   page = 1;
   totalPages = 1;
   limit = 10;
   isLoading = false;
   categoryTitle = '';
   total_discounts = 0;
+  filteredCount = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -95,7 +91,7 @@ export class CategoryPage implements OnInit {
     private auth: AuthService,
     private translate: TranslateService
   ) {
-    addIcons({listOutline, gridOutline, languageOutline, mapOutline, notificationsOutline, menuOutline});
+    addIcons({listOutline, gridOutline, languageOutline, mapOutline, notificationsOutline, menuOutline, searchOutline});
     translate.use('ua');
   }
 
@@ -160,6 +156,9 @@ export class CategoryPage implements OnInit {
 
   resetAndLoad() {
     this.products = [];
+    this.filteredProducts = [];
+    this.filteredCount = 0;
+    this.keyword = '';
     this.page = 1;
     this.totalPages = 1;
     this.loadProducts();
@@ -178,18 +177,43 @@ export class CategoryPage implements OnInit {
               this.categoryTitle = res.name || this.translate.instant('TEXT_RESULTS');
               this.totalPages = res.total_pages || 1;
               this.total_discounts = res.discounts_count || 0;
+              this.applySearchFilter();
             }
           },
           error: (err) => {
             console.error('❌ Помилка HTTP:', err);
+            this.isLoading = false;
           },
+          complete: () => {
+            this.isLoading = false;
+          }
         });
       } catch (e) {
         console.error('Помилка завантаження:', e);
-      }finally {
-         this.isLoading = false;
+        this.isLoading = false;
       }
     }
+  }
+
+  searchByKeyword(event: Event) {
+    const value = String((event.target as HTMLInputElement).value ?? '');
+    this.keyword = value;
+    this.applySearchFilter();
+  }
+
+  applySearchFilter() {
+    const query = this.keyword.trim().toLowerCase();
+    this.filteredProducts = query
+      ? this.products.filter((discount: any) => {
+          const haystack = [discount?.name, discount?.category]
+            .filter(Boolean)
+            .join(' ')
+            .toLowerCase();
+          return haystack.includes(query);
+        })
+      : [...this.products];
+
+    this.filteredCount = query ? this.filteredProducts.length : this.total_discounts || this.filteredProducts.length;
   }
 
   toggleView(mode: 'grid' | 'list') {

@@ -1,95 +1,106 @@
-<ion-content [fullscreen]="true" *ngIf="!loading; else loadingTpl">
-<ion-button fill="clear" class="back-btn" (click)="goBack()">
-    <ion-icon name="arrow-back-outline"></ion-icon>
-  </ion-button>
-
-  <div class="shop-header ion-text-center ion-padding">
-    <img
-      [src]="shop_logo"
-      alt="{{ shop_name }}"
-      class="shop-logo"
-    />
-    <h2>{{ shop_name  }}</h2>
-    <p class="shop-address"> {{ shop_addresses }}</p>
-
-    <div class="shop-phones">
-      <ion-chip *ngFor="let phone of shop_phones">
-        <ion-icon name="call-outline"></ion-icon>
-        <ion-label><a class="link" href="tel:{{ phone }}">{{ phone }}</a></ion-label>
-      </ion-chip>
-    </div>
-
-    <!-- Соцмережі -->
-    <div *ngIf="shop_socials?.length" class="shop-socials ion-margin-top">
-      <h4>{{ shop_name }} {{ 'TEXT_IN_SOCIALS' | translate }}:</h4>
-      <div class="links">
-      <ion-button
-        *ngFor="let social of shop_socials"
-        fill="clear"
-        size="small"
-        [href]="social.url"
-        target="_blank"
-      >
-      <img *ngIf="social.image" src="{{social.image}}" class="social-icon">
-      </ion-button>
-     </div>
+<ion-header class="ion-no-border" *ngIf="!loading && shop_name">
+  <div class="shop-page-header">
+    <ion-button fill="clear" class="back-btn" (click)="goBack()">
+      <ion-icon name="arrow-back-outline"></ion-icon>
+    </ion-button>
+    <div class="header-title-wrap">
+      <span class="header-kicker">{{ 'TEXT_TAB_2' | translate }}</span>
+      <h1>{{ shop_name }}</h1>
     </div>
   </div>
+</ion-header>
 
-  <!-- Опис магазину -->
-  <ion-card>
-    <ion-card-content>
-      <div [innerHTML]="shop_description"></div>
-    </ion-card-content>
-  </ion-card>
+<ion-content class="shop-content" *ngIf="!loading; else loadingTpl">
+  <ng-template #notFound>
+    <p class="ion-text-center page-state">{{ 'TEXT_SHOP_NOT_FOUND' | translate }}</p>
+  </ng-template>
 
-  <!-- Знижки -->
-  <ion-list *ngIf="discounts?.length">
-    <ion-list-header>
-      <ion-label>{{ 'TEXT_SPECIALS_ITEMS' | translate }}</ion-label>
-    </ion-list-header>
+  <ng-container *ngIf="shop_name; else notFound">
+    <div class="shop-hero">
+      <div class="shop-hero-glow"></div>
+      <div class="shop-header ion-text-center">
+        <div class="shop-logo-shell" [class.loaded]="logoLoaded || !shop_logo">
+          <div class="shop-logo-placeholder" *ngIf="shop_logo"></div>
+          <img
+            [src]="shop_logo"
+            alt="{{ shop_name }}"
+            class="shop-logo"
+            (load)="logoLoaded = true"
+          />
+        </div>
+        <h2>{{ shop_name }}</h2>
+        <p class="shop-address"> {{ shop_addresses }}</p>
 
-  <!----->
-  <div class="slider-wrapper" *ngIf="discounts">
-    <swiper-container
-      slides-per-view="auto"
-      centered-slides="true"
-      space-between="10"
-      pagination='{"el": ".swiper-pagination", "clickable": true}'
-      autoplay="true"
-      autoplay-delay="3000"
-      loop="true"
-      initial-slide="1">
-      <swiper-slide *ngFor="let discount of discounts">
-        <ion-card class="slide-card">
-          <img [src]="discount.image" class="slide-image" />
-          <div class="discount-badge">{{ discount.percent_raw }}% {{ 'TEXT_SALE' | translate }}</div>
-          <ion-card-header>
-            <ion-card-title>{{ discount.name }}</ion-card-title>
-            <ion-card-subtitle>{{ discount.address }}</ion-card-subtitle>
-          </ion-card-header>
-          <ion-card-content>
-            <ion-button (click)="openDiscount(discount.discount_id)" expand="block" fill="solid" color="primary">
-              {{ 'TEXT_OPEN' | translate }}
+        <div class="shop-phones">
+          <ion-chip *ngFor="let phone of shop_phones">
+            <ion-icon name="call-outline"></ion-icon>
+            <ion-label><a class="link" href="tel:{{ phone }}">{{ phone }}</a></ion-label>
+          </ion-chip>
+        </div>
+
+        <div *ngIf="shop_socials?.length" class="shop-socials ion-margin-top">
+          <h4>{{ shop_name }} {{ 'TEXT_IN_SOCIALS' | translate }}:</h4>
+          <div class="links">
+            <ion-button
+              *ngFor="let social of shop_socials"
+              fill="clear"
+              size="small"
+              [href]="social.url"
+              target="_blank"
+            >
+              <img *ngIf="social.image" src="{{social.image}}" class="social-icon">
             </ion-button>
-          </ion-card-content>
-        </ion-card>
-      </swiper-slide>
-    </swiper-container>
-    <div class="swiper-pagination"></div>
-  </div>
-  <!----->
+          </div>
+        </div>
+      </div>
+    </div>
 
-  </ion-list>
+    <div class="page-content">
+      <ion-card>
+        <ion-card-content>
+          <div [innerHTML]="shop_description"></div>
+        </ion-card-content>
+      </ion-card>
+
+      <section class="shop-discounts" *ngIf="discounts?.length">
+        <div class="shop-discounts-header">
+          <ion-label>{{ 'TEXT_SPECIALS_ITEMS' | translate }}</ion-label>
+        </div>
+
+        <div class="slider-wrapper">
+          <swiper-container
+            slides-per-view="auto"
+            centered-slides="true"
+            space-between="10"
+            pagination="true"
+            autoplay="true"
+            autoplay-delay="3000"
+            loop="true"
+            initial-slide="0">
+            <swiper-slide *ngFor="let discount of discounts">
+              <ion-card class="slide-card">
+                <img [src]="discount.image" class="slide-image" [alt]="discount.name" loading="lazy" />
+                <div class="discount-badge">-{{ discount.percent_raw }}%</div>
+                <ion-card-header>
+                  <ion-card-title>{{ discount.name }}</ion-card-title>
+                  <ion-card-subtitle>{{ discount.address }}</ion-card-subtitle>
+                </ion-card-header>
+                <ion-card-content>
+                  <ion-button (click)="openDiscount(discount.discount_id)" expand="block" fill="solid" color="primary">
+                    {{ 'TEXT_OPEN' | translate }}
+                  </ion-button>
+                </ion-card-content>
+              </ion-card>
+            </swiper-slide>
+          </swiper-container>
+        </div>
+      </section>
+    </div>
+  </ng-container>
 </ion-content>
 
-
-<ng-template #notFound>
-    <p class="ion-text-center">{{ 'TEXT_SHOP_NOT_FOUND' | translate }}</p>
-</ng-template>
-
 <ng-template #loadingTpl>
-  <ion-content class="ion-padding ion-text-center">
+  <ion-content class="shop-content ion-padding ion-text-center loading-content">
     <ion-spinner name="crescent"></ion-spinner>
     <p>{{ 'TEXT_LOADING' | translate }}</p>
   </ion-content>

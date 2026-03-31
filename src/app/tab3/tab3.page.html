@@ -133,14 +133,15 @@
   </ion-card>
 
   <div id="my-qr" *ngIf="is_show_qr">
-    <span (click)="showMyQr()" class="close">
-      <ion-icon name="close-outline"></ion-icon>
-    </span>
-    <p *ngIf="my_qr_code_notice" class="notice">{{ my_qr_code_notice }}</p>
-
-    <img src="{{ my_qr_code_url }}" >
-
-    <p class="text-code">{{ my_qr_code_text }}</p>
+    <div class="qr-overlay" (click)="showMyQr()"></div>
+    <div class="qr-sheet">
+      <span (click)="showMyQr()" class="close">
+        <ion-icon name="close-outline"></ion-icon>
+      </span>
+      <p *ngIf="my_qr_code_notice" class="notice">{{ my_qr_code_notice }}</p>
+      <img src="{{ my_qr_code_url }}" alt="My QR code">
+      <p class="text-code">{{ my_qr_code_text }}</p>
+    </div>
   </div>
 
   </div><!-- /is_auth_user -->

@@ -2,32 +2,28 @@
   <div class="header-container" [class.hidden]="hideHeader" [class.scrolled]="isScrolled">
     <div class="header-top">
       <img src="assets/icon/logo/Logo_GreenLight_White_G.png" alt="GreenLight Logo" class="header-logo-img" />
-      <div class="header-icons">
-       
-        
-        <ion-button (click)="openMenu()">
-          <ion-icon slot="icon-only" name="menu-outline"></ion-icon>
-        </ion-button>
-      </div>
     </div>
   </div>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="ion-padding animated-background" [style.--padding-top]="head_height + 'px'">
-  <div class="need-pay" *ngIf="!is_active_user">
-    <img src="assets/icon/tab5_icon_emoji.svg" alt="Buy plan icon" class="buy-plan-img" />
-    <div class="text-buy">
-      <p>{{ 'BUY_PLAN_TO_START' | translate }}</p>
-      <ion-button (click)="openRefDescription()" expand="block" color="primary" slot="center" class="ion-margin-top">
-        {{ 'ABOUT_REF_PROG' | translate }}
+<ion-content [fullscreen]="true" [scrollEvents]="true" (ionScroll)="onScroll($event)" class="ion-padding tab5-content animated-background">
+  <div class="animated-orbs" aria-hidden="true"></div>
+  <div class="guest-hero-card" *ngIf="!is_active_user">
+    <div class="guest-hero-copy">
+      <span class="guest-eyebrow">Green Light Coin</span>
+      <h3>Почни свій шлях у GLC</h3>
+      <p>Дізнайся, як працює Green Light Coin, як отримати свої перші 1000 GLC і які можливості відкриються далі.</p>
+    </div>
+    <div class="guest-hero-actions">
+      <ion-button (click)="openCryptoDescription()" expand="block" color="primary" class="guest-secondary-button">
+        Про Green Light Coin
         <ion-icon name="chevron-forward-outline"></ion-icon>
       </ion-button>
+      <ion-button *ngIf="!is_auth_user" (click)="openAuth()" expand="block" color="primary" class="guest-primary-button">
+        <ion-icon name="log-in-outline"></ion-icon>
+        {{ 'ENTER_TO_ACC' | translate }}
+      </ion-button>
     </div>
-  </div>
-  <div class="need-auth" *ngIf="!is_auth_user">
-    <ion-button (click)="openAuth()" expand="block" color="primary"> <ion-icon name="log-in-outline"></ion-icon>
-      {{ 'ENTER_TO_ACC' | translate }}
-    </ion-button>  
   </div>
   
   <div class="my-earnings" *ngIf="is_active_user">
@@ -36,43 +32,42 @@
       <span>{{ 'HELLO' | translate }}, {{ fullname }}!</span></div>
     <div class="card-top">
       <div class="balance-top">
-        <span class="text-amount">{{ 'YOUR_BALANCE' | translate }}</span>
-        <span class="amount">{{ my_balance }} {{ plan_currency }}</span>
+        <span class="text-amount">
+          <span class="text-amount-1">
+            <ion-icon name="diamond-outline"></ion-icon> Green Light Coin
+          </span>
+          <span class="withdwor">
+            <ion-button (click)="openCryptoDescription()" class="menu-button-payout">
+              Детальніше
+              <ion-icon name="arrow-forward-outline" class="strelka"></ion-icon>
+            </ion-button>
+          </span>
+        </span>
+        <span class="amount">{{ glc_balance }} {{ glc_coin_symbol }}</span>
+        <span class="exchange-rate">1000 {{ glc_coin_symbol }} = {{ glc_price_usdt || 50 }} $</span>
       </div>
       <div class="balance-bottom">
         <div class="left-section">
-          <ion-icon name="add-outline"></ion-icon>
+          <ion-icon name="people-outline"></ion-icon>
           <div class="text">
-            <small>{{ 'EARN_TEXT' | translate }}</small>
-            <span>{{ earning_amount }} <small>{{ plan_currency }}</small></span>
-          </div>
-        </div>
-        <div class="right-section">
-          <ion-icon name="remove-outline"></ion-icon>
-          <div class="text">
-            <small>{{ 'PAYOUT_TEXT' | translate }}</small>
-            <span>{{ payout_amount }} <small>{{ plan_currency }}</small></span>
+            <small>Всього монет випущено</small>
+            <span>{{ total_supply || 0 }} <small>{{ glc_coin_symbol }}</small></span>
           </div>
         </div>
       </div>
     </div>
 
-    <div (click)="setAboutStyle(true)" class="glc-button ion-margin-top">
-      <span>Green Light Coin <ion-icon name="chevron-forward-outline"></ion-icon></span> <span><ion-icon name="wallet-outline"></ion-icon> {{ glc_balance }} {{ glc_coin_symbol }}</span>
-    </div>
-
-    <div class="about-glc-token" *ngIf="about_crypto_display">
+    <div class="about-glc-token">
       <div class="header">
-        <h4>GLC coin</h4>
-        <span (click)="setAboutStyle(false)" class="close-about"><ion-icon name="close-outline"></ion-icon></span>
+        <div class="status-heading">
+          <span class="eyebrow">GLC Status</span>
+          <h4>Статус монет Green Light Coin</h4>
+        </div>
       </div>
       <div *ngIf="wallet_address == ''" class="note-empty-wallet">
-        <div class="text-note-with-icon">
-        <ion-icon name="settings-outline"></ion-icon>
+        <div class="text-note-with-icon no-icon">
         <p>{{ 'GLC_TEXT_NOTE_1' | translate }} {{ glc_token_mint_amount }} {{ glc_coin_symbol }}. <br>
           {{ 'GLC_TEXT_NOTE_2' | translate }}
-          <br>
-          <ion-button size="small" (click)="openCryptoDescription()">{{ 'GLC_TEXT_DETAILS' | translate}}  <ion-icon slot="end" name="open-outline"></ion-icon></ion-button>
         </p>
         
         </div>
@@ -115,20 +110,117 @@
       </div>
     </div>
 
-    <div class="last-transactions ion-margin-top">
-      <h5>{{ 'LATEST_TRANSACTIONS' | translate }}</h5>
-
-      <p *ngIf="!transactions" class="ion-margin-bottom ion-margin-top" style="text-align: center;">{{ 'EMPTY_TRANSACTIONS' | translate }}</p>
-      <div class="transactions">
-      <div *ngFor="let transcation of transactions" class="transaction-item">
-          <div class="headline"><span class="date">{{ transcation.date_added }}</span><h5>{{transcation.comment}}</h5></div>
-          <div class="bottom-row">
-          <span class="status status-color-{{transcation.bg_color}}">{{ transcation.text_status }}</span>
-          <p class="transcation-amount">{{ transcation.amount }} <small>{{ plan_currency }}</small></p>
-          </div> 
-      </div>
-    </div>
-    </div>  
   </div>  
 
+  <div class="coming-soon-grid" *ngIf="is_auth_user">
+    <div class="coming-soon-card disabled">
+      <div class="coming-soon-icon">
+        <ion-icon name="storefront-outline"></ion-icon>
+      </div>
+      <div class="coming-soon-copy">
+        <strong>Green Light Market</strong>
+        <small>coming soon</small>
+      </div>
+    </div>
+
+    <div class="coming-soon-card disabled">
+      <div class="coming-soon-icon">
+        <ion-icon name="rocket-outline"></ion-icon>
+      </div>
+      <div class="coming-soon-copy">
+        <strong>Оплата підняття оголошень за GLC</strong>
+        <small>coming soon</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="glc-sections">
+    <section class="glc-section-card">
+      <div class="section-copy">
+        <span class="section-eyebrow">GLC benefits</span>
+        <h4>Що дає Green Light Coin</h4>
+      </div>
+      <div class="benefits-grid">
+        <div class="benefit-item">
+          <strong>1000 GLC бонусом</strong>
+          <small>Після активації тарифного плану Green Light.</small>
+        </div>
+        <div class="benefit-item">
+          <strong>Внутрішня торгівля</strong>
+          <small>Можливість продавати та купувати GLC між користувачами.</small>
+        </div>
+        <div class="benefit-item">
+          <strong>Потенціал росту</strong>
+          <small>Підготовка до лістингу та розширення сценаріїв використання.</small>
+        </div>
+      </div>
+    </section>
+
+    <section class="glc-section-card">
+      <div class="section-copy">
+        <span class="section-eyebrow">How to get</span>
+        <h4>Як отримати GLC</h4>
+      </div>
+      <div class="steps-list">
+        <div class="step-item">
+          <span class="step-index">1</span>
+          <div class="step-copy">
+            <strong>Активуй тариф Green Light</strong>
+            <small>Після активації тарифу система відкриває доступ до бонусу.</small>
+          </div>
+        </div>
+        <div class="step-item">
+          <span class="step-index">2</span>
+          <div class="step-copy">
+            <strong>Отримай 1000 GLC</strong>
+            <small>Монети автоматично нараховуються на твій акаунт.</small>
+          </div>
+        </div>
+        <div class="step-item">
+          <span class="step-index">3</span>
+          <div class="step-copy">
+            <strong>Зберігай або використовуй</strong>
+            <small>Тримай GLC, торгуй між користувачами або чекай нових функцій.</small>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="glc-section-card">
+      <div class="section-copy">
+        <span class="section-eyebrow">Roadmap</span>
+        <h4>Що відкривається далі</h4>
+      </div>
+      <div class="roadmap-list">
+        <div class="roadmap-item done">
+          <span class="roadmap-dot"></span>
+          <div class="roadmap-copy">
+            <strong>Бонус 1000 GLC</strong>
+            <small>Нарахування монет після активації тарифного плану.</small>
+          </div>
+        </div>
+        <div class="roadmap-item current">
+          <span class="roadmap-dot"></span>
+          <div class="roadmap-copy">
+            <strong>Внутрішній Green Light Market</strong>
+            <small>Купівля та продаж GLC між користувачами платформи.</small>
+          </div>
+        </div>
+        <div class="roadmap-item">
+          <span class="roadmap-dot"></span>
+          <div class="roadmap-copy">
+            <strong>Оплата функцій за GLC</strong>
+            <small>Підняття магазинів, знижок та нові сервіси всередині платформи.</small>
+          </div>
+        </div>
+        <div class="roadmap-item">
+          <span class="roadmap-dot"></span>
+          <div class="roadmap-copy">
+            <strong>Вихід на біржі</strong>
+            <small>Розвиток ліквідності та масштабування Green Light Coin.</small>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
 </ion-content>

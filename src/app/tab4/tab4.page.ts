@@ -1,19 +1,15 @@
-import { ExploreContainerComponent } from '../explore-container/explore-container.component';
-import { Component, OnInit } from '@angular/core';
-import { IonAlert, IonToast,IonLoading, IonHeader,IonFooter, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonButton, IonIcon, IonSegment, IonSegmentButton, IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, IonList, IonItem, MenuController, IonInput, IonText, IonInputPasswordToggle } from '@ionic/angular/standalone';
+import { Component } from '@angular/core';
+import { IonAlert, IonToast, IonLoading, IonHeader, IonContent, IonButtons, IonButton, IonIcon, MenuController, IonInput, IonText, IonInputPasswordToggle } from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
-import { language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, searchOutline, globeOutline, languageOutline, listOutline, gridOutline, pencilOutline, barChartOutline, cartOutline, logOutOutline, trashOutline, flashOffOutline, flashOutline, copyOutline, peopleOutline, cashOutline, arrowBackOutline, starOutline, closeOutline, thumbsUpOutline, chevronForwardOutline, addOutline, removeOutline, logInOutline, arrowForwardOutline, personOutline } from 'ionicons/icons';
-import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, searchOutline, globeOutline, languageOutline, listOutline, barChartOutline, cartOutline, logOutOutline, trashOutline, flashOutline, copyOutline, peopleOutline, cashOutline, arrowBackOutline, starOutline, closeOutline, thumbsUpOutline, chevronForwardOutline, addOutline, removeOutline, logInOutline, arrowForwardOutline, personOutline } from 'ionicons/icons';
 import { ApiService } from '../services/api';
-import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
-import { map, switchMap, startWith } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { Preferences } from '@capacitor/preferences';
-import { ToastController, AlertController, ViewWillEnter } from '@ionic/angular';
+import { ToastController, AlertController, NavController } from '@ionic/angular';
 
 import { AuthService } from 'src/app/services/auth.service';
-import { Router } from '@angular/router';
 //локалізація 
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
@@ -21,11 +17,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
   selector: 'app-tab4',
   templateUrl: 'tab4.page.html',
   styleUrls: ['tab4.page.scss'],
-  imports: [IonAlert, IonToast, TranslateModule, IonLoading, IonInputPasswordToggle, IonInput, IonText, IonFooter, IonHeader, 
-    IonToolbar, IonTitle, IonContent, IonMenuButton, IonButton, IonSegment, IonSegmentButton, 
-    IonLabel, IonCard, IonCardHeader, IonCardTitle, IonCardSubtitle, IonCardContent, IonPopover, 
-    IonList, IonItem, FormsModule, CommonModule, IonButtons, IonMenuButton, IonButton, IonIcon, 
-    ExploreContainerComponent, IonLabel, IonList, IonItem, IonPopover, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMenuButton, IonButton, IonIcon],
+  imports: [TranslateModule, IonLoading, IonInputPasswordToggle, IonInput, IonText, IonHeader, IonContent, IonButtons, IonButton, IonIcon, FormsModule, CommonModule],
 })
 export class Tab4Page {
   //for header 
@@ -78,14 +70,14 @@ export class Tab4Page {
   constructor(
     private api: ApiService,
     private menu: MenuController,
-    private router: Router,
+    private navCtrl: NavController,
     private auth: AuthService,
     private toastCtrl: ToastController,
     private alertCtrl: AlertController,
     private translate: TranslateService
   ) {
     addIcons({ language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, 
-      searchOutline, globeOutline, languageOutline, pencilOutline, barChartOutline, listOutline, 
+      searchOutline, globeOutline, languageOutline, barChartOutline, listOutline, 
       cartOutline, logOutOutline, trashOutline, flashOutline, copyOutline, peopleOutline, 
       cashOutline, arrowBackOutline, starOutline, closeOutline, thumbsUpOutline,
       chevronForwardOutline, addOutline, removeOutline, logInOutline, arrowForwardOutline, personOutline });
@@ -97,21 +89,16 @@ export class Tab4Page {
   async ionViewWillEnter() {
     const { value: token } = await Preferences.get({ key: 'auth_token' });
     this.showDelAccNototify = false;
-    if (token) {
-      this.is_auth_user = true;
-    } else {
-      this.is_auth_user = false;
-      this.router.navigate(['/auth'], { replaceUrl: true });
+    this.is_auth_user = Boolean(token);
+    if (!this.is_auth_user) {
+      this.currentView = 'main';
     }
     this.ngOnInit();
   }
 
   async ngOnInit() {
     const { value: token } = await Preferences.get({ key: 'auth_token' });
-    
-    if (!token) {
-      this.router.navigate(['/auth'], { replaceUrl: true });
-    }
+    this.is_auth_user = Boolean(token);
     this.showDelAccNototify = false;
     //for header
     this.api.getAvailableLanguages().subscribe({
@@ -162,6 +149,13 @@ export class Tab4Page {
         });
       }
     });
+
+    if (!token) {
+      this.is_active_user = false;
+      this.transactions = [];
+      this.purchases = [];
+      return;
+    }
 
     this.api.getMyName().subscribe({
       next: (res:any) => {
@@ -340,7 +334,7 @@ deletePurchase(id:any){
   });
 }
 openDiscount(discount_id: number){
-    this.router.navigate(['/discount', discount_id]);
+    this.navCtrl.navigateForward(`/discount/${discount_id}`);
 }
 hidePopUp(){
   this.popupClass = '';
@@ -372,7 +366,7 @@ createPayout(){
 
 logout(){
   this.auth.logout();
-  this.router.navigate(['/tabs/tab1']);
+  this.navCtrl.navigateRoot('/tabs/tab1', { animated: false });
 }
 
 showConfirmDeleteAccount(){
@@ -419,7 +413,7 @@ getMyTransaction(){
 }
 
 openAuth(){
-  this.router.navigate(['/auth'], { replaceUrl: true });
+  this.navCtrl.navigateForward('/auth', { animated: false });
 }
 
 

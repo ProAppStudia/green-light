@@ -12,6 +12,7 @@ import { ApiService } from 'src/app/services/api';
 import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
 import { Preferences } from '@capacitor/preferences';
+import { NavController } from '@ionic/angular';
 //локалізація 
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
@@ -38,6 +39,7 @@ export class AuthPage {
   constructor(
     private api: ApiService, 
     private router: Router,
+    private navCtrl: NavController,
     private auth:AuthService,
     private toastController: ToastController,
     private translate: TranslateService
@@ -81,7 +83,7 @@ export class AuthPage {
               this.presentToast(res['error'], 'danger');
             }else if(res.success){
               this.auth.saveToken(res.token);
-              this.router.navigate(['/tabs/tab1']);
+              this.navCtrl.navigateRoot('/tabs/tab1', { animated: false });
             }
             this.loading = false;
           },
@@ -105,7 +107,7 @@ export class AuthPage {
               this.presentToast(res['error'], 'danger');
             }else if(res.success){
               this.auth.saveToken(res.token);
-              this.router.navigate(['/tabs/tab1']);
+              this.navCtrl.navigateRoot('/tabs/tab1', { animated: false });
             }
             this.loading = false;
           },
@@ -121,7 +123,7 @@ export class AuthPage {
     window.open('https://firstgreenlight.com/forgot-password/', '_blank');
   }
   goHome(){
-    this.router.navigate(['/tabs/tab1']);
+    this.navCtrl.navigateBack('/tabs/tab4', { animated: false });
   }
 
   
