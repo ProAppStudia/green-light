@@ -1,9 +1,11 @@
 <ion-header class="ion-no-border">
   <div class="header-container" [class.hidden]="hideHeader" [class.scrolled]="isScrolled">
     <div class="header-top">
-      <img src="assets/icon/logo/Logo_GreenLight_White_G.png" alt="GreenLight Logo" class="header-logo-img" />
+      <div class="header-logo">
+        <img src="assets/icon/logo/Logo_GreenLight_White_G.png" alt="GreenLight Logo" class="header-logo-img" />
+      </div>
       <div class="header-icons">
-        <ion-button id="language-popover-button" (click)="isLanguageOpen = true">
+        <ion-button id="language-popover-button" class="header-pill language-button" (click)="isLanguageOpen = true">
           <ion-icon slot="start" name="language-outline"></ion-icon>
           <ion-label>{{ selectedLanguage }}</ion-label>
         </ion-button>
@@ -18,7 +20,7 @@
             </ion-content>
           </ng-template>
         </ion-popover>
-        <ion-button id="country-popover-button" (click)="isCountryOpen = true">
+        <ion-button id="country-popover-button" class="header-pill country-button" (click)="isCountryOpen = true">
           <ion-icon slot="start" name="map-outline"></ion-icon>
           <ion-label>{{ selectedCountry }}</ion-label>
         </ion-button>
@@ -33,7 +35,7 @@
             </ion-content>
           </ng-template>
         </ion-popover>
-        <ion-button (click)="openMenu()" class="menu-button-green">
+        <ion-button (click)="openMenu()" class="menu-button-green header-pill icon-only-button">
           <ion-icon slot="icon-only" name="menu-outline"></ion-icon>
         </ion-button>
       </div>

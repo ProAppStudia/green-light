@@ -150,6 +150,14 @@ export class ApiService {
     return this.http.get(url);
   }
 
+  saveDeviceToken(payload: {
+    token: string;
+    platform: string;
+    provider: string;
+  }): Observable<any> {
+    return this.http.post(`${this.baseUrl}?type=save_device_token`, payload);
+  }
+
   /* 
   * FROM DIFFERENT API.SERVICES
   */

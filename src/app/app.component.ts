@@ -6,6 +6,9 @@ import { SideMenuComponent } from './components/side-menu/side-menu.component';
 
 import { StatusBar, Style } from '@capacitor/status-bar';
 import { Platform } from '@ionic/angular';
+import { App } from '@capacitor/app';
+import { RealtimeService } from './services/realtime.service';
+import { PushService } from './services/push.service';
 
 
 @Component({
@@ -14,7 +17,11 @@ import { Platform } from '@ionic/angular';
   imports: [IonApp, IonRouterOutlet, IonMenu, IonHeader, IonToolbar, IonTitle, IonContent, IonList, IonItem, IonIcon, IonLabel, SideMenuComponent],
 })
 export class AppComponent {
-  constructor(private platform: Platform) {
+  constructor(
+    private platform: Platform,
+    private realtimeService: RealtimeService,
+    private pushService: PushService,
+  ) {
     addIcons({ home, person, settings, star, helpCircle, informationCircle });
     this.initializeApp();
   }
@@ -27,6 +34,19 @@ export class AppComponent {
 
     // Опціонально — зробити темний або світлий текст
     await StatusBar.setStyle({ style: Style.Dark });
+
+    await this.pushService.initialize();
+    await this.realtimeService.connect();
+
+    App.addListener('appStateChange', ({ isActive }) => {
+      if (isActive) {
+        void this.pushService.syncToken();
+        void this.realtimeService.connect();
+        return;
+      }
+
+      this.realtimeService.disconnect();
+    });
   }
 
 }
