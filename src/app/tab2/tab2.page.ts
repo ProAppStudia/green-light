@@ -171,8 +171,8 @@ export class Tab2Page implements OnInit {
     }
   }
 
-  searchByKeyword(event: CustomEvent){
-    const value = String((event.target as HTMLIonInputElement).value ?? '');
+  searchByKeyword(event: any){
+    const value = String((event.target as HTMLInputElement).value ?? '');
     if(value.length > 4){
       this.keyword = value;
       this.page = 1;

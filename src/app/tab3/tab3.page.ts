@@ -3,7 +3,7 @@ import { IonMenu, IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonMe
 import { ExploreContainerComponent } from '../explore-container/explore-container.component';
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
-import { language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, searchOutline, globeOutline, languageOutline, listOutline, gridOutline, pencilOutline, barChartOutline, cartOutline, logOutOutline, trashOutline, flashOffOutline, flashOutline, copyOutline, peopleOutline, cashOutline, arrowBackOutline, starOutline, closeOutline, thumbsUpOutline, chevronForwardOutline } from 'ionicons/icons';
+import { language, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, searchOutline, globeOutline, languageOutline, listOutline, gridOutline, pencilOutline, barChartOutline, cartOutline, logOutOutline, trashOutline, flashOffOutline, flashOutline, copyOutline, peopleOutline, cashOutline, arrowBackOutline, starOutline, closeOutline, thumbsUpOutline, chevronForwardOutline, logInOutline } from 'ionicons/icons';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { map, switchMap, startWith } from 'rxjs/operators';
@@ -57,6 +57,7 @@ export class Tab3Page {
   languages$: any | [];
   //end for header
 
+  is_auth_user = false;
   manualCode = '';
   isScanning = false;
 
@@ -77,18 +78,22 @@ export class Tab3Page {
     private translate: TranslateService,
     private ngZone: NgZone
   ) {
-    addIcons({language, languageOutline, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, closeOutline, copyOutline});
+    addIcons({language, languageOutline, cart, chevronDown, flag, notificationsOutline, mapOutline, menuOutline, closeOutline, copyOutline, logInOutline});
     translate.use('ua');
   }
 
   async ionViewWillEnter() {
+    const { value: token } = await Preferences.get({ key: 'auth_token' });
+    this.is_auth_user = !!token && token !== 'undefined';
     this.data = [];
     this.showResultBlock = false;
     this.is_show_qr = false;
-    this.loadMyQrCode();
+    if (this.is_auth_user) {
+      this.loadMyQrCode();
+    }
   }
 
-  ngOnInit(){
+  async ngOnInit(){
     //for header
     this.api.getAvailableLanguages().subscribe({
       next: (res:any) => {
@@ -138,7 +143,11 @@ export class Tab3Page {
       }
     });
     //end for header
-    this.loadMyQrCode();
+    const { value: token } = await Preferences.get({ key: 'auth_token' });
+    this.is_auth_user = !!token && token !== 'undefined';
+    if (this.is_auth_user) {
+      this.loadMyQrCode();
+    }
   }
 
 
@@ -273,7 +282,11 @@ hideInfo(){
     }
   }
 
-  //for header 
+  openAuth() {
+    this.router.navigate(['/auth'], { replaceUrl: true });
+  }
+
+  //for header
   openMenu() {
     this.menu.open('main-menu');
   }

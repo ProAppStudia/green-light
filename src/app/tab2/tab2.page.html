@@ -20,19 +20,10 @@
     </ion-toolbar>
   </ion-header>
 
-  <ion-list class="search-bar-list">
- 
-    <ion-input
-      labelPlacement="stacked"
-      fill="solid"
-      [clearInput]="true"
-      placeholder="{{ 'TEXT_SEARCH_BY_NAME' | translate }}"
-      value=""
-      (ionInput)="searchByKeyword($event)"
-    >
-    </ion-input>
-  
-  </ion-list>
+  <div class="search-bar">
+    <ion-icon name="search-outline"></ion-icon>
+    <input type="text" placeholder="{{ 'TEXT_SEARCH_BY_NAME' | translate }}" (input)="searchByKeyword($event)" />
+  </div>
 
 
   <!-- Shops Grid -->

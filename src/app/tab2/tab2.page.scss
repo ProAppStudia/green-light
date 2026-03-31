@@ -1,31 +1,51 @@
-/*for header*/ 
+/*for header*/
 ion-header {
   box-shadow: none;
   --box-shadow: none;
 }
-.search-bar-list {
-  
-  background: none;
-  margin: 10px 16px;
 
+.search-bar {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  padding: 0 14px;
+  margin: 12px 16px;
+  min-height: 52px;
+
+  ion-icon {
+    color: rgba(255, 255, 255, 0.7);
+    margin-right: 10px;
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  input {
+    border: none;
+    color: white;
+    outline: none;
+    flex-grow: 1;
+    font-size: 16px;
+    background-color: transparent;
+    width: 100%;
+    min-width: 0;
+
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.45);
+    }
+  }
 }
+
 .img-shop {
-  border-radius: 15px;
-  padding: 16px;
-  display: block; /* Ensure the image behaves as a block element */
-  width: 100%; /* Make the image fill the width of its container */
-  height: auto; /* Maintain aspect ratio */
-  object-fit: cover; /* Ensure the image covers the area without distortion */
-}
-.search-bar-list ion-input {
-  --background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
-  backdrop-filter: blur(10px); /* Frosted glass blur effect */
-  border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
-  --color: white;
-  --placeholder-color: rgba(255, 255, 255, 0.7);
-  border-radius: 10px;
-  padding: 8px 12px;
-  border-bottom: none;
+  display: block;
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  padding: 0;
+  border-radius: 0;
 }
 .man-top ion-button {
     --background: rgba(255, 255, 255, 0.2);
@@ -102,8 +122,9 @@ ion-header {
   }
     ion-card {
     background: #2e2e2e;
-    margin-bottom: 15px;
+    margin: 0;
     border-radius: 15px;
+    overflow: hidden;
   }
   ion-card-content {
     padding: 0 16px 16px 16px;
@@ -135,11 +156,29 @@ ion-header {
 }
 .grid-view, .list-view {
   transition: all 0.3s ease;
+  padding: 0 16px;
 }
+
 .grid-view {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  gap: 10px;
+
+  .img-shop {
+    height: 120px;
+  }
+
+  ion-card-title {
+    font-size: 0.9em;
+  }
+
+  ion-card-subtitle {
+    font-size: 0.75em;
+  }
+
+  .product-description {
+    display: none;
+  }
 }
 
 .list-view {

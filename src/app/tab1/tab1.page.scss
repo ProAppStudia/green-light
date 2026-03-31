@@ -186,7 +186,7 @@ swiper-slide {
 
 .slide-card {
   width: 100%;
-  height: 360px; /* 180 фото + ~124 текст (2р адреса + 2р заголовок) + ~56 кнопка */
+  height: 340px; /* 180 фото + ~124 текст (2р адреса + 2р заголовок) + ~56 кнопка */
   display: flex;
   flex-direction: column;
   margin: 0;
@@ -209,12 +209,14 @@ swiper-slide {
     position: absolute;
     top: 12px;
     right: 12px;
-    background-color: var(--ion-color-danger);
-    color: white;
+    background: #FFD600;
+    color: #1a1a1a;
     padding: 6px 10px;
-    border-radius: 8px;
-    font-size: 0.9em;
-    font-weight: 600;
+    border-radius: 10px;
+    font-size: 1em;
+    font-weight: 900;
+    letter-spacing: -0.3px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
   }
 
   ion-card-header {

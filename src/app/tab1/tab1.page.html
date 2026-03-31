@@ -82,7 +82,7 @@
       <swiper-slide *ngFor="let discount of homeData.products_to_cat">
         <ion-card class="slide-card">
           <img [src]="discount.image" class="slide-image" />
-          <div class="discount-badge">{{ discount.percent_raw }}% OFF</div>
+          <div class="discount-badge">-{{ discount.percent_raw }}%</div>
           <ion-card-header>
             <ion-card-title>{{ discount.name }}</ion-card-title>
             <ion-card-subtitle>{{ discount.address }}</ion-card-subtitle>

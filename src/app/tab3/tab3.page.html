@@ -12,7 +12,15 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-   
+
+  <div class="need-auth" *ngIf="!is_auth_user">
+    <ion-button (click)="openAuth()" expand="block" color="primary">
+      <ion-icon slot="start" name="log-in-outline"></ion-icon>
+      {{ 'ENTER_TO_ACC' | translate }}
+    </ion-button>
+  </div>
+
+  <div *ngIf="is_auth_user">
 
   <div id="result-block" *ngIf="showResultBlock">
     <ion-card *ngIf="data">
@@ -135,7 +143,6 @@
     <p class="text-code">{{ my_qr_code_text }}</p>
   </div>
 
-
-  
+  </div><!-- /is_auth_user -->
 
 </ion-content>

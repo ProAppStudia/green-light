@@ -90,6 +90,21 @@ export class Tab1Page implements OnInit {
     this.menu.open('main-menu'); // 'main-menu' is the ID of the ion-menu
   }
 
+  ionViewDidEnter() {
+    // Після повернення на вкладку Swiper не знає реальних розмірів
+    // (таб був display:none) — примусово перераховуємо
+    setTimeout(() => {
+      document.querySelectorAll('swiper-container').forEach((el: any) => {
+        if (el.swiper) {
+          el.swiper.update();
+          if (el.swiper.autoplay && !el.swiper.autoplay.running) {
+            el.swiper.autoplay.start();
+          }
+        }
+      });
+    }, 50);
+  }
+
   onScroll(event: any) {
     const scrollTop = event.detail.scrollTop;
     const delta = scrollTop - this.lastScrollTop;
