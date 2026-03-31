@@ -96,9 +96,12 @@ ion-footer {
 }
 
 span.btn-link.btn-buy {
-    background: #474747;
-    background: linear-gradient(39deg, rgb(71, 71, 71) 0%, rgb(47, 199, 76) 100%);
+    background: linear-gradient(135deg, #4c4c4c 0%, #2fc74c 100%);
     color: #fff;
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 14px 24px rgba(0, 0, 0, 0.22);
+    font-weight: 700;
+    padding: 14px 16px;
 }
 span.btn-link {
     display: block;
@@ -111,6 +114,33 @@ span.btn-link {
 }
 span.btn-link span {
     padding-left: 10px;
+}
+.btn-link.btn-buy {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.btn-link.btn-buy ion-icon {
+    transform: rotate(-10deg);
+    font-size: 1.15rem;
+    flex-shrink: 0;
+}
+.btn-link .buy-copy {
+    display: grid;
+    gap: 2px;
+    padding-left: 0;
+}
+.btn-link .buy-copy strong {
+    font-size: 1rem;
+    line-height: 1.2;
+}
+.btn-link .buy-copy small {
+    color: rgba(255, 255, 255, 0.84);
+    font-size: 0.78rem;
+    line-height: 1.25;
+}
+.btn-link.btn-ref-program {
+    background: rgba(255, 255, 255, 0.07);
 }
 span.btn-link.btn-danger {
     background: #F44336;
@@ -384,14 +414,6 @@ ion-header {
     min-width: 40px; /* Ensure it's at least 40px wide */
   }
 }
-.need-pay {
-    padding: 25px;
-    text-align: center;
-}
-.need-pay img.buy-plan-img {
-    max-width: 170px;
-}
-
 .card-top {
     border-radius: 20px;
     padding: 15px 20px;

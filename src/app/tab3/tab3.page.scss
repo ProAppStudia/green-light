@@ -88,29 +88,32 @@ ion-card {
 }
 #result-block{
   position:relative;
+  margin-bottom: 18px;
 
-  ion-card {
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+.result-card {
+  border-radius: 18px;
+  box-shadow: 0 14px 28px rgba(0,0,0,0.22);
 }
 
-ion-card-content {
+.result-card-content {
   font-size: 14px;
   line-height: 1.4;
   background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
   backdrop-filter: blur(10px); /* Frosted glass blur effect */
   border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
   color: var(--ion-color-light); /* Adjusted for dark theme */
+  border-radius: 18px;
+  padding: 22px 16px 16px;
 
-  ion-item {
-    --background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
-    backdrop-filter: blur(10px); /* Frosted glass blur effect */
-    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
-    --color: var(--ion-color-light); /* Lighter text color */
-    --border-radius: 10px;
-    margin-bottom: 15px;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.3); /* Inner shadow for depth */
-    padding-left: 10px; /* Add some padding inside the item */
+  .result-item {
+    --background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    --color: var(--ion-color-light);
+    --border-radius: 12px;
+    margin-bottom: 12px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.25);
+    padding-left: 10px;
   }
 
   ion-label {
@@ -123,36 +126,57 @@ ion-card-content {
     --placeholder-color: var(--ion-color-medium); /* Adjusted placeholder color */
     padding-left: 5px; /* Align input text with label */
   }
-  
 }
-ion-list {
-    background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
-    backdrop-filter: blur(10px); /* Frosted glass blur effect */
-    border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
-    border-radius: 12px;
+
+.result-hero {
+    display: grid;
+    justify-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
 }
-ion-list ion-list-header ion-label {
-    font-weight: 500;
-    font-size: 1.2rem;
-    color: var(--ion-color-light); /* Adjusted for dark theme */
+
+.result-list {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    padding: 8px;
 }
+
+.result-list-header ion-label {
+    font-weight: 600;
+    font-size: 1.08rem;
+    color: var(--ion-color-light);
+    margin-bottom: 6px;
+}
+
 img.discount-image {
     display: block;
     margin: auto;
     border-radius: 12px;
 }
-ion-card-header {
+.result-header {
   text-align: center;
+  padding: 0;
 }
 
-ion-card-title {
-    padding-bottom: 10px;
+.result-header ion-card-title {
+    padding-bottom: 0;
+    font-size: clamp(1.6rem, 5vw, 2.1rem);
+    line-height: 1.15;
+    font-weight: 800;
+    letter-spacing: -0.02em;
 }
-ion-button {
+
+.result-close-button {
     position: absolute;
-    top: 5px;
-    right: 5px;
+    top: 12px;
+    right: 12px;
+    z-index: 2;
+    --border-radius: 10px;
+    --box-shadow: 0 10px 18px rgba(0,0,0,0.18);
 }
+
  b {
     padding-right: 5px;
 }
@@ -227,7 +251,9 @@ div#my-qr .text-code {
     letter-spacing: 0.03em;
 }
 img.discount-image.is_check_icon {
-    max-width: 64px;
+    width: 72px;
+    max-width: 72px;
+    filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.18));
 }
 ion-item.item-lines-default {
     --background: #393939;

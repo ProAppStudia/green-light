@@ -111,7 +111,15 @@
 
     <span *ngIf="!is_active_user" (click)="buyPlane()" class="btn-link btn-buy">
       <ion-icon name="flash-outline"></ion-icon>
-      <span>{{ 'BUY_PLANE' | translate }}</span>
+      <span class="buy-copy">
+        <strong>{{ 'BUY_PLANE' | translate }}</strong>
+        <small>Після активації ви отримаєте 1000 GLC</small>
+      </span>
+    </span>
+
+    <span *ngIf="!is_active_user" (click)="openRefDescription()" class="btn-link btn-ref-program">
+      <ion-icon name="people-outline"></ion-icon>
+      <span>{{ 'ABOUT_REF_PROG' | translate }}</span>
     </span>
 
     
@@ -270,16 +278,6 @@
 
   </div>
 </div>
-<div class="need-pay" *ngIf="!is_active_user">
-    <img src="assets/icon/tab5_icon_emoji.svg" alt="Buy plan icon" class="buy-plan-img" />
-    <div class="text-buy">
-      <p>{{ 'BUY_PLAN_TO_START' | translate }}</p>
-      <ion-button (click)="openRefDescription()" expand="block" color="primary" slot="center" class="ion-margin-top">
-        {{ 'ABOUT_REF_PROG' | translate }}
-        <ion-icon name="chevron-forward-outline"></ion-icon>
-      </ion-button>
-    </div>
-  </div>
   </div>
   </ng-container>
 
