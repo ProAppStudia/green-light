@@ -479,6 +479,46 @@ ion-header {
     margin: 6px 0 0;
     font-size: 0.96rem;
 }
+.copy-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 6px;
+}
+
+.copy-value,
+.transcation-id {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+
+.copy-btn {
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+    border: 0;
+    border-radius: 12px;
+    background: rgba(142, 231, 62, 0.14);
+    color: #beff7e;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.copy-btn ion-icon {
+    font-size: 1.1rem;
+}
+
+.tx-copy-row {
+    align-items: flex-start;
+}
+
 .about-c-transactions > h5{
     text-align: center;
 }
@@ -488,6 +528,7 @@ ion-header {
 .transactions-glc .transaction-item p.transcation-id {
     margin: 0px;
     font-size: 12px;
+    line-height: 1.45;
 }
 .transactions-glc .transaction-item p.transcation-amount {
     margin: 7px 0px;
