@@ -224,6 +224,11 @@ export class ApiService {
      return this.http.get(`${this.baseUrl}?type=getShops`).pipe();
    }
 
+  getDiscountsMap(filters: any = {}): Observable<any> {
+    return this.request('POST', 'type=getDiscountsMap', filters);
+  }
+
+
   /* EXAMPLES: */
   sendForm(data: any): Observable<any> {
     const url = `${this.baseUrl}/contact-form`;
@@ -235,7 +240,7 @@ export class ApiService {
   }
 
   request(method: 'GET' | 'POST' | 'PUT' | 'DELETE', endpoint: string, data?: any): Observable<any> {
-    const url = `${this.baseUrl}/${endpoint}`;
+    const url = `${this.baseUrl}?${endpoint}`;
     const headers = new HttpHeaders({
       'Accept': 'application/json',
       'Content-Type': 'application/json'

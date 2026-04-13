@@ -118,5 +118,6 @@
   "GLC_TEXT_TOTAL_SUPPLY": "Всего выпущено монет",
   "GLC_TEXT_LATEST_TRANSACTIONS": "Последние транзакции криптовалюты",
   "GLC_TEXT_AMOUNT": "Количество",
-  "GLC_TEXT_TX_ID": "Идентификатор транзакции"
+  "GLC_TEXT_TX_ID": "Идентификатор транзакции", 
+  "TEXT_DISCOUNT_MAP" : "Карта скидок"
 }

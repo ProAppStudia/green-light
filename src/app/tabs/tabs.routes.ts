@@ -48,6 +48,11 @@ export const routes: Routes = [
         path: 'search',
         loadComponent: () => import('../pages/category/category.page').then(m => m.CategoryPage)
       },
+      /*для карти знижок*/
+      {
+        path: 'discount-map',
+        loadComponent: () => import('../discount-map/discount-map.page').then(m => m.DiscountMapPage)
+      },
       {
         path: '',
         redirectTo: '/tabs/tab1',

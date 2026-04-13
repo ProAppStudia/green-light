@@ -1,0 +1,24 @@
+<ion-header class="ion-no-border">
+  <div class="header-container" [class.hidden]="hideHeader" [class.scrolled]="isScrolled">
+    <div class="header-top">
+      <img src="assets/icon/logo/Logo_GreenLight_White_G.png" alt="GreenLight Logo" class="header-logo-img" />
+      <div class="header-icons">
+        <ion-button  (click)="loadDiscounts()">
+          Показати всі
+        </ion-button>
+        <ion-button (click)="openMenu()">
+          <ion-icon slot="icon-only" name="menu-outline"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+  </div>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">discount_map</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <div id="map" style="height: 100%"></div>
+</ion-content>

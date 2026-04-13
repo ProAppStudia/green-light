@@ -231,6 +231,10 @@ export class CategoryPage implements OnInit {
     this.router.navigate(['/discount', discount_id]);
   }
 
+  openMapDiscount(){
+    this.router.navigate(['/tabs/discount-map/'], { queryParams: { category: this.categoryId } });
+  }
+
   //for header 
   openMenu() {
     this.menu.open('main-menu'); // 'main-menu' is the ID of the ion-menu

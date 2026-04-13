@@ -1,0 +1,64 @@
+/*for header*/ 
+ion-header {
+  box-shadow: none;
+  --box-shadow: none;
+}
+
+.header-container {
+  background: rgba(255, 255, 255, 0.05);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: calc(var(--ion-safe-area-top, 0px) + 10px) 16px 16px;
+  color: white;
+  transition: all 0.3s ease-out;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+
+  &.scrolled {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  &.hidden .header-bottom {
+    transform: translateY(-100%);
+    opacity: 0;
+    height: 0;
+    padding: 0;
+    margin: 0;
+  }
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-logo-img {
+  height: 40px;
+}
+
+.header-icons {
+  display: flex;
+  align-items: center;
+
+  ion-button {
+    --background: rgba(255, 255, 255, 0.05); /* Frosted glass background */
+   
+    --background-activated: rgba(255, 255, 255, 0.3);
+    --background-focused: rgba(255, 255, 255, 0.3);
+    --background-hover: rgba(255, 255, 255, 0.3);
+    --color: var(--ion-color-light); /* Lighter color for text */
+    --border-radius: 10px;
+    height: 40px;
+   
+    min-width: 40px; /* Ensure it's at least 40px wide */
+  }
+
+}
+
+ion-toolbar {
+  --background: var(--ion-background-color); /* Adjusted for dark theme */
+  --border-color: transparent;
+}

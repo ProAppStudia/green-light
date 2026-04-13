@@ -118,5 +118,6 @@
   "GLC_TEXT_TOTAL_SUPPLY": "Gesamtmenge der ausgegebenen Coins",
   "GLC_TEXT_LATEST_TRANSACTIONS": "Neueste Kryptowährungs-Transaktionen",
   "GLC_TEXT_AMOUNT": "Betrag",
-  "GLC_TEXT_TX_ID": "Transaktions-ID"
+  "GLC_TEXT_TX_ID": "Transaktions-ID",
+  "TEXT_DISCOUNT_MAP" : "Rabatt-Karte"
 }

@@ -89,4 +89,5 @@ export class ApiService {
       tap(response => console.log('API: getShops raw response:', response))
     );
   }
+
 }

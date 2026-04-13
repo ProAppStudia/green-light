@@ -118,5 +118,6 @@
   "GLC_TEXT_TOTAL_SUPPLY": "Total supply",
   "GLC_TEXT_LATEST_TRANSACTIONS": "Latest cryptocurrency transactions",
   "GLC_TEXT_AMOUNT": "Amount",
-  "GLC_TEXT_TX_ID": "Transaction ID"
+  "GLC_TEXT_TX_ID": "Transaction ID",
+  "TEXT_DISCOUNT_MAP" : "Discount Map"
 }

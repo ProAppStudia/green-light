@@ -20,6 +20,10 @@ export const routes: Routes = [
     path: 'auth',
     loadComponent: () => import('./pages/auth/auth.page').then( m => m.AuthPage)
   },
+  {
+    path: 'discount-map',
+    loadComponent: () => import('./discount-map/discount-map.page').then( m => m.DiscountMapPage)
+  },
 
 
 
