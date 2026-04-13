@@ -9,6 +9,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { Observable } from 'rxjs';
 import { Preferences } from '@capacitor/preferences';
 import { ToastController, AlertController, NavController } from '@ionic/angular';
+import { Browser } from '@capacitor/browser';
 
 //локалізація 
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
@@ -189,7 +190,7 @@ export class Tab5Page {
 
   openCryptoDescription(){
     if(this.crypto_description_link){
-      window.open(this.crypto_description_link, '_system');
+      void Browser.open({ url: this.crypto_description_link });
     }else{
       this.showToast(this.translate.instant('TEXT_ERROR_LINK'));
     }
@@ -236,7 +237,7 @@ export class Tab5Page {
 
 openRefDescription(){
   if(this.ref_description_link){
-    window.open(this.ref_description_link, '_system');
+    void Browser.open({ url: this.ref_description_link });
   }else{
     this.showToast(this.translate.instant('TEXT_ERROR_LINK'));
   }

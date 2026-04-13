@@ -109,18 +109,18 @@
   </div>
   <div class="links">
 
-    <span *ngIf="!is_active_user" (click)="buyPlane()" class="btn-link btn-buy">
+    <button *ngIf="!is_active_user" type="button" (click)="buyPlane()" class="btn-link btn-buy">
       <ion-icon name="flash-outline"></ion-icon>
       <span class="buy-copy">
         <strong>{{ 'BUY_PLANE' | translate }}</strong>
         <small>Після активації ви отримаєте 1000 GLC</small>
       </span>
-    </span>
+    </button>
 
-    <span *ngIf="!is_active_user" (click)="openRefDescription()" class="btn-link btn-ref-program">
+    <button *ngIf="!is_active_user" type="button" (click)="openRefDescription()" class="btn-link btn-ref-program">
       <ion-icon name="people-outline"></ion-icon>
       <span>{{ 'ABOUT_REF_PROG' | translate }}</span>
-    </span>
+    </button>
 
     
     
@@ -146,6 +146,36 @@
       <ion-button slot="start" (click)="cancelDelAccount()" color="primary"> {{ 'TEXT_CANCEL' | translate }}</ion-button>
       <ion-button slot="end" (click)="approvedDelAccount()" color="danger">{{ 'TEXT_APPLY' | translate }}</ion-button>
     </ion-buttons>
+  </div>
+
+  <div class="plan-activation-modal" *ngIf="showPlanActivationModal">
+    <div class="plan-activation-backdrop" (click)="closePlanActivationModal()"></div>
+    <div class="plan-activation-sheet">
+      <button type="button" class="plan-activation-close" (click)="closePlanActivationModal()">
+        <ion-icon name="close-outline"></ion-icon>
+      </button>
+      <div class="plan-activation-head">
+        <h3>Активуйте план</h3>
+      </div>
+      <div class="plan-activation-body">
+        <h4>Як активувати тарифний план?</h4>
+        <ul>
+          <li>Активація тарифного плану буде відбуватись через платіжну систему CoinPayments.</li>
+          <li>Ви можете сплатити активацію фіатною валютою або крипто-валютою USDT.</li>
+          <li>Якщо ви обрали USDT, зверніть увагу на мережу. Ми використовуємо TRON (TRC20).</li>
+          <li>Щоб продовжити натисніть на кнопку оплатити.</li>
+        </ul>
+        <ion-button expand="block" class="plan-activation-pay" (click)="openPaymentLink()">
+          Оплатити
+          <ion-icon name="checkmark-outline"></ion-icon>
+        </ion-button>
+      </div>
+      <div class="plan-activation-footer">
+        <ion-button fill="clear" class="plan-activation-cancel-btn" (click)="closePlanActivationModal()">
+          Відміна
+        </ion-button>
+      </div>
+    </div>
   </div>
 
 </div>

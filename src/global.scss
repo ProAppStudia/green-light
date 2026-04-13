@@ -109,3 +109,69 @@ ion-tab-bar,
 .ion-card-frosted {
   -webkit-backdrop-filter: blur(10px);
 }
+
+ion-alert.plan-activation-alert {
+  --background: linear-gradient(180deg, #17156b 0%, #14124d 100%);
+  --color: #fff;
+  --backdrop-opacity: 0.55;
+}
+
+ion-alert.plan-activation-alert .alert-wrapper {
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.32);
+}
+
+ion-alert.plan-activation-alert .alert-head {
+  padding: 28px 24px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+ion-alert.plan-activation-alert .alert-title {
+  font-size: 1.9rem;
+  font-weight: 700;
+}
+
+ion-alert.plan-activation-alert .alert-message {
+  padding: 24px;
+  max-height: none;
+  color: rgba(255, 255, 255, 0.96);
+}
+
+.plan-activation-copy h3 {
+  margin: 0 0 18px;
+  font-size: 1.35rem;
+  line-height: 1.2;
+}
+
+.plan-activation-copy ul {
+  margin: 0;
+  padding-left: 22px;
+}
+
+.plan-activation-copy li {
+  margin-bottom: 12px;
+  line-height: 1.45;
+}
+
+ion-alert.plan-activation-alert .alert-button-group {
+  padding: 16px 24px 24px;
+  justify-content: space-between;
+}
+
+ion-alert.plan-activation-alert .alert-button {
+  border-radius: 14px;
+  min-height: 52px;
+  font-weight: 700;
+  text-transform: none;
+}
+
+ion-alert.plan-activation-alert .alert-button.plan-activation-cancel {
+  background: rgba(255, 255, 255, 0.24);
+  color: #fff;
+}
+
+ion-alert.plan-activation-alert .alert-button.plan-activation-confirm {
+  background: #1f9b59;
+  color: #fff;
+}

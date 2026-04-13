@@ -8,6 +8,7 @@ import { ApiService } from '../services/api';
 import { Observable } from 'rxjs';
 import { Preferences } from '@capacitor/preferences';
 import { ToastController, AlertController, NavController } from '@ionic/angular';
+import { Browser } from '@capacitor/browser';
 
 import { AuthService } from 'src/app/services/auth.service';
 //локалізація 
@@ -65,6 +66,7 @@ export class Tab4Page {
   payout_amount:any | 0;
 
   showDelAccNototify = false;
+  showPlanActivationModal = false;
 
 
   constructor(
@@ -277,13 +279,38 @@ updateProfile(){
 }
 
 buyPlane(){
+  this.showPlanActivationModal = true;
+}
+
+closePlanActivationModal() {
+  this.showPlanActivationModal = false;
+}
+
+openPaymentLink(){
+  this.showPlanActivationModal = false;
   this.api.createPaymentLink().subscribe({
     next: (res:any) => {
-      if(typeof res.success != 'undefined' && res.checkout_url){
-        this.showToast(res.success, 'success');
-        window.open(res.checkout_url, '_system');
-      }else if(typeof res.error != 'undefined'){
+      const checkoutUrl =
+        res?.checkout_url ||
+        res?.payment_url ||
+        res?.redirect_url ||
+        res?.url ||
+        (typeof res === 'string' && /^https?:\/\//i.test(res) ? res : '');
+
+      if (checkoutUrl) {
+        const successMessage =
+          (typeof res?.success === 'string' && res.success) ||
+          (typeof res?.message === 'string' && res.message) ||
+          'Переходимо до оплати';
+
+        this.showToast(successMessage, 'success');
+        void Browser.open({ url: checkoutUrl });
+      } else if(typeof res?.error != 'undefined' && res.error){
         this.showToast(res.error, 'danger');
+      } else if (res === true || res === 'True' || res?.success === true || res?.success === 'True') {
+        this.showToast('Посилання на оплату не отримано з API', 'danger', 3500);
+      } else {
+        this.showToast('Не вдалося відкрити сторінку оплати', 'danger', 3500);
       }
     },
     error: (err) => {
@@ -294,7 +321,7 @@ buyPlane(){
 
 openRefDescription(){
   if(this.ref_description_link){
-    window.open(this.ref_description_link, '_system');
+    void Browser.open({ url: this.ref_description_link });
   }else{
     this.showToast(this.translate.instant('TEXT_ERROR_LINK'));
   }

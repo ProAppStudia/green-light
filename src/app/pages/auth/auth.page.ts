@@ -13,6 +13,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { Router } from '@angular/router';
 import { Preferences } from '@capacitor/preferences';
 import { NavController } from '@ionic/angular';
+import { Browser } from '@capacitor/browser';
 //локалізація 
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
@@ -128,7 +129,7 @@ export class AuthPage {
   }
 
   openForgotPassword() {
-    window.open('https://firstgreenlight.com/forgot-password/', '_blank');
+    void Browser.open({ url: 'https://firstgreenlight.com/forgot-password/' });
   }
   goHome(){
     this.navCtrl.navigateBack('/tabs/tab4', { animated: false });
