@@ -78,17 +78,7 @@ export class AuthPage {
       }else{
         this.auth.login(this.loginData.username, this.loginData.password).subscribe({
           next: async (res:any) => {
-            if(typeof res.error != 'undefined' && res.error){
-              this.presentToast(res['error'], 'danger');
-            }else if(res.success){
-              if (!res.token) {
-                this.presentToast('Токен авторизації не отримано', 'danger');
-              } else {
-                await this.presentToast('Вхід виконано успішно', 'success', 1500);
-                await this.auth.saveToken(res.token);
-                await this.navCtrl.navigateRoot('/tabs/tab1', { animated: false });
-              }
-            }
+            await this.handleLoginResponse(res);
             this.loading = false;
           },
           error: async (err) => {
@@ -111,11 +101,23 @@ export class AuthPage {
               this.presentToast(res['error'], 'danger');
             }else if(res.success){
               if (!res.token) {
-                this.presentToast('Акаунт створено, але токен авторизації не отримано', 'warning', 4000);
+                await this.presentToast('Акаунт створено. Виконуємо автоматичний вхід...', 'success', 1800);
+                this.auth.login(this.registerData.email, this.registerData.password).subscribe({
+                  next: async (loginRes:any) => {
+                    await this.handleLoginResponse(loginRes, 'Акаунт успішно створено');
+                    this.loading = false;
+                  },
+                  error: async () => {
+                    this.presentToast('Акаунт створено, увійдіть у кабінет вручну', 'warning', 4000);
+                    this.isLoginMode = true;
+                    this.loginData.username = this.registerData.email;
+                    this.loginData.password = '';
+                    this.loading = false;
+                  }
+                });
+                return;
               } else {
-                await this.presentToast('Акаунт успішно створено', 'success', 1800);
-                await this.auth.saveToken(res.token);
-                await this.navCtrl.navigateRoot('/tabs/tab1', { animated: false });
+                await this.finalizeAuth(res.token, 'Акаунт успішно створено');
               }
             }
             this.loading = false;
@@ -126,6 +128,28 @@ export class AuthPage {
           }
       });
     }
+  }
+
+  private async handleLoginResponse(res: any, successMessage = 'Вхід виконано успішно') {
+    if(typeof res?.error != 'undefined' && res.error){
+      await this.presentToast(res.error, 'danger');
+      return;
+    }
+
+    if(res?.success){
+      if (!res.token) {
+        await this.presentToast('Токен авторизації не отримано', 'danger');
+        return;
+      }
+
+      await this.finalizeAuth(res.token, successMessage);
+    }
+  }
+
+  private async finalizeAuth(token: string, successMessage: string) {
+    await this.presentToast(successMessage, 'success', 1500);
+    await this.auth.saveToken(token);
+    await this.navCtrl.navigateRoot('/tabs/tab1', { animated: false });
   }
 
   openForgotPassword() {
