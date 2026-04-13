@@ -200,40 +200,28 @@ export class ApiService {
      );
    }
  
-   getCountries(): Observable<any> {
-     return this.http.get(`${this.baseUrl}?type=getCountries`).pipe(
-       tap(response => console.log('API: getCountries raw response:', response))
-     );
+  getCountries(): Observable<any> {
+     return this.http.get(`${this.baseUrl}?type=getCountries`).pipe();
    }
  
    getLanguages(): Observable<any> {
-     return this.http.get(`${this.baseUrl}?type=getLanguages`).pipe(
-       tap(response => console.log('API: getLanguages raw response:', response))
-     );
+     return this.http.get(`${this.baseUrl}?type=getLanguages`).pipe();
    }
  
    setLanguage(contextKey: string): Observable<any> {
-     return this.http.post(`${this.baseUrl}?type=set_language`, { contextKey }).pipe(
-       tap(response => console.log(`API: setLanguage for ${contextKey} raw response:`, response))
-     );
+     return this.http.post(`${this.baseUrl}?type=set_language`, { contextKey }).pipe();
    }
  
    setCountry(countryId: number): Observable<any> {
-     return this.http.post(`${this.baseUrl}?type=set_country`, { country_id: countryId }).pipe(
-       tap(response => console.log(`API: setCountry for ID ${countryId} raw response:`, response))
-     );
+     return this.http.post(`${this.baseUrl}?type=set_country`, { country_id: countryId }).pipe();
    }
  
    getHomeData(): Observable<any> {
-     return this.http.get(`${this.baseUrl}?type=get_home_data`).pipe(
-       tap(response => console.log('API: getHomeData raw response:', response))
-     );
+     return this.http.get(`${this.baseUrl}?type=get_home_data`).pipe();
    }
  
    getShops(): Observable<any> {
-     return this.http.get(`${this.baseUrl}?type=getShops`).pipe(
-       tap(response => console.log('API: getShops raw response:', response))
-     );
+     return this.http.get(`${this.baseUrl}?type=getShops`).pipe();
    }
 
   /* EXAMPLES: */

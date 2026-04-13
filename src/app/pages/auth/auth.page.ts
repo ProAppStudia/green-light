@@ -75,15 +75,18 @@ export class AuthPage {
         this.presentToast(this.translate.instant('TEXT_CHECK_LOGIN_DATA'), 'danger');
         this.loading = false;
       }else{
-        console.log('Login '+this.loginData.username);
-        console.log('Pass '+this.loginData.password);
         this.auth.login(this.loginData.username, this.loginData.password).subscribe({
           next: async (res:any) => {
             if(typeof res.error != 'undefined' && res.error){
               this.presentToast(res['error'], 'danger');
             }else if(res.success){
-              this.auth.saveToken(res.token);
-              this.navCtrl.navigateRoot('/tabs/tab1', { animated: false });
+              if (!res.token) {
+                this.presentToast('Токен авторизації не отримано', 'danger');
+              } else {
+                await this.presentToast('Вхід виконано успішно', 'success', 1500);
+                await this.auth.saveToken(res.token);
+                await this.navCtrl.navigateRoot('/tabs/tab1', { animated: false });
+              }
             }
             this.loading = false;
           },
@@ -106,8 +109,13 @@ export class AuthPage {
             if(typeof res.error != 'undefined' && res.error){
               this.presentToast(res['error'], 'danger');
             }else if(res.success){
-              this.auth.saveToken(res.token);
-              this.navCtrl.navigateRoot('/tabs/tab1', { animated: false });
+              if (!res.token) {
+                this.presentToast('Акаунт створено, але токен авторизації не отримано', 'warning', 4000);
+              } else {
+                await this.presentToast('Акаунт успішно створено', 'success', 1800);
+                await this.auth.saveToken(res.token);
+                await this.navCtrl.navigateRoot('/tabs/tab1', { animated: false });
+              }
             }
             this.loading = false;
           },

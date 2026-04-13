@@ -79,15 +79,15 @@ export class PushService {
 
   private async bindListeners(): Promise<void> {
     await FirebaseMessaging.addListener('notificationReceived', (notification) => {
-      console.log('[Push] notificationReceived', notification as PushNotificationSchema);
+      void notification;
     });
 
     await FirebaseMessaging.addListener('notificationActionPerformed', (notification) => {
-      console.log('[Push] notificationActionPerformed', notification as PushNotificationSchema);
+      void notification;
     });
 
     await FirebaseMessaging.addListener('tokenReceived', (token) => {
-      console.log('[Push] tokenReceived', token as PushNotificationToken);
+      void token;
       void this.syncToken();
     });
   }
