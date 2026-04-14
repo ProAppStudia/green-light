@@ -37,7 +37,7 @@
       <div>{{ 'TEXT_TOTAL_DISCOUNTS' | translate }}: {{ filteredCount }}</div>
       <ion-buttons>
         <ion-button fill="outline" (click)="openMapDiscount()">
-          <ion-icon name="list-outline"></ion-icon> {{ 'TEXT_DISCOUNT_MAP' | translate }}
+          <ion-icon name="map-outline" slot="start"></ion-icon> {{ 'TEXT_DISCOUNT_MAP' | translate }}
         </ion-button>
         <ion-button fill="outline" (click)="toggleView('list')" [color]="viewMode === 'list' ? 'light' : 'medium'">
           <ion-icon name="list-outline"></ion-icon>

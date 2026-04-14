@@ -155,24 +155,24 @@
         <ion-icon name="close-outline"></ion-icon>
       </button>
       <div class="plan-activation-head">
-        <h3>Активуйте план</h3>
+        <h3>{{ 'TEXT_ACTIVATE_PLANE' | translate }}</h3>
       </div>
       <div class="plan-activation-body">
-        <h4>Як активувати тарифний план?</h4>
+        <h4>{{ 'TEXT_ACTIVATE_PLANE_HOW_HEADER' | translate }}</h4>
         <ul>
-          <li>Активація тарифного плану буде відбуватись через платіжну систему CoinPayments.</li>
-          <li>Ви можете сплатити активацію фіатною валютою або крипто-валютою USDT.</li>
-          <li>Якщо ви обрали USDT, зверніть увагу на мережу. Ми використовуємо TRON (TRC20).</li>
-          <li>Щоб продовжити натисніть на кнопку оплатити.</li>
+          <li>{{ 'TEXT_ACTIVATE_PLANE_HOW_1' | translate }}</li>
+          <li>{{ 'TEXT_ACTIVATE_PLANE_HOW_2' | translate }}</li>
+          <li>{{ 'TEXT_ACTIVATE_PLANE_HOW_3' | translate }}</li>
+          <li>{{ 'TEXT_ACTIVATE_PLANE_HOW_4' | translate }}</li>
         </ul>
         <ion-button expand="block" class="plan-activation-pay" (click)="openPaymentLink()">
-          Оплатити
+          {{ 'TEXT_PAY' | translate }}
           <ion-icon name="checkmark-outline"></ion-icon>
         </ion-button>
       </div>
       <div class="plan-activation-footer">
         <ion-button fill="clear" class="plan-activation-cancel-btn" (click)="closePlanActivationModal()">
-          Відміна
+          {{ 'TEXT_CANCEL_2' | translate }}
         </ion-button>
       </div>
     </div>

@@ -93,7 +93,6 @@ export class DiscountMapPage implements OnInit {
 
     this.route.queryParamMap.subscribe(params => {
       const categoryId = Number(params.get('category'));
-console.log('Отримано category_id з query params:', categoryId);
       if (categoryId) {
         this.loadDiscounts({ category_id: categoryId });
       } else {
@@ -266,8 +265,8 @@ console.log('Отримано category_id з query params:', categoryId);
 
   async showNoResultsAlert() {
   const alert = await this.alertCtrl.create({
-    header: 'Нічого не знайдено',
-    message: 'За цими фільтрами знижки не мають геолокації.',
+    header: this.translate.instant('TEXT_NOT_FOUND'),
+    message: this.translate.instant('TEXT_DISCOUNT_WITHOUT_GEO'),
     buttons: ['OK']
   });
 

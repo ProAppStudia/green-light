@@ -11,12 +11,12 @@
   <div class="guest-hero-card" *ngIf="!is_active_user">
     <div class="guest-hero-copy">
       <span class="guest-eyebrow">Green Light Coin</span>
-      <h3>Почни свій шлях у GLC</h3>
-      <p>Дізнайся, як працює Green Light Coin, як отримати свої перші 1000 GLC і які можливості відкриються далі.</p>
+      <h3>{{ 'TEXT_START_ROUTE_GLC' | translate }}</h3>
+      <p>{{ 'TEXT_START_ROUTE_GLC_DESC' | translate }}</p>
     </div>
     <div class="guest-hero-actions">
       <ion-button (click)="openCryptoDescription()" expand="block" color="primary" class="guest-secondary-button">
-        Про Green Light Coin
+        {{ 'TEXT_ABOUT_GLC_BUTTON' | translate }}
         <ion-icon name="chevron-forward-outline"></ion-icon>
       </ion-button>
       <ion-button *ngIf="!is_auth_user" (click)="openAuth()" expand="block" color="primary" class="guest-primary-button">
@@ -38,7 +38,7 @@
           </span>
           <span class="withdwor">
             <ion-button (click)="openCryptoDescription()" class="menu-button-payout">
-              Детальніше
+              {{ 'TEXT_DETAILS' | translate }}
               <ion-icon name="arrow-forward-outline" class="strelka"></ion-icon>
             </ion-button>
           </span>
@@ -50,7 +50,7 @@
         <div class="left-section">
           <ion-icon name="people-outline"></ion-icon>
           <div class="text">
-            <small>Всього монет випущено</small>
+            <small>{{ 'GLC_TEXT_TOTAL_SUPPLY' | translate }}</small>
             <span>{{ total_supply || 0 }} <small>{{ glc_coin_symbol }}</small></span>
           </div>
         </div>
@@ -61,7 +61,7 @@
       <div class="header">
         <div class="status-heading">
           <span class="eyebrow">GLC Status</span>
-          <h4>Статус монет Green Light Coin</h4>
+          <h4>{{ 'TEXT_GLC_STATUS' | translate }}</h4>
         </div>
       </div>
       <div *ngIf="wallet_address == ''" class="note-empty-wallet">
@@ -119,7 +119,7 @@
       </div>
       <div class="coming-soon-copy">
         <strong>Green Light Market</strong>
-        <small>coming soon</small>
+        <small>{{ 'TEXT_COMING_SOON' | translate }}</small>
       </div>
     </div>
 
@@ -128,8 +128,8 @@
         <ion-icon name="rocket-outline"></ion-icon>
       </div>
       <div class="coming-soon-copy">
-        <strong>Оплата підняття оголошень за GLC</strong>
-        <small>coming soon</small>
+        <strong>{{ 'TEXT_GLC_TOP_UP' | translate }}</strong>
+        <small>{{ 'TEXT_COMING_SOON' | translate }}</small>
       </div>
     </div>
   </div>
@@ -137,21 +137,21 @@
   <div class="glc-sections">
     <section class="glc-section-card">
       <div class="section-copy">
-        <span class="section-eyebrow">GLC benefits</span>
-        <h4>Що дає Green Light Coin</h4>
+        <span class="section-eyebrow">{{ 'TEXT_GLC_BENEFITS' | translate }}</span>
+        <h4>{{ 'TEXT_GLC_BENEFITS_DESC' | translate }}</h4>
       </div>
       <div class="benefits-grid">
         <div class="benefit-item">
-          <strong>1000 GLC бонусом</strong>
-          <small>Після активації тарифного плану Green Light.</small>
+          <strong>{{ 'TEXT_GLC_BENEFIT_1' | translate }}</strong>
+          <small>{{ 'TEXT_GLC_BENEFIT_1_DESC' | translate }}</small>
         </div>
         <div class="benefit-item">
-          <strong>Внутрішня торгівля</strong>
-          <small>Можливість продавати та купувати GLC між користувачами.</small>
+          <strong>{{ 'TEXT_GLC_BENEFIT_2' | translate }}</strong>
+          <small>{{ 'TEXT_GLC_BENEFIT_2_DESC' | translate }}</small>
         </div>
         <div class="benefit-item">
-          <strong>Потенціал росту</strong>
-          <small>Підготовка до лістингу та розширення сценаріїв використання.</small>
+          <strong>{{ 'TEXT_GLC_BENEFIT_3' | translate }}</strong>
+          <small>{{ 'TEXT_GLC_BENEFIT_3_DESC' | translate }}</small>
         </div>
       </div>
     </section>
@@ -159,28 +159,28 @@
     <section class="glc-section-card">
       <div class="section-copy">
         <span class="section-eyebrow">How to get</span>
-        <h4>Як отримати GLC</h4>
+        <h4>{{ 'TEXT_HOW_TO_GET_GLC' | translate }}</h4>
       </div>
       <div class="steps-list">
         <div class="step-item">
           <span class="step-index">1</span>
           <div class="step-copy">
-            <strong>Активуй тариф Green Light</strong>
-            <small>Після активації тарифу система відкриває доступ до бонусу.</small>
+            <strong>{{ 'TEXT_HOW_TO_GET_GLC_STEP_1' | translate }}</strong>
+            <small>{{ 'TEXT_HOW_TO_GET_GLC_STEP_1_DESC' | translate }}</small>
           </div>
         </div>
         <div class="step-item">
           <span class="step-index">2</span>
           <div class="step-copy">
-            <strong>Отримай 1000 GLC</strong>
-            <small>Монети автоматично нараховуються на твій акаунт.</small>
+            <strong>{{ 'TEXT_HOW_TO_GET_GLC_STEP_2' | translate }}</strong>
+            <small>{{ 'TEXT_HOW_TO_GET_GLC_STEP_2_DESC' | translate }}</small>
           </div>
         </div>
         <div class="step-item">
           <span class="step-index">3</span>
           <div class="step-copy">
-            <strong>Зберігай або використовуй</strong>
-            <small>Тримай GLC, торгуй між користувачами або чекай нових функцій.</small>
+            <strong>{{ 'TEXT_HOW_TO_GET_GLC_STEP_3' | translate }}</strong>
+            <small>{{ 'TEXT_HOW_TO_GET_GLC_STEP_3_DESC' | translate }}</small>
           </div>
         </div>
       </div>
@@ -189,35 +189,35 @@
     <section class="glc-section-card">
       <div class="section-copy">
         <span class="section-eyebrow">Roadmap</span>
-        <h4>Що відкривається далі</h4>
+        <h4>{{ 'TEXT_GLC_ROADMAP_HEADER' | translate }}</h4>
       </div>
       <div class="roadmap-list">
         <div class="roadmap-item done">
           <span class="roadmap-dot"></span>
           <div class="roadmap-copy">
-            <strong>Бонус 1000 GLC</strong>
-            <small>Нарахування монет після активації тарифного плану.</small>
+            <strong>{{ 'TEXT_GLC_ROADMAP_STEP_1' | translate }}</strong>
+            <small>{{ 'TEXT_GLC_ROADMAP_STEP_1_DESC' | translate }}</small>
           </div>
         </div>
         <div class="roadmap-item current">
           <span class="roadmap-dot"></span>
           <div class="roadmap-copy">
-            <strong>Внутрішній Green Light Market</strong>
-            <small>Купівля та продаж GLC між користувачами платформи.</small>
+            <strong>{{ 'TEXT_GLC_ROADMAP_STEP_2' | translate }}</strong>
+            <small>{{ 'TEXT_GLC_ROADMAP_STEP_2_DESC' | translate }}</small>
           </div>
         </div>
         <div class="roadmap-item">
           <span class="roadmap-dot"></span>
           <div class="roadmap-copy">
-            <strong>Оплата функцій за GLC</strong>
-            <small>Підняття магазинів, знижок та нові сервіси всередині платформи.</small>
+            <strong>{{ 'TEXT_GLC_ROADMAP_STEP_3' | translate }}</strong>
+            <small>{{ 'TEXT_GLC_ROADMAP_STEP_3_DESC' | translate }}</small>
           </div>
         </div>
         <div class="roadmap-item">
           <span class="roadmap-dot"></span>
           <div class="roadmap-copy">
-            <strong>Вихід на біржі</strong>
-            <small>Розвиток ліквідності та масштабування Green Light Coin.</small>
+            <strong>{{ 'TEXT_GLC_ROADMAP_STEP_4' | translate }}</strong>
+            <small>{{ 'TEXT_GLC_ROADMAP_STEP_4_DESC' | translate }}</small>
           </div>
         </div>
       </div>
