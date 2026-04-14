@@ -1,3 +1,14 @@
+/*fix for text size adjustment*/
+html {
+  font-size: 16px;
+}
+
+html, body {
+  -webkit-text-size-adjust: none !important;
+  -moz-text-size-adjust: none !important;
+  text-size-adjust: none !important;
+}
+
 /*
  * App Global CSS
  * ----------------------------------------------------------------------------

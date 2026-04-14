@@ -127,6 +127,13 @@ export class Tab1Page implements OnInit {
   }
 
   ngOnInit() {
+
+    console.log('Device Pixel');
+    console.log('Device Pixel -- ');
+    console.log(window.innerWidth);
+    console.log(screen.width);
+    console.log(window.devicePixelRatio);
+
     this.homeData$ = this.apiService.getHomeData().pipe(
       map(response => {
         console.log('Home Data (parsed):', JSON.stringify(response, null, 2));

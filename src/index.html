@@ -9,6 +9,22 @@
 
   <meta name="color-scheme" content="light dark" />
   <meta name="viewport" content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <script>
+    (function () {
+      var sw = screen.width;
+      var iw = window.innerWidth;
+      if (iw < sw - 10) {
+        var scale = iw / sw;
+        document.querySelector('meta[name="viewport"]').setAttribute('content',
+          'viewport-fit=cover, width=device-width' +
+          ', initial-scale=' + scale +
+          ', minimum-scale=' + scale +
+          ', maximum-scale=' + scale +
+          ', user-scalable=no'
+        );
+      }
+    })();
+  </script>
   <meta name="format-detection" content="telephone=no" />
   <meta name="msapplication-tap-highlight" content="no" />
 
