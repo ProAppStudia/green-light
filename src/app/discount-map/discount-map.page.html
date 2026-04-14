@@ -1,9 +1,12 @@
 <ion-header class="ion-no-border">
   <div class="header-container" [class.hidden]="hideHeader" [class.scrolled]="isScrolled">
     <div class="header-top">
+      <ion-button fill="clear" (click)="goBack()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
       <img src="assets/icon/logo/Logo_GreenLight_White_G.png" alt="GreenLight Logo" class="header-logo-img" />
       <div class="header-icons">
-        <ion-button  (click)="loadDiscounts()">
+        <ion-button (click)="loadDiscounts()">
           {{ 'TEXT_SHOW_ALL' | translate }}
         </ion-button>
         <ion-button (click)="openMenu()">

@@ -3,7 +3,7 @@ import { IonHeader, IonToolbar, IonTitle, IonContent, IonButtons, IonButton, Ion
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { addIcons } from 'ionicons';
-import { notificationsOutline, languageOutline, globeOutline, menuOutline, searchOutline, mapOutline, cart } from 'ionicons/icons';
+import { notificationsOutline, languageOutline, globeOutline, menuOutline, searchOutline, mapOutline, cart, arrowBackOutline } from 'ionicons/icons';
 import { globeOutline as globeOutlineIcon } from 'ionicons/icons'; // Alias for globeOutline if needed elsewhere
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { Observable, BehaviorSubject, combineLatest, forkJoin, of, Subject } from 'rxjs';
@@ -13,6 +13,7 @@ import { CategoriesGridComponent } from '../components/categories-grid/categorie
 /*import { ApiService } from '../services/api.service'; // old one*/
 import { Router } from '@angular/router';
 import { ActivatedRoute } from '@angular/router';
+import { Location } from '@angular/common';
 import { AlertController } from '@ionic/angular';
 
 import { ApiService } from '../services/api';
@@ -21,13 +22,6 @@ import { AuthService } from 'src/app/services/auth.service';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 // Leaflet
 import * as L from 'leaflet';
-//change icons
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'assets/marker-icon-2x.png',
-  iconUrl: 'assets/marker-icon.png',
-  shadowUrl: 'assets/marker-shadow.png',
-});
 
 @Component({
   selector: 'app-discount-map',
@@ -73,11 +67,12 @@ export class DiscountMapPage implements OnInit {
     private menu: MenuController, 
     private cdr: ChangeDetectorRef,
     private router: Router,
+    private location: Location,
     private auth: AuthService,
     private translate: TranslateService,
     private alertCtrl: AlertController
   ) {
-    addIcons({notificationsOutline,languageOutline,mapOutline,menuOutline,searchOutline,cart,globeOutline:globeOutlineIcon});
+    addIcons({notificationsOutline,languageOutline,mapOutline,menuOutline,searchOutline,cart,arrowBackOutline,globeOutline:globeOutlineIcon});
     translate.use('ua');
   }
 
@@ -162,6 +157,10 @@ export class DiscountMapPage implements OnInit {
     this.isScrolled = scrollTop > 0;
   }
 
+  goBack() {
+    this.location.back();
+  }
+
   openMenu() {
     this.menu.open('main-menu'); // 'main-menu' is the ID of the ion-menu
   }
@@ -241,7 +240,14 @@ export class DiscountMapPage implements OnInit {
               const lat = parseFloat(discount.coordinates?.lat);
               const lan = parseFloat(discount.coordinates?.lan);
               if(!isNaN(lat) && !isNaN(lan) && lat !== 0 && lan !== 0){
-                const marker = L.marker([lat, lan]);
+                const greenIcon = L.divIcon({
+                  html: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="36" height="36"><path fill="#2dc96e" stroke="#fff" stroke-width="0.8" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>`,
+                  className: '',
+                  iconSize: [36, 36],
+                  iconAnchor: [18, 36],
+                  popupAnchor: [0, -36]
+                });
+                const marker = L.marker([lat, lan], { icon: greenIcon });
                 const popupContent = `
                   <div class="custom-popup">
                     <img src="${discount.image}" />
