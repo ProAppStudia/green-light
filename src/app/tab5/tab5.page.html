@@ -75,7 +75,12 @@
       <div class="about-body" *ngIf="wallet_address">
         <div class="ab-item">
           <span class="heading">{{ 'GLC_TEXT_WALLET_ADDRESS' | translate }}</span>
-          <p>{{ wallet_address }} <ion-icon name="copy-outline" (click)="copy(wallet_address)"></ion-icon></p>
+          <div class="copy-row">
+            <p class="copy-value">{{ wallet_address }}</p>
+            <button type="button" class="copy-btn" (click)="copy(wallet_address)" aria-label="Скопіювати адресу гаманця">
+              <ion-icon name="copy-outline"></ion-icon>
+            </button>
+          </div>
         </div>
         <div class="ab-item">
           <span class="heading">{{ 'GLC_TEXT_WALLET_CHAIN' | translate }}</span>
@@ -103,7 +108,12 @@
           <div *ngFor="let transcation of glc_transactions" class="transaction-item">
               <div class="headline"><h5>{{transcation.type}}</h5> <span class="date">{{ transcation.date }}</span></div>
               <p class="transcation-amount">{{ 'GLC_TEXT_AMOUNT' | translate }}: {{ transcation.amount }} </p>
-              <p class="transcation-id">{{ 'GLC_TEXT_TX_ID' | translate }}: {{ transcation.tx }} <ion-icon name="copy-outline" (click)="copy(transcation.tx)"></ion-icon></p>
+              <div class="copy-row tx-copy-row">
+                <p class="transcation-id">{{ 'GLC_TEXT_TX_ID' | translate }}: {{ transcation.tx }}</p>
+                <button type="button" class="copy-btn" (click)="copy(transcation.tx)" aria-label="Скопіювати ідентифікатор транзакції">
+                  <ion-icon name="copy-outline"></ion-icon>
+                </button>
+              </div>
           </div>
         </div>
         </div>

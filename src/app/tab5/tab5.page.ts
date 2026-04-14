@@ -247,15 +247,44 @@ openAuth(){
   this.navCtrl.navigateForward('/auth', { animated: false });
 }
 
-copy(text:any){
-    navigator.clipboard.writeText(text)
-    .then(() => {
-      this.showToast(this.translate.instant('COPIED'));
-    })
-    .catch(err => {
-      this.showToast(this.translate.instant('ERROR_OCCURED'));
-    });
+async copy(text: any) {
+    const value = String(text ?? '');
+
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(value);
+      } else {
+        this.copyWithFallback(value);
+      }
+
+      await this.showToast(this.translate.instant('COPIED'));
+    } catch {
+      try {
+        this.copyWithFallback(value);
+        await this.showToast(this.translate.instant('COPIED'));
+      } catch {
+        await this.showToast(this.translate.instant('ERROR_OCCURED'));
+      }
+    }
   }
+
+private copyWithFallback(value: string) {
+  const textarea = document.createElement('textarea');
+  textarea.value = value;
+  textarea.setAttribute('readonly', '');
+  textarea.style.position = 'fixed';
+  textarea.style.opacity = '0';
+  textarea.style.pointerEvents = 'none';
+  document.body.appendChild(textarea);
+  textarea.select();
+  textarea.setSelectionRange(0, textarea.value.length);
+  const copied = document.execCommand('copy');
+  document.body.removeChild(textarea);
+
+  if (!copied) {
+    throw new Error('copy_failed');
+  }
+}
 
 async showToast(text:any, color:any='light', duration:any=2000) {
   const toast = await this.toastCtrl.create({
