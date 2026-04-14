@@ -162,5 +162,6 @@
   "TEXT_CANCEL_2": "Отмена",
   "TEXT_MY_QR_CODE": "Мой QR-код",
   "TEXT_NOT_FOUND": "Ничего не найдено",
-  "TEXT_DISCOUNT_WITHOUT_GEO": "По этим фильтрам скидки не имеют геолокации."
+  "TEXT_DISCOUNT_WITHOUT_GEO": "По этим фильтрам скидки не имеют геолокации.",
+  "TEXT_AFTER_ACTIVATION" : "После активации вы получите 1000 GLC."
 }

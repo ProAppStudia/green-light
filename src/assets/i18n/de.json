@@ -162,5 +162,6 @@
   "TEXT_CANCEL_2": "Abbrechen",
   "TEXT_MY_QR_CODE": "Mein QR-Code",
   "TEXT_NOT_FOUND": "Nichts gefunden",
-  "TEXT_DISCOUNT_WITHOUT_GEO": "Für diese Filter gibt es keine Rabatte mit Geolokation."
+  "TEXT_DISCOUNT_WITHOUT_GEO": "Für diese Filter gibt es keine Rabatte mit Geolokation.",
+  "TEXT_AFTER_ACTIVATION" : "Nach der Aktivierung erhalten Sie 1000 GLC."
 }
