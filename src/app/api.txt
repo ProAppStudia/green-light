@@ -1,0 +1,2419 @@
+<?php 
+//load core 
+define('MODX_API_MODE', true);
+require $_SERVER['DOCUMENT_ROOT'] . '/index.php';
+
+// FOR DEBUG
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+ini_set("log_errors", 1);
+ini_set("error_log", "api-php-error.log");
+
+// CORS 
+header('Content-Type: application/json; charset=utf-8');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization,  X-Requested-With, X-Language, X-Country');
+
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit;
+}
+	
+/*get all headers*/	
+if (!function_exists('getallheaders')) {
+  function getAllHeaders() {
+    $out = array();
+    foreach($_SERVER as $key=>$value) {
+      if (substr($key,0,5)=="HTTP_") {
+        $key=str_replace(" ","-",ucwords(strtolower(str_replace("_"," ",substr($key,5)))));
+        $out[$key]=$value;
+      }else{
+        $out[$key]=$value;
+      }
+    }
+    return $out;
+  }
+}
+
+function clean($data) {
+	if (is_array($data)) {
+		foreach ($data as $key => $value) {
+			unset($data[$key]);
+
+			$data[clean($key)] = clean($value);
+		}
+	} else {
+		$data = htmlspecialchars(($data ?? ''), ENT_COMPAT, 'UTF-8');
+	}
+	return $data;
+}
+
+$json = [];
+
+$country_id = 0;
+$count_discounts = 0;
+$limit = 15; // Кількість елементів при відображені (знижки / магазини)
+
+
+function authUser($token = ''){
+	
+	if(!$token){return false;}
+	global $modx;
+	
+	$modx->addPackage('user_app', $modx->getOption('core_path').'components/user_app/model/');
+	
+	$user = false;
+
+	$app_user = $modx->getObject('UserApp', ['token' => trim($token)]);
+	if($app_user){
+		$user = $modx->getObject('modUser', ['id' => $app_user->user_id]); // Головна умова
+	}
+	
+	if($user){
+		$user_id = $user->get('id');
+		
+		$modx->user = $modx->getObject('modUser', ['id' => $user_id]);
+		$modx->user->addSessionContext($modx->context->key);
+		
+		return $user_id;
+	}else{
+		return false;
+	}
+}
+
+$user_token = null;
+$user_id    = 0;
+$headers    = getallheaders();
+$authHeader = $headers['Authorization'] ?? $headers['authorization'] ?? null;
+if ($authHeader) {
+	if (stripos($authHeader, 'Bearer ') === 0) {
+		$user_token =  substr($authHeader, 7);
+	}else{
+		$user_token = trim($authHeader);
+	}
+}
+
+if($user_token){
+	$user_id = authUser($user_token);
+}
+
+
+
+
+if(isset($_GET['type']) && $_GET['type']){
+	
+	//Завантажити кастомні об'єкти
+	loadPackages(); 
+	
+	$type = clean($_GET['type']);
+	
+	$data = clean(json_decode(file_get_contents('php://input'), true));
+		
+	//fix for map filter debug
+	if(!is_array($data)){
+		$data = [];
+	}
+	
+	if(isset($_GET['category_id']) && intVal($_GET['category_id'])){
+		$data['category_id'] = intVal($_GET['category_id']);
+	}
+	
+	if(isset($_GET['shop_id']) && intVal($_GET['shop_id'])){
+		$data['shop_id'] = intVal($_GET['shop_id']);
+	}
+	//end fix
+	
+	if(isset($headers['contextKey']) && $headers['contextKey']){
+		$data['contextKey'] = $headers['contextKey'];
+	}elseif(isset($headers['X-Language']) && $headers['X-Language']){
+		$data['contextKey'] = $headers['X-Language'];
+	}
+	
+	if(isset($headers['country_id']) && $headers['country_id']){
+		$data['country_id'] = $headers['country_id'];
+	}elseif(isset($headers['X-Country']) && $headers['X-Country']){
+		$data['country_id'] = $headers['X-Country'];
+	}
+	
+	//for debug
+	if(!is_array($data)){$data = [];}
+	
+	if(isset($_GET['discount_id']) && !isset($data['discount_id'])){
+		$data['discount_id'] = (int)clean($_GET['discount_id']);
+	}
+	
+	if(isset($_GET['shop_id']) && !isset($data['shop_id'])){
+		$data['shop_id'] = (int)clean($_GET['shop_id']);
+	}
+	
+	if(isset($_GET['category_id']) && !isset($data['category_id'])){
+		$data['category_id'] = (int)clean($_GET['category_id']);
+	}
+	//end for debug
+	
+	//aplly from user storage
+	if($user_id){
+		$app_user = $modx->getObject('UserApp', ['user_id' => $user_id]);
+		/*Ці дані є в застосунку і приходять із кожним запитом*/
+		$user_data = json_decode($app_user->data, true);
+		if(isset($user_data['contextKey']) && $user_data['contextKey']){
+			//$data['contextKey'] = $user_data['contextKey'];
+		}
+		
+		if(isset($user_data['country_id']) && $user_data['country_id']){
+			//$data['country_id'] = $user_data['country_id'];
+		}
+	}
+	
+	//apply from session
+	if(!isset($data['country_id']) && isset($_SESSION['country_id']) && $_SESSION['country_id']){
+		$data['country_id'] = (int)$_SESSION['country_id'];
+	}
+	
+	if(!isset($data['contextKey']) && isset($_SESSION['contextKey']) && $_SESSION['contextKey']){
+		$data['contextKey'] = $_SESSION['contextKey'];
+	}
+	
+	//set Language version
+	if(isset($data['contextKey'])){
+		$context_key = $data['contextKey'];
+		$modx->setOption('cultureKey', $context_key);
+		
+	}else{
+		$context_key = $modx->getOption('cultureKey');
+		if($context_key == 'web' || $context_key == 'en'){
+			$context_key = 'ua';
+		}
+	}
+	
+	//let Language variables from lexicon
+	$lex_results = $modx->query("SELECT name, value FROM ".$modx->getOption('table_prefix')."lexicon_entries WHERE language = '".$context_key."'");
+    if(is_object($lex_results)){
+        while($row = $lex_results->fetch(PDO::FETCH_ASSOC)){
+             $modx->lexicon->set($row['name'], $row['value']);
+        }
+    }
+	
+	
+	
+	//set country_id
+	if(isset($data['country_id'])){
+		$country_id = (int)$data['country_id'];
+		$_SESSION['country_id'] = $country_id;
+	}
+	
+	/*
+		Авторизація
+	*/
+	if($type == 'login'){
+		$errors = [
+			'loginpass' => [
+				'ua' => 'Помилка. Email або пароль введено не вірно',
+				'ru' => 'Ошибка. Email или пароль введен не верно',
+				'en' => 'Error. Login or password is incorrect'
+			],
+			'usernotfound' => [
+				'ua' => 'Помилка. За вказаним еmail користувача не знайдено',
+				'ru' => 'Ошибка. За введенным еmail пользователь не найден',
+				'en' => 'Customer not found'
+			],
+			'notactive' => [
+				'ua' => 'Помилка. Ваш акаунт не активний',
+				'ru' => 'Ошибка. Ваш акаунт не активный',
+				'en' => 'Error. Your profile is disabled'
+			]
+		];
+
+		$username = ($data['username'] ?? '');
+		$password = ($data['password'] ?? '');
+		
+		if(!$username || !$password){
+			$json['error'] = $errors['loginpass'][$context_key];
+		}
+		
+		$user = $modx->getObject('modUser', ['username' => $username]);
+		if (!$user && !$json) {
+		   $json['error'] = $errors['usernotfound'][$context_key];
+		}
+		
+		if (!$json && !$user->active) {
+			$json['error'] = $errors['notactive'][$context_key];
+		}
+		
+		if (!$json && $user && $user->getOne('Profile')->get('blocked')) {
+			$json['error'] = $errors['notactive'][$context_key];
+			$json['error_reason'] = 'blocked';
+		}
+		
+		if(!$json){
+			$modx->setOption('login.remember_me_lifetime', 31536000);		
+			$properties = array(
+					'username' => $username,
+					'password' => $password,
+					'login_context'=> 'web',
+					//'add_contexts' => 'web',
+					'rememberme' => true,
+				);
+			$result = $modx->runProcessor('security/login', $properties);
+			if ($result->isError()) {
+				$json['error'] = $errors['loginpass'][$context_key];
+				$json['error_desc'] = $result->getAllErrors();
+			}else{
+				$modx->reloadConfig();
+				$modx->user = $modx->getUser();
+				
+				$json['success'] = true;
+				
+				$user_id = $user->id;
+				$token = generateSecureToken();
+				$json['token'] = $token;
+				
+				$userProfile = $user->getOne('Profile');
+				$extended = $userProfile->get('extended');
+				
+				$extended['app_token'] = $token;
+				$userProfile->set('extended', $extended);
+				$userProfile->save();
+				
+				$user_app = $modx->getObject('UserApp', ['user_id' => $user_id]);
+				if($user_app){
+					$user_app->set('token', $token);
+					$user_app->save();
+				}else{
+					$user_app = $modx->newObject('UserApp');
+					$user_app->fromArray([
+						'user_id' => $user_id, 
+						'token' => $token, 
+						'data' => json_encode([]),
+						'date_added' => date('Y-m-d H:i:s')
+					]);
+					$user_app->save();
+				}	
+			}
+		}
+	}
+	/*
+		Реєстрація
+	*/
+	if($type == 'register'){
+		
+		$fullname = ($data['fullname'] ?? '');
+		$email = ($data['email'] ?? '');
+		$referral_code = ($data['referral_code'] ?? '');
+		$password = ($data['password'] ?? '');
+		$password_confirm = ($data['password_confirm'] ?? '');
+		
+		if(!$fullname){
+			$json['error'] = 'Поле "Повне ім\'я" обов\'язкове до заповненя.';
+		}
+		
+		if(!$password || $password != $password_confirm){
+			$json['error'] = 'Перевірте поле пароль та підтвердження пароля';
+		}
+		
+		if(!$email){
+			$json['error'] = 'Поле "Email" обов\'язкове до заповненя.';
+		}else{
+			if(!filter_var($email, FILTER_VALIDATE_EMAIL)){
+				$json['error'] = 'Помилка. Перевірте поле еmail';
+			}else{
+				$validate_email = $modx->getObject('modUser', ['username' => $email]);
+				if($validate_email){
+					$json['error'] = 'Такий емейл вже зареєстровано';
+				}
+			}
+		}
+		
+		if(!$json){
+			
+			$user = $modx->newObject('modUser');
+			
+			$email = trim(strtolower($email));
+			$user->set('username', $email);
+			$user->set('email', $email);
+			$user->set('active', (int)($_POST['status'] ?? 1));
+			
+			$password = trim($password);
+			
+			$user->set('password', $password);
+					
+			$profile = $modx->newObject('modUserProfile');
+			$profile->set('fullname', $fullname);
+			$profile->set('email', $email);
+			
+			$token = generateSecureToken();
+			$extended = [
+				'app_token' => $token
+			];
+			$profile->set('extended', $extended);
+							
+			$user->addOne($profile);
+			
+			if($user->save()){
+				
+				$default_group_id = 3;
+				$user->joinGroup(intval($default_group_id));
+				
+				$user_id = $user->get('id');
+				
+				$json['success'] = true;
+				
+				sendRegisterEmail($email, $fullname);
+				
+				$user_app = $modx->newObject('UserApp');
+				$user_app->fromArray([
+					'user_id' => $user_id, 
+					'token' => $token, 
+					'data' => json_encode([]),
+					'date_added' => date('Y-m-d H:i:s')
+				]);
+				$user_app->save();
+				
+				if($referral_code){
+					
+					$referral_code = trim($referral_code);
+					
+					$modx->addPackage('track_codes', $modx->getOption('core_path').'components/track_codes/model/');
+					$modx->addPackage('referals', $modx->getOption('core_path').'components/referals/model/'); 
+					$modx->addPackage('referal_history', $modx->getOption('core_path').'components/referal_history/model/');
+					
+					$inviteUserId = $modx->getObject('TrackCodes', ['code'=>$referral_code]);
+					if($inviteUserId){
+						$history = $modx->newObject('ReferalHistory');
+						$history->fromArray([
+							'user_id' => $user_id, 
+							'inviter_id' => $inviteUserId->get('user_id'),
+							'inviter_code' => $referral_code,
+						]);
+						$history->save();
+					}
+				}
+			
+			}else{
+				$json['error'] = 'Щось пішло не так...';
+			}
+		}
+		
+	}
+	
+	
+	/*
+		Отримать список категорій
+	*/
+	if($type == 'getCategories'){
+		
+		$parent_category = 0;
+		
+		$cache_name = 'categories_'.$context_key.'_'.$country_id;
+		
+		$cached = $modx->cacheManager->get($cache_name);
+		
+		if(!$cached){
+			$query = "SELECT c.category_id, c.icon, cd.name FROM modx_ship_category c LEFT JOIN modx_ship_category_description cd ON (c.category_id = cd.category_id) WHERE cd.context_key = '".$context_key."' AND c.status = 1 AND c.parent_id = %d ORDER BY c.sort_order ASC";
+			//get main catgories 
+			$json['categories'] = [];
+			$main_query = $modx->query(sprintf($query, $parent_category));
+			while ($result = $main_query->fetch(PDO::FETCH_ASSOC)) {
+				
+				
+				$sub_query = $modx->query(sprintf($query, $result['category_id']));
+				$child = [];
+				if(is_object($sub_query)){
+					while($sub = $sub_query->fetch(PDO::FETCH_ASSOC)){
+						
+						$sub_query2 = $modx->query(sprintf($query, $sub['category_id']));
+						$child3 = [];
+						if(is_object($sub_query2)){
+							while($sub2 = $sub_query2->fetch(PDO::FETCH_ASSOC)){
+								
+								$sub_query3 = $modx->query(sprintf($query, $sub2['category_id']));
+								$child4 = [];
+								if(is_object($sub_query3)){
+									while($sub3 = $sub_query3->fetch(PDO::FETCH_ASSOC)){
+										
+										$icon = '';
+										if($sub3['icon']){
+											$icon = $sub3['icon'];
+										}
+										
+										$child4[] = [
+											'category_id' => $sub3['category_id'], 
+											'name' => $sub3['name'],
+											'icon' => $icon,						
+											'count' => getCountDiscountsInCategory($sub3['category_id']), 
+											'child' => []
+										];
+									}
+								}
+								
+								$icon = '';
+								if($sub2['icon']){
+									$icon = $sub2['icon'];
+								}
+								
+								$child3[] = [
+									'category_id' => $sub2['category_id'], 
+									'name' => $sub2['name'],
+									'icon' => $icon,						
+									'count' => getCountDiscountsInCategory($sub2['category_id']), 
+									'child' => $child4
+								];
+							}
+						}
+						
+						$icon = '';
+						if($sub['icon']){
+							$icon = $sub['icon'];
+						}
+						
+						$child[] = [
+							'category_id' => $sub['category_id'], 
+							'name' => $sub['name'],
+							'icon' => $icon,						
+							'count' => getCountDiscountsInCategory($sub['category_id']), 
+							'child' => $child3
+						];
+					}
+				}
+				
+				$icon = '';
+				if($result['icon']){
+					$icon = $result['icon'];
+				}
+				
+				$json['categories'][] = [
+					'icon' => $icon, 
+					'category_id' => $result['category_id'], 
+					'name' => $result['name'], 
+					'count' => getCountDiscountsInCategory($result['category_id']),
+					'child' => $child
+				];
+			}
+			
+			$modx->cacheManager->set($cache_name, $json['categories'], 14400);
+		
+		}else{
+			$json['categories'] = $cached;
+		}
+	}
+	
+	/*
+		Отримать знижку
+	*/
+	if($type == 'getDiscount' && isset($data['discount_id'])){
+		$discount_id = (int)$data['discount_id'];
+		
+		$discount = $modx->getObject('Discounts', ['discount_id'=>$discount_id, 'status' => 1]);
+		$json['discount'] = [];
+		
+		if($discount){
+			
+			$discount_description = $modx->getObject('DiscountDescription', ['discount_id'=>$discount_id, 'context_key' => $context_key]);
+			
+			$c = $modx->newQuery('DiscountImages');
+			$c->where(['discount_id'=>$discount_id]);
+			$c->sortby('sort_order','ASC');
+			$discount_images = $modx->getIterator('DiscountImages', $c);
+			$images = [];
+			
+			$main_image = '';
+			if($discount->get('main_image')){
+				$main_image = $modx->runSnippet('phpthumbof', [
+                    'input'  => $discount->get('main_image'),
+                    'options'=> '&w=450&h=300&zc=0'
+				]);
+				
+			}else{
+				$main_image = $modx->runSnippet('phpthumbof', [
+                    'input'  => $modx->getOption('image_placeholder'),
+                    'options'=> '&w=450&h=300&zc=0'
+				]);
+			}
+			
+			$main_image = $modx->getOption('site_url').ltrim($main_image, '/');
+			$images[] = $main_image;
+			
+			if($discount_images){
+				foreach($discount_images as $img){
+					$image = $modx->runSnippet('phpthumbof', [
+                            'input'  => $img->get('image'),
+                            'options'=> '&w=450&h=300&zc=0'
+					]);
+					if(strpos($image, 'http') === false){
+						$image = $modx->getOption('site_url').ltrim($image, '/');
+					}
+					$images[] = $image;
+				}
+			}
+			
+			
+			
+			$cor_l = $cor_r = '';
+			if($discount->get('map_coordinates') && strpos($discount->get('map_coordinates'), '/') !== false){
+				$coor = explode('/', $discount->get('map_coordinates'));
+				$cor_l = $coor[0];
+				$cor_r = $coor[1];
+			}
+			// shop information
+			$c = $modx->newQuery('Shops');
+            $c->select(array(
+              'Shops.shop_id as shop_id',
+              'Shops.status as status',
+              'Shops.status_sale as status_sale',
+              'Shops.logo as logo',
+              'Shops.viwed as viwed',
+              'Shops.addresses as addresses',
+              'Shops.socials as socials',
+              'Shops.phones as phones',
+              'ShopsDescription.name as name'
+            ));
+           
+            $c->leftJoin('ShopsDescription','ShopsDescription', 'ShopsDescription.shop_id = Shops.shop_id');
+            $c->where(['Shops.status' => 1, 'ShopsDescription.context_key' => $context_key, 'Shops.shop_id' => $discount->get('shop_id')]);
+            $shop = $modx->getObject('Shops', $c);
+			
+			//set empty vars 
+			$shop_socials = $shop_phones = [];
+			$shop_addresses = $shop_logo = $shop_name = '';
+			if($shop){			
+				$shop_socials = $modx->fromJSON($shop->get('socials'));
+				$shop_phones = $modx->fromJSON($shop->get('phones'));
+				
+				$shop_addresses = '';
+				$shop_addressesOBJ = $modx->fromJSON($shop->get('addresses'));
+				if($shop_addressesOBJ){
+					foreach($shop_addressesOBJ as $inx=>$address){
+						$shop_addresses .= $address['city'].', '.$address['address']."\r\n";
+					}
+				}
+				
+				$shop_logo = '';
+				if($shop->get('logo')){
+					$sh_logo = $shop->get('logo');
+					$shop_logo = $modx->runSnippet('phpthumbof', [
+						'input'  => $sh_logo,
+						'options'=> '&w=450&h=300&zc=1'
+					]);
+				}
+				
+				$shop_logo = $modx->getOption('site_url').ltrim($shop_logo, '/');
+				
+				$shop_name = $shop->get('name');
+			}
+			
+			$category_name = '';
+			if($discount->get('category_id')){
+				$category = $modx->getObject('CategoryDescription', ['category_id' => $discount->get('category_id'), 'context_key' => $context_key]);
+				if($category){
+					$category_name = $category->name;
+				}
+			}
+			
+			$json['discount'] = [
+				'image' => $main_image, 
+				'images' => $images,
+				'discount_id' => $discount->get('discount_id'),
+				'category_id' => $discount->get('category_id'),
+				'category' => $category_name,				
+				'shop_id' => $discount->get('shop_id'),
+				'percent' => $discount->get('percent'),
+				'currency' => $discount->get('currency'),
+				'discount_online' => $discount->get('discount_online'),
+				'date_start' => date('d.m.Y', strtotime($discount->get('date_start'))),
+				'date_end' => date('d.m.Y', strtotime($discount->get('date_end'))),
+				'address' => $discount->get('address'),
+				'name' => $discount_description->get('name'),
+				'description' => $discount_description->get('description'),
+				'lat' => $cor_l,
+				'lan' => $cor_r,
+				'shop_name' => $shop_name,
+				'shop_socials' => $shop_socials,
+				'shop_phones' => $shop_phones, 
+				'shop_addresses' => $shop_addresses, 
+				'shop_logo' => $shop_logo,
+			];
+			
+		}else{
+			$json['error'] = 'Discount not found...';
+		}		
+	}
+	
+	if($type == 'getShop' && isset($data['shop_id'])){
+		$shop_id = (int)$data['shop_id'];
+		// update viwed
+		$viw = $modx->getObject('Shops', ['shop_id'=>$shop_id]);
+		if($viw){
+			$viw->set('viwed', $viw->get('viwed') + 1);
+			$viw->save();
+		}
+		
+		$c = $modx->newQuery('Shops');
+        $c->select(array(
+              'Shops.shop_id as shop_id',
+              'Shops.status as status',
+              'Shops.status_sale as status_sale',
+              'Shops.logo as logo',
+              'Shops.viwed as viwed',
+              'Shops.addresses as addresses',
+              'Shops.socials as socials',
+              'Shops.phones as phones',
+              'ShopsDescription.name as name',
+              'ShopsDescription.description as description'
+            ));
+        $c->leftJoin('ShopsDescription','ShopsDescription', 'ShopsDescription.shop_id = Shops.shop_id');
+        $c->where(['Shops.status' => 1, 'ShopsDescription.context_key' => $context_key, 'Shops.shop_id' => $shop_id]);
+        $shop = $modx->getObject('Shops', $c);
+		
+		$json['shop'] = [];
+		if($shop){
+			
+			$shop_socials = $modx->fromJSON($shop->get('socials'));
+			$shop_phones = $modx->fromJSON($shop->get('phones'));
+				
+			$shop_addresses = '';
+			$shop_addressesOBJ = $modx->fromJSON($shop->get('addresses'));
+			if($shop_addressesOBJ){
+				foreach($shop_addressesOBJ as $inx=>$address){
+					$shop_addresses .= $address['city'].', '.$address['address']."\r\n";
+				}
+			}
+				
+			$shop_logo = '';
+			if($shop->get('logo')){
+				$sh_logo = $shop->get('logo');
+				$shop_logo = $modx->runSnippet('phpthumbof', [
+					'input'  => $sh_logo,
+					'options'=> '&w=450&h=300&zc=1'
+				]);
+			}else{
+				$shop_logo = $modx->runSnippet('phpthumbof', [
+                    'input'  => $modx->getOption('image_placeholder'),
+                    'options'=> '&w=450&h=300&zc=0'
+				]);
+			}
+			
+			if(strpos($shop_logo, 'http') === false){
+				$shop_logo = $modx->getOption('site_url').ltrim($shop_logo, '/');
+			}
+			
+			$shop_name = $shop->get('name');
+			
+			$social_image = [
+				'facebook' => $modx->getOption('site_url').'assets/images/soc_fb.png',
+				'instagram' => $modx->getOption('site_url').'assets/images/soc_inst.png',
+				'linkedin' => $modx->getOption('site_url').'assets/images/soc_linkedin.png',
+				'twitter' => $modx->getOption('site_url').'assets/images/soc_x.png',
+				'blank' => $modx->getOption('site_url').'assets/images/soc_blank.png'
+			];
+			$social_prepared = [];
+			if($shop_socials){
+				foreach($shop_socials as $skey => $slink){
+					$social_prepared[] = [
+						'url' => $slink,
+						'image' => ($social_image[$skey]) ? $social_image[$skey] : $social_image['blank'],
+						'type' => ucfirst($skey)
+					];
+				}
+			}
+			
+			$json['shop'] = [
+				'shop_name' => $shop_name,
+				'shop_socials' => $social_prepared,
+				'shop_phones' => $shop_phones, 
+				'shop_addresses' => $shop_addresses, 
+				'shop_logo' => $shop_logo,
+				'shop_description' => $shop->get('description'),
+				'shop_id' => $shop->get('shop_id'),
+			];
+			
+			
+			$start = 0;
+			$page = 1;
+			if(isset($data['page']) && $data['page']){
+				$start = intval($data['page']) * $limit;
+				$page  = intval($data['page']);
+			}
+			
+			//get discount by shop
+			$json['discounts'] = getDiscountsBy([
+				'by_shop' => $shop->get('shop_id')
+			], $start, $limit);
+			
+			$json['discounts_count'] = $count_discounts;
+			
+			//create pagination
+			$total_pages = ceil($count_discounts / $limit);
+			$json['total_pages'] = $total_pages;
+			$json['pagination'] = [];
+			if($total_pages){
+				$i = 1;
+				$max_output = $total_pages;
+				if($max_output > 10){
+					if($page){
+						$max_output = $page + 7;
+						if($page > 3){
+							$i = $page - 3;
+						}
+						if(($total_pages-$max_output) < 0){
+							$i = $i + ($total_pages - $max_output);
+							$max_output = $total_pages;
+						}
+					}
+				}
+				for($i;$i<=$max_output;$i++){
+					$json['pagination'][] = [
+						'page_no' => $i,
+						'active' => ($page == $i) ? true : false
+					];
+				}
+			}
+			
+		}else{
+			$json['error'] = 'Shop not found...';
+		}
+	}
+	/* Отримати список магазинів */
+	
+	if($type == 'getShops'){
+		
+		$keyword = (isset($_GET['keyword']) && $_GET['keyword']) ? clean(trim($_GET['keyword'])) : '';
+		
+		$c = $modx->newQuery('Shops');
+        $c->select(array(
+              'Shops.shop_id as shop_id',
+              'Shops.status as status',
+              'Shops.status_sale as status_sale',
+              'Shops.logo as logo',
+              'Shops.viwed as viwed',
+              'Shops.addresses as addresses',
+              'Shops.socials as socials',
+              'Shops.phones as phones',
+              'ShopsDescription.name as name'
+            ));
+        $c->leftJoin('ShopsDescription','ShopsDescription', 'ShopsDescription.shop_id = Shops.shop_id');
+        $c->where(['Shops.status' => 1, 'ShopsDescription.context_key' => $context_key]);
+		
+		if($keyword){
+			// $keyword = $modx->quote($keyword);
+			$c->where([['ShopsDescription.name:LIKE' => '%'.$keyword.'%'], ['ShopsDescription.description:LIKE' => '%'.$keyword.'%']], xPDOQuery::SQL_OR);
+		}
+		
+		
+		
+		$json['count_shops'] = $modx->getCount('Shops', $c);
+		
+        $shops = $modx->getIterator('Shops', $c);
+		$c->sortBy('RAND()');
+		
+		$start = 0;
+		$page = 1;
+		if(isset($_GET['limit']) && $_GET['limit']){
+			$limit = (int)$_GET['limit'];
+		}
+		if(isset($_GET['page']) && $_GET['page']){
+			$start = (intval($_GET['page']) - 1) * $limit;
+			$page  = intval($_GET['page']);
+		}
+		
+		$json['total_pages'] = ceil($json['count_shops'] / $limit);
+		
+		$c->limit($limit, $start);
+		
+		$json['shops'] = [];
+		if($shops){
+			
+			foreach($shops as $shop){
+				
+				$count_discount = $modx->newQuery('Discounts');
+				$where = [];
+				$where['Discounts.status'] = 1;
+				$where['Discounts.date_end:>='] = date('Y-m-d');
+				$where['Discounts.shop_id'] = $shop->shop_id;
+				$count_discount->where($where);
+				$count_discount->prepare();
+				$count_discount = $modx->getCount('Discounts', $count_discount, false);
+			
+				$shop_socials = $modx->fromJSON($shop->get('socials'));
+				$shop_phones = $modx->fromJSON($shop->get('phones'));
+					
+				$shop_addresses = '';
+				$shop_addressesOBJ = $modx->fromJSON($shop->get('addresses'));
+				if($shop_addressesOBJ){
+					foreach($shop_addressesOBJ as $inx=>$address){
+						$shop_addresses .= $address['city'].', '.$address['address']."\r\n";
+					}
+				}
+					
+				$shop_logo = '';
+				if($shop->get('logo')){
+					$sh_logo = $shop->get('logo');
+					$shop_logo = $modx->runSnippet('phpthumbof', [
+						'input'  => $sh_logo,
+						'options'=> '&w=450&h=300&zc=1'
+					]);
+				}else{
+					$shop_logo = $modx->runSnippet('phpthumbof', [
+						'input'  => $modx->getOption('image_placeholder'),
+						'options'=> '&w=450&h=300&zc=0'
+					]);
+				}
+				
+				if(strpos($shop_logo, 'http') === false){
+					$shop_logo = $modx->getOption('site_url').ltrim($shop_logo, '/');
+				}
+				
+				$shop_name = $shop->get('name');
+				
+				$social_image = [
+					'facebook' => $modx->getOption('site_url').'assets/images/soc_fb.png',
+					'instagram' => $modx->getOption('site_url').'assets/images/soc_inst.png',
+					'linkedin' => $modx->getOption('site_url').'assets/images/soc_linkedin.png',
+					'twitter' => $modx->getOption('site_url').'assets/images/soc_x.png',
+					'blank' => $modx->getOption('site_url').'assets/images/soc_blank.png'
+				];
+				$social_prepared = [];
+				if($shop_socials){
+					foreach($shop_socials as $skey => $slink){
+						$social_prepared[] = [
+							'url' => $slink,
+							'image' => ($social_image[$skey]) ? $social_image[$skey] : $social_image['blank'],
+							'type' => ucfirst($skey)
+						];
+					}
+				}
+				
+				$json['shops'][] = [
+					'shop_name' => $shop_name,
+					'shop_socials' => $social_prepared,
+					'shop_phones' => $shop_phones, 
+					'shop_addresses' => $shop_addresses, 
+					'shop_logo' => $shop_logo,
+					'shop_id' => $shop->get('shop_id'),
+					'count_discount' => $count_discount
+				];
+			}
+		}
+		
+	}
+	
+	if($type == 'getDiscountsMap'){
+		$category_id = isset($data['category_id']) ? (int)$data['category_id'] : 0;
+		$shop_id     = isset($data['shop_id']) ? (int)$data['shop_id'] : 0;
+		$start = 0; 
+		$limit = 15;
+		//Візьмемо максимальне число		
+		$res = $modx->query("SELECT count(*) as cnt FROM modx_ship_discounts WHERE DATE(date_end) > NOW() AND status = 1");
+		$res = $res->fetch(PDO::FETCH_ASSOC);
+		if($res){
+			if($res['cnt'] > $limit){
+				$limit = (int)$res['cnt'];
+			}
+		}
+		
+		//get discount by shop
+		$json['discounts'] = getDiscountsBy([
+			'category_id' => $category_id,
+			'by_shop'     => $shop_id,
+			'for_map'     => true,
+		], $start, $limit);
+		
+		$json['count'] = count($json['discounts']);
+		
+		if($category_id){
+			$category = $modx->query("SELECT c.category_id, c.parent_id, cd.name FROM modx_ship_category c LEFT JOIN modx_ship_category_description cd ON c.category_id = cd.category_id WHERE c.category_id = '".$category_id."' AND c.status = '1' AND cd.context_key = '".$context_key."';");
+			$category = $category->fetch(PDO::FETCH_ASSOC);
+			if($category){
+				$json['category'] = [
+					'name'        => $category['name'],
+					'category_id' => $category['category_id'],
+					'parent_id'   => $category['parent_id'],
+				];
+			}
+		}
+
+		if($shop_id){
+			$c = $modx->newQuery('Shops');
+			$c->select(array(
+				  'Shops.shop_id as shop_id',
+				  'Shops.status as status',
+				  'Shops.status_sale as status_sale',
+				  'Shops.logo as logo',
+				  'Shops.addresses as addresses',
+				  'Shops.socials as socials',
+				  'Shops.phones as phones',
+				  'ShopsDescription.name as name'
+				));
+			$c->leftJoin('ShopsDescription','ShopsDescription', 'ShopsDescription.shop_id = Shops.shop_id');
+			$c->where(['Shops.status' => 1, 'ShopsDescription.context_key' => $context_key, 'Shops.shop_id' => $shop_id]);
+			
+			$shop = $modx->getObject('Shops', $c);
+			
+			if($shop){
+				$shop_logo = '';
+				if($shop->get('logo')){
+					$sh_logo = $shop->get('logo');
+					$shop_logo = $modx->runSnippet('phpthumbof', [
+						'input'  => $sh_logo,
+						'options'=> '&w=450&h=300&zc=1'
+					]);
+				}else{
+					$shop_logo = $modx->runSnippet('phpthumbof', [
+						'input'  => $modx->getOption('image_placeholder'),
+						'options'=> '&w=450&h=300&zc=0'
+					]);
+				}
+				
+				if(strpos($shop_logo, 'http') === false){
+					$shop_logo = $modx->getOption('site_url').ltrim($shop_logo, '/');
+				}
+				
+				$shop_name = $shop->get('name');
+				
+				$json['shop'] = [
+					'logo' => $shop_logo, 
+					'name' => $shop_name, 
+					'shop_id' => $shop->get('shop_id'),
+					
+				];
+			}
+		}
+		
+	}
+	
+	if($type == 'getCategory' && isset($data['category_id'])){
+		$category_id = (int)$data['category_id'];
+		
+		$category = $modx->query("SELECT c.category_id, c.parent_id, cd.name FROM modx_ship_category c LEFT JOIN modx_ship_category_description cd ON c.category_id = cd.category_id WHERE c.category_id = '".$category_id."' AND c.status = '1' AND cd.context_key = '".$context_key."';");
+		$category = $category->fetch(PDO::FETCH_ASSOC);
+		if($category){
+			$json['name']        = $category['name'];
+			$json['category_id'] = $category['category_id'];
+			$json['parent_id']   = $category['parent_id'];
+			
+			
+			$start = 0;
+			$page = 1;
+			if(isset($data['limit']) && $data['limit']){
+				$limit = (int)$data['limit'];
+			}
+			if(isset($data['page']) && $data['page']){
+				$start = intval($data['page']) * $limit;
+				$page  = intval($data['page']);
+			}
+			
+			//get discount by shop
+			$json['discounts'] = getDiscountsBy([
+				'category_id' => $category_id
+			], $start, $limit);
+			
+			
+			$json['discounts_count'] = $count_discounts;
+			// $json['discounts_count'] =$count_discounts= 50;
+			
+			//create pagination
+			$total_pages = ceil($count_discounts / $limit);
+			$json['total_pages'] = $total_pages;
+			$json['pagination'] = [];
+			if($total_pages){
+				$i = 1;
+				$max_output = $total_pages;
+				if($max_output > 10){
+					if($page){
+						$max_output = $page + 7;
+						if($page > 3){
+							$i = $page - 3;
+						}
+						if(($total_pages-$max_output) < 0){
+							$i = $i + ($total_pages - $max_output);
+							$max_output = $total_pages;
+						}
+					}
+				}
+				for($i;$i<=$max_output;$i++){
+					$json['pagination'][] = [
+						'page_no' => $i,
+						'active' => ($page == $i) ? true : false
+					];
+				}
+			}
+			
+			$json['success'] = true;
+			
+			
+		}else{
+			$json['error'] = 'Category not found';
+		}
+	}
+	
+	if($type == 'getCountries'){  
+
+		$c = $modx->newQuery('Countries');
+		$c->where(array('status' => 1));
+		$c->sortby('name','ASC');
+		$countries = $modx->getIterator('Countries', $c);
+		$json['countries'] = [];
+		foreach($countries as $country){
+			$json['countries'][] = [
+				'name'       => $country->get('name'),
+				'country_id' => $country->get('id'),
+				'selected'   => ($country_id == $country->get('id')) ? true : false,
+			];
+		}
+		
+	}
+	
+	if($type == 'getLanguages'){
+		
+		$languages = $modx->getIterator('localizatorLanguage', ['active' => 1]);
+		$json['languages'] = [];
+		
+		$langs = [
+			'ua' => 'Українська',
+			'en' => 'English',
+			'de' => 'Deutsche',
+			'ru' => 'Русский',
+		];
+		
+		foreach($languages as $language) {
+			$json['languages'][] = [
+				'context_key' => $language->key, 
+				'name' => $langs[$language->key],
+				'active' => ($language->key == $context_key) ? true : false
+			];
+		}
+	
+	}
+	
+	/*
+	Додати знижку до мого профілю
+	*/
+	
+	if($type == 'add_to_my_discounts'){
+		
+		if(isset($_GET['discount_id']) && !isset($_POST['discount_id'])){
+			$_POST['discount_id'] = $_GET['discount_id'];
+		}
+		
+		if(!isset($_POST['discount_id']) || !$_POST['discount_id']){
+			$json['error'] = 'Будь ласка, оберіть знижку яку ви хочете додати';
+		}
+		
+		if(!$user_id){
+			$json['error'] = 'Будь ласка, увійдіть в свій кабінет або зареєструйтесь';
+		}
+		
+		if(!isset($json['error'])){
+			$discount_id = intVal($_POST['discount_id']);
+			$code = uniqid('GT_');
+			$code = strtoupper(mb_substr($code, 0, 14));
+			
+			$modx->addPackage('user_deal', $modx->getOption('core_path').'components/user_deal/model/');
+			
+			$is_have = $modx->getObject('UserDeal', ['user_id' => $user_id, 'discount_id' => $discount_id]);
+			
+			if($is_have){
+				$json['success'] = 'Знижка вже додана до вашого списку';
+			}else{
+				$modx->newObject('UserDeal', [
+					'user_id'     => $user_id,
+					'discount_id' => $discount_id,
+					'date_added'  => date('Y-m-d H:i:s'),
+					'code'        => $code
+				])->save();
+				$json['success'] = 'Знижка додана до вашого списку';
+			}
+		}
+		
+	}
+	/*
+		видалити знижку із мого профілю 
+	*/
+	if($type == 'delete_my_purchase'){
+		
+		if(!$user_id){
+			$json['error'] = 'Будь ласка, увійдіть в свій кабінет або зареєструйтесь';
+		}
+		
+		if(!isset($data['id']) || !$data['id']){
+			$json['error'] = 'Виникла помилка, спробуйте ще раз';
+		}
+		
+		if(!isset($json['error'])){
+			$purchase = $modx->getObject('UserDeal', ['id' => (int)$data['id'], 'user_id' => $user_id]);
+			if(!$purchase){
+				$json['error'] = 'Ви не можете видалити цю знижку';
+			}else{
+				if($purchase->remove() === false){
+					$modx->query("DELETE FROM modx_ship_user_deal WHERE id = '".(int)$data['id']."'");
+				}
+				$json['success'] = 'Успіщно видалено';
+			}
+		}
+		
+	}
+		
+	
+	/*
+		отримати реферальний код для зареєстрованих
+	*/
+	if($type == 'get_my_ref_code'){
+		if($user_id){
+			$ref_code = $modx->runSnippet('generateTrackCode', ['get_code' => true]); 
+			$json['code'] = $ref_code;
+			$json['link'] = $modx->getOption('site_url').'?ref='.$ref_code;
+		}else{
+			$json['error'] = 'Будь ласка, увійдіть в свій кабінет або зареєструйтесь';
+		}
+	}
+	/*
+		отримати список моїх покупок - для звичайних клієнтів
+	*/
+	
+	
+	
+	if($type == 'get_my_purchases'){
+		
+		if(!$user_id){
+			$json['error'] = 'Будь ласка, увійдіть в свій кабінет або зареєструйтесь';
+		}else{
+			
+			$q = $modx->newQuery('UserDeal');
+			$q->where(['user_id' => $user_id]);
+			$q->sortby('date_added', 'DESC');
+			
+			$json['total'] = $modx->getCount('UserDeal', $q);
+			
+			$results = $modx->getIterator('UserDeal', $q);
+			
+			$json['purchases'] = [];
+			
+			if($results){
+				foreach($results as $result){
+					
+					$discount  = $modx->getObject('Discounts', ['discount_id'=>$result->get('discount_id')]);
+					$discountd = $modx->getObject('DiscountDescription', ['discount_id'=>$result->get('discount_id'), 'context_key' => $context_key]);
+					
+					if($discount->get('main_image')){
+						$image = $modx->runSnippet('phpthumbof', [
+								'input'  => $discount->get('main_image'),
+								'options'=> '&w=200&h=200&zc=1'
+						]);
+					}else{
+						$image = '/assets/media/placeholder-image.jpg';
+					}
+					
+					if(strpos($image, 'http') === false){
+						$image = rtrim($modx->getOption('site_url'), '/').'/'.ltrim($image, '/');
+					}
+					
+					$path = $modx->getOption('assets_path').'qr_codes/';
+					if(file_exists($path.$result->get('code').'.png')){
+						$qr = $modx->getOption('site_url').'/assets/qr_codes/'.$result->get('code').'.png';
+					}else{
+						require_once($modx->getOption('assets_path').'components/phpqrcode/phpqrcode.php');
+						QRcode::png($result->get('code'), $path.$result->get('code').'.png');
+						$qr = $modx->getOption('site_url').'/assets/qr_codes/'.$result->get('code').'.png';
+					}
+					
+					$status = true; 
+					if($discount->get('status') != 1 || strtotime($discount->get('date_end')) < strtotime(date())){
+						$status = false;
+					}
+					
+					$json['purchases'][] = [
+						'image' => $image, 
+						'name' => $discountd->get('name'),
+						'status' => $status, 
+						'date_start' => date('d.m.Y', strtotime($discount->get('date_start'))),
+						'date_end' => date('d.m.Y', strtotime($discount->get('date_end'))),
+						'code' => $result->get('code'),
+						'qr' => $qr,
+						'discount_id' => $result->get('discount_id'),
+						'id' => $result->get('id'),
+						'to_delete_id' => $result->get('id')
+					];
+				}
+			}
+		}
+		
+	}
+	
+	/* 
+		Отримати список рефералів 
+	*/
+	
+	if($type == 'get_my_referals_count'){
+		if(!is_active_user()){
+			$json['error'] = 'Для доступу до цієї сторінки вам потрібно оплатити тарифний план';
+			$json['not_active'] = true;
+		}else{
+			
+			$count = $modx->getCount('Referals', ['invite_id' => $user_id]);
+			$json['count_referals'] =  ($count) ? $count : 0;
+			$json['success'] = true;
+		}	
+	}
+	
+	/*
+		отримати мій поточний баланс
+	*/
+	if($type == 'get_my_balance'){
+		if(!is_active_user()){
+			$json['error'] = 'Для доступу до цієї сторінки вам потрібно оплатити тарифний план';
+			$json['not_active'] = true;
+		}else{
+			
+			$c = $modx->newQuery('ReferalTransactions');
+			$c->select('SUM(amount) as sum_amount');
+			$c->where(array('status'=>1, 'user_id' => $user_id, 'type:!=' => 'plan'));
+			$result = $modx->getObject('ReferalTransactions', $c, false);
+			if($result){
+				$json['balance'] = round($result->get('sum_amount'), 0);
+				$json['balance_usd'] = '$ '.number_format(round($result->get('sum_amount'), 0), 2, ',', ' ');
+			}else{
+				$json['balance'] = 0;    
+				$json['balance_usd'] = '$ 0';    
+			}
+			$json['success'] = true;
+		}	
+	}
+	
+	if($type == 'get_my_name'){
+		if(!$user_id){
+			$json['error'] = 'Для доступу до цієї сторінки вам потрібно оплатити тарифний план';
+		}else{
+			
+			$user_profile = $modx->getObject('modUserProfile', ['internalKey' => (int)$user_id]);
+			$json['fullname'] = $user_profile->fullname;
+			$json['email'] = $user_profile->email;
+			
+			$json['max_payout_amount'] = $modx->runSnippet('getStatAccount', ['clear' => true, 'getCurrentBalance' => true]);
+			$json['plan_price'] = $modx->getOption('plan_amount');
+			$json['plan_currency'] = $modx->getOption('cp_default_currency');
+			$json['plan_currency_type'] = 'TRC20';
+			//remove TRC20
+			if(strpos($json['plan_currency'], '.') !== false){
+				$json['plan_currency'] = explode('.', $json['plan_currency']);
+				$json['plan_currency'] = $json['plan_currency'][0];
+			}
+			
+			$count = $modx->getCount('Referals', ['invite_id' => $user_id]);
+			$json['count_referals'] =  ($count) ? $count : 0;
+			
+			// Примусово авторизуємо
+			if(!$modx->user->id){
+				$user = $modx->getObject('modUser', ['id' => $user_id]);
+				if ($user) {
+					$modx->user = $user;
+					$modx->getUser($modx->context->key, true);
+					$modx->user->addSessionContext($modx->context->key);
+				}
+			}
+			
+			$json['ref_code'] = $modx->runSnippet('generateTrackCode', ['get_code' => true]);
+			$json['ref_link'] = $modx->getOption('site_url').'?ref='.$json['ref_code'];
+			$json['ref_description_link'] = $modx->makeUrl(1134, '', '', 'full');
+			
+			$json['success'] = true;
+		}	
+	}
+	
+	if($type == 'get_my_qr_code'){
+		if($user_id){
+			
+			require_once($_SERVER['DOCUMENT_ROOT'].'assets/components/phpqrcode/phpqrcode.php');
+			
+			$user_token = '';
+			
+			$user_code = $modx->getObject('UserQrCode', ['user_id' => $user_id]);
+			if(!$user_code){	
+				
+				$user_token = 'U-'.generateSecureToken(16);	
+				$filename = 'assets/qr_codes/'.$user_token.'.png';
+				QRcode::png($user_token, $_SERVER['DOCUMENT_ROOT'].$filename, 'H', 10, 2);  
+				
+				$uc = $modx->newObject('UserQrCode');
+				$uc->fromArray([
+					'user_id' => $user_id, 
+					'code' => $user_token,
+					'updated_at' => date('Y-m-d H:i:s')
+				]);
+				$uc->save();
+			}else{
+				
+				if(strtotime($user_code->updated_at) <= strtotime('- 1 day ') || empty($user_code->code)){
+					$user_token = 'U-'.generateSecureToken(16);	
+					$filename = 'assets/qr_codes/'.$user_token.'.png';
+					QRcode::png($user_token, $_SERVER['DOCUMENT_ROOT'].$filename, 'H', 10, 2);
+					$user_code->set('code', $user_token);
+					$user_code->set('updated_at', date('Y-m-d H:i:s'));
+					$user_code->save();
+				}else{
+					$user_token = $user_code->code;
+				}
+			}
+			
+			$json['my_qr_code'] = false;
+			
+			if($user_token){
+				
+				if(!file_exists($_SERVER['DOCUMENT_ROOT'].'assets/qr_codes/'.$user_token.'.png')){
+					$filename = 'assets/qr_codes/'.$user_token.'.png';
+					QRcode::png($user_token, $_SERVER['DOCUMENT_ROOT'].$filename, 'H', 10, 2);
+				}
+				
+				$json['my_qr_code'] = $modx->getOption('site_url').'assets/qr_codes/'.$user_token.'.png';
+				$json['my_qr_code_text'] = $user_token;
+				$json['success'] = true;
+				
+				$json['is_active_user'] = is_active_user();
+				if(!$json['is_active_user']){
+					$json['err_notice'] = 'Щоб користуватись всіми перевагами платформи, будь ласка, придбайте тариф';
+				}
+				
+			}else{
+				$json['error'] = 'Виникла не очікувана помилка. Будь ласка, спробуйте пізніще або зверніть до нашої підтримки';
+			}
+		}else{
+			$json['error'] = 'Будь ласка, увійдіть або створіть особистий кабінет';
+		}
+	}
+		
+	
+	if($type == 'get_my_earnings'){
+		
+		$json['is_auth'] = false;
+		$json['fullname'] = '';
+		if($user_id){
+			$json['is_auth'] = true;
+			$user_profile = $modx->getObject('modUserProfile', ['internalKey' => (int)$user_id]);
+			$json['fullname'] = $user_profile->fullname;
+		}
+		
+		$json['is_active_user'] = is_active_user();
+		
+		$json['ref_description_link'] = $modx->makeUrl(1134, '', '', 'full');
+		$json['crypto_description_link'] = $modx->makeUrl(1131, '', '', 'full');
+		
+		$json['transactions'] = [];
+		
+		$json['plan_currency'] = $modx->getOption('cp_default_currency');
+		//remove TRC20
+		if(strpos($json['plan_currency'], '.') !== false){
+			$json['plan_currency'] = explode('.', $json['plan_currency']);
+			$json['plan_currency'] = $json['plan_currency'][0];
+		}
+		
+		$json['my_balance'] = 0;
+		$json['earning_amount'] = $json['payout_amount'] = 0;
+		
+		if($json['is_active_user']){
+			
+			$json['my_balance'] = $modx->runSnippet('getStatAccount', ['clear' => true, 'getCurrentBalance' => true]);
+			
+			$total = $modx->getCount('ReferalTransactions', ['user_id' => $user_id]);
+			$page = isset($_GET['page']) ? $_GET['page'] : 1; 
+			$limit = 100;
+			$start = ($page > 1) ? ($page - 1) * $limit : 0;
+			
+			$json['total_items'] = $total;
+			$json['total_pages'] = $total ? ceil($total / $limit) : 0;
+
+			$c = $modx->newQuery('ReferalTransactions');
+			$c->where(['user_id' => $user_id]);
+			$c->sortby('date_added', 'DESC');
+			$c->limit($limit, $start);
+			
+			$transactions = $modx->getCollection('ReferalTransactions', $c, false);
+			
+			$json['transactions'] = [];
+			
+			if($transactions){
+				foreach($transactions as $transaction){
+					$transaction = $transaction->toArray();
+					
+					if($transaction['amount'] > 0){
+						$color = 'green';
+					}else{
+						$color = 'red';
+					}
+					
+					if($transaction['status'] == 1){
+						$text_status = $modx->lexicon('admin_status_success');
+						$bg_color = 'success';
+					}elseif($transaction['status'] == 2 || $transaction['status'] < 0){
+						$text_status = $modx->lexicon('admin_status_cancel');
+						$bg_color = 'danger';
+					}else{
+						$text_status = $modx->lexicon('admin_status_waiting');
+						$bg_color = 'warning';
+					}
+					
+					if($transaction['type'] == 'plan'){
+						$transaction['comment'] = $modx->lexicon('admin_comment_buy_plan');
+					}elseif($transaction['type'] == 'referal_pay'){
+						$transaction['comment'] = $modx->lexicon('admin_comment_referal_pay');
+					}elseif($transaction['type'] == 'bring_out'){
+						$transaction['comment'] = $modx->lexicon('admin_comment_bring_out');
+					}
+					
+					$json['transactions'][] = [
+						'id'         => $transaction['id'],
+						'amount'     => round($transaction['amount']),
+						'color'      => $color,
+						'bg_color'   => $bg_color,
+						'date_added' => date('Y.m.d', strtotime($transaction['date_added'])),
+						'text_status'=> $text_status,
+						'comment'    => $transaction['comment']
+					];
+						
+				}
+				
+				
+				$payouts_amount = $modx->query("SELECT SUM(amount) as amount FROM `modx_ship_referal_transactions` WHERE amount < 0 AND status = 1 AND user_id = '".$user_id."' AND type != 'plan';");
+				$payouts_amount = $payouts_amount->fetch(PDO::FETCH_ASSOC);
+				$json['payout_amount'] = (!is_null($payouts_amount['amount'])) ? $payouts_amount['amount'] : 0;
+				
+				$earning_amount = $modx->query("SELECT SUM(amount) as amount FROM `modx_ship_referal_transactions` WHERE amount > 0 AND status = 1 AND user_id = '".$user_id."' AND type IN ('referal_pay', 'referal_comission');");
+				$earning_amount = $earning_amount->fetch(PDO::FETCH_ASSOC);
+				$json['earning_amount'] = (!is_null($earning_amount['amount'])) ? $earning_amount['amount'] : 0;
+				
+				
+			}
+			
+			//crypto data
+			$modx->runSnippet('getCryptoWallet');
+			$json['balance_glc'] 	 = $modx->getPlaceholder('balance_glc');
+			$json['balance_usdt'] 	 = $modx->getPlaceholder('balance_usdt');
+			$json['balance_updated'] = $modx->getPlaceholder('balance_updated'); 
+			$json['wallet_address']  = $modx->getPlaceholder('wallet_address');
+			$json['wallet_chain']  = $modx->getOption('glc_chain');
+			$json['total_supply']  = $modx->getOption('glc_total_supply');
+			$json['glc_token_mint_amount']  = $modx->getOption('glc_token_mint_amount');
+			$json['balance_updated_at']  = $modx->getPlaceholder('balance_updated');
+			$json['glc_coin_symbol']  = 'GLC';
+			$json['glc_price_usdt']  = $modx->getPlaceholder('glc_price_in_usdt');
+			//get transcactions 
+			$json['glc_transactions'] = [];
+			$results = $modx->query("SELECT * FROM `modx_ship_crypto_transactions` WHERE user_id = '".(int)$user_id."' ORDER BY created_at DESC");
+			if(is_object($results)){
+				while($res = $results->fetch(PDO::FETCH_ASSOC)){
+					$json['glc_transactions'][] = [
+						'amount' => $res['amount'],
+						'type' => $res['type'],
+						'date' => date('d.m.Y H:i', strtotime($res['created_at'])),
+						'tx' => $res['tx'],
+					];
+				}
+			}
+			//debug
+			// $json['wallet_address'] = '';
+			
+		}
+		
+	}
+	
+	/*
+		отримати список моїх транзакцій
+	*/
+	if($type == 'get_my_transcations'){
+		
+		if(!is_active_user()){
+			$json['error'] = 'Для доступу до цієї сторінки вам потрібно оплатити тарифний план';
+			$json['not_active'] = true;
+		}else{
+			
+			
+			$total = $modx->getCount('ReferalTransactions', ['user_id' => $user_id]);
+			$page = isset($_GET['page']) ? $_GET['page'] : 1; 
+			$limit = 100;
+			$start = ($page > 1) ? ($page - 1) * $limit : 0;
+			
+			$json['total_items'] = $total;
+			$json['total_pages'] = $total ? ceil($total / $limit) : 0;
+
+			$c = $modx->newQuery('ReferalTransactions');
+			$c->where(['user_id' => $user_id]);
+			$c->sortby('date_added', 'DESC');
+			$c->limit($limit, $start);
+			
+			$transactions = $modx->getCollection('ReferalTransactions', $c, false);
+			
+			$json['transactions'] = [];
+			
+			if($transactions){
+			foreach($transactions as $transaction){
+				$transaction = $transaction->toArray();
+				
+				if($transaction['amount'] > 0){
+					$color = 'green';
+				}else{
+					$color = 'red';
+				}
+				
+				if($transaction['status'] == 1){
+					$text_status = $modx->lexicon('admin_status_success');
+					$bg_color = 'success';
+				}elseif($transaction['status'] == 2 || $transaction['status'] < 0){
+					$text_status = $modx->lexicon('admin_status_cancel');
+					$bg_color = 'danger';
+				}else{
+					$text_status = $modx->lexicon('admin_status_waiting');
+					$bg_color = 'warning';
+				}
+				
+				if($transaction['type'] == 'plan'){
+					$transaction['comment'] = $modx->lexicon('admin_comment_buy_plan');
+				}elseif($transaction['type'] == 'referal_pay'){
+					$transaction['comment'] = $modx->lexicon('admin_comment_referal_pay');
+				}elseif($transaction['type'] == 'bring_out'){
+					$transaction['comment'] = $modx->lexicon('admin_comment_bring_out');
+				}
+				
+				$json['transactions'][] = [
+					'id'         => $transaction['id'],
+					'amount'     => round($transaction['amount']),
+					'color'      => $color,
+					'bg_color'   => $bg_color,
+					'date_added' => date('Y.m.d', strtotime($transaction['date_added'])),
+					'text_status'=> $text_status,
+					'comment'    => $transaction['comment']
+				];
+					
+			}
+			}
+			
+			$json['success'] = true;
+		}
+	}
+	
+	/*
+	сформувати посилання для оплати
+	*/
+	
+	if($type == 'buy_plan'){
+		if($user_id){
+			
+			// Додати перевірку на головного юзера, щоб продавець не міг вивести кошти 
+			
+			if(!isset($json['error'])){		
+			
+				$user_data = $modx->getObject('UserApp', ['user_id' => $user_id]);
+				$temp_data = json_decode($user_data->data, true);
+				if(isset($temp_data['checkout_url']) && isset($temp_data['checkout_url_date_time']) && isCheckoutUrlValid($temp_data['checkout_url_date_time'])){
+					$json['success'] = true;
+					$json['checkout_url'] = $temp_data['checkout_url'];
+				}else{
+					$url = rtrim($modx->getOption('site_url'), '/').'/assets/coin-payments/handler.php';
+					$postdata = ['createPayment' => true, 'is_app' => true, 'token' => $user_token];
+					
+					$ch = curl_init();
+					// Set cURL options
+					curl_setopt($ch, CURLOPT_URL, $url);
+					curl_setopt($ch, CURLOPT_POST, true);
+					curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postdata));
+					curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+					$response = curl_exec($ch);
+					
+					$result = json_decode($response, true);
+					
+					if(isset($result['success']) && $result['success']){
+						$json['success'] = true;
+						$json['checkout_url'] = $result['checkout_url'];
+						
+						$user_data = $modx->getObject('UserApp', ['user_id' => $user_id]);
+						$temp_data = json_decode($user_data->data, true);
+						$temp_data['checkout_url'] = $json['checkout_url'];
+						$temp_data['checkout_url_date_time'] = date('Y-m-d H:i:s');
+						$user_data->set('data', json_encode($temp_data));
+						$user_data->save();
+						
+					}elseif(isset($result['error']) && $result['error']){
+						$json['error'] = $result['error'];
+					}else{
+						$json['error'] = 'Виникла неочікувана помилка. Будь ласка, спробуйте ще раз';
+					}
+				}
+						
+			}
+						
+			
+		}else{
+			$json['error'] = 'Увійдіть або зареєструйтесь, щоб продовжити';
+		}
+	}
+	
+	/*
+		Створити запит на вивід коштів
+	*/
+	
+	if($type == 'create_payout'){
+		if(!$user_id){
+			$json['error'] = 'Увійдіть або зареєструйтесь, щоб продовжити';
+		}
+		if(!is_active_user()){
+			$json['error'] = 'Придбайте тариф, щоб продовжити';
+		}
+		
+		if(empty($data['address'])){
+			$json['error'] = 'Вкажіть адресу вашого гаманця';
+		}
+		
+		if(empty($data['amount']) || !$data['amount']){
+			$json['error'] = 'Вкажіть суму.';
+		}
+		
+		$is_active_tarif = $modx->runSnippet('is_active_user');
+		$is_seller = $modx->runSnippet('is_seller');
+			
+		if($is_active_tarif == 'false' && $is_seller){
+			$json['error'] = 'Ви не можете ініціювати вивід коштів. Будь ласка, зверніться до адміністратора вашого акаунту.';
+		}
+		
+		if(!isset($json['error'])){
+			
+			$url = rtrim($modx->getOption('site_url'), '/').'/assets/coin-payments/handler.php';
+			$postdata = [
+				'createPayout' => true,
+				'address' => $data['address'],
+				'amount' => $data['amount'],
+				'is_app' => true, 
+				'token' => $user_token
+			];
+			
+			$ch = curl_init();
+			// Set cURL options
+			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch, CURLOPT_POST, true);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postdata));
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			$response = curl_exec($ch);
+			
+			$result = json_decode($response, true);
+			
+			if(isset($result['success'])){
+				$json['success'] = 'Заявка на вивід коштів успішно відправлена. Найближчим часом кошти надійдуть на ваш гаманець';
+			}elseif(isset($result['error'])){
+				$json['error'] = $result['error'];
+			}else{
+				$json['error'] = 'Виникла помилка. Будь ласка, спробуйте ще раз';
+			}
+			
+		}
+		
+	}
+	
+	/*
+	Перевірити код знижки
+	*/
+	
+	if($type == 'validate_code'){
+		// $user_id = 1;
+		// $data['code'] = 'U-3fe7b762f8eef926';
+		
+		file_put_contents(__DIR__.'/debug_input.txt', "INPUT ".print_r($data, true)."\n", FILE_APPEND);
+		
+		if($user_id){
+			
+			if(isset($data['code']) && $data['code']){
+				
+				$code = htmlentities($data['code']);
+			    $purchase = $modx->getObject('UserDeal', ['code' => $code]); 
+			    if($purchase && $purchase->get('user_id')){
+				   $date_added = $purchase->get('date_added');
+				   $user = $modx->getObject('modUser', $purchase->get('user_id'));
+				   $profile = $user->getOne('Profile');
+				   $name = $profile->get('fullname');
+				   
+				   $discountd = $modx->getObject('DiscountDescription', ['discount_id'=>$purchase->get('discount_id'), 'context_key' => $context_key]);
+				   
+				   $discount = $modx->getObject('Discounts', ['discount_id' => $purchase->get('discount_id')]);
+				   $dicount_image = $discount->main_image;
+				   if(!$dicount_image){
+					   $dicount_image = $modx->getOption('image_placeholder');
+				   }
+					$dicount_image = $modx->runSnippet('phpthumbof', [
+						'input'  => '/'.ltrim($dicount_image, '/'),
+						'options'=> '&w=200&h=200&zc=1'
+					]);
+					if(strpos($dicount_image, 'http') === false){
+						$dicount_image = $modx->getOption('site_url').ltrim($dicount_image, '/');
+					}
+				   
+				   $json['success'] = [
+						'name' => $name, 
+						'date_added' => date('d.m.Y', strtotime($date_added)), 
+						'discount_id' => $purchase->get('discount_id'),
+						'discount_name' => $discountd->get('name'),
+						'discount_image' => $dicount_image, 
+						'percent_raw' => '-'.$discount->percent.'%', 
+						'percent' => $discount->percent, 
+						'status' => $discount->status, 
+						'date_start' => date('d.m.Y', strtotime($discount->date_start)),
+						'date_end' => date('d.m.Y', strtotime($discount->date_end)),
+						'is_online' => $discount->discount_online
+					];
+			   }else{
+					
+					$is_offline_check = $modx->getObject('UserQrCode', ['code' => $code]);
+					
+					if($is_offline_check){
+						$user_id_by_code = $is_offline_check->user_id;
+						$active = $modx->getObject('UserActive', ['user_id' => $user_id_by_code], false);
+						if($active){
+							if($active->active == 1){
+								
+								$udata = $modx->getObject('modUserProfile', ['internalKey' => $user_id_by_code]);
+								
+								$json['success'] = [
+									'is_online' => false,
+									'is_offline' => true,
+									'user_id' => $user_id_by_code,
+									'name' => $udata->fullname,
+									'discount_image' => $modx->getOption('site_url').'assets/images/success_icon.png',
+									'custom_title' => 'Вітаємо! Вказаний код відповідає учаснику платформи!'
+								];
+								
+							}else{
+								$json['error'] = 'Вказаний користувач не є учасником програми платформи.';
+							}
+						}else{
+							$json['error'] = 'Вказаний користувач не є учасником програми платформи.';
+						}
+					
+				   }else{
+					   $json['error'] = 'За вказаним кодом інформацію не знайдено';
+				   }
+			   }
+				
+				
+			}else{
+				$json['error'] = 'Виникла помилка, будь ласка, спробуйте ще раз';
+			}
+			
+		}else{
+			$json['error'] = 'Увійдіть або зареєструйтесь, щоб продовжити';
+		}
+		
+		file_put_contents(__DIR__.'/debug_input.txt', "OUTPUT ".print_r($json, true)."\n", FILE_APPEND);
+		
+	}
+	
+	if($type == 'set_language'){
+		if(!isset($data['contextKey']) || !$data['contextKey']){
+			$json['error'] = 'Оберіть мову';
+		}
+		
+		if(!$user_id){
+			//??
+			$json['error'] = 'Увійдіть або зареєструйтесь, щоб продовжити';
+		}
+		
+		if(!isset($json['error'])){
+			$app_user = $modx->getObject('UserApp', ['user_id' => $user_id]);
+			if($app_user){
+				$user_data = json_decode($app_user->data, true);
+				$user_data['contextKey'] = $data['contextKey'];
+				$app_user->save();
+			}
+			$_SESSION['contextKey'] = $data['contextKey'];
+			$json['success'] = true;
+		}
+	}
+	
+	if($type == 'set_country'){
+		if(!isset($data['country_id']) || !$data['country_id']){
+			$json['error'] = 'Оберіть країну';
+		}
+		
+		if(!$user_id){
+			//??
+			$json['error'] = 'Увійдіть або зареєструйтесь, щоб продовжити';
+		}
+		
+		if(!isset($json['error'])){
+			$app_user = $modx->getObject('UserApp', ['user_id' => $user_id]);
+			if($app_user){
+				$user_data = json_decode($app_user->data, true);
+				$user_data['country_id'] = (int)$data['country_id'];
+				$app_user->save();
+			}
+			$_SESSION['country_id'] = (int)$data['country_id'];
+			$json['success'] = true;
+		}
+	}
+	
+	/*
+	*/
+	if($type == 'get_home_data'){
+		
+		$json['slider'] = [];
+		
+		$c = $modx->newQuery('Discounts');
+		$c->select(array(
+		  'Discounts.discount_id as discount_id', 
+		  'Discounts.status as status',
+		  'Discounts.date_end as date_end',
+		  'Discounts.percent as percent',
+		  'Discounts.main_image as main_image',
+		  'DiscountDescription.name as name',
+		  'Shops.addresses as addresses'
+		));
+		$c->leftJoin('DiscountDescription','DiscountDescription', 'DiscountDescription.discount_id = Discounts.discount_id');
+		$c->leftJoin('Shops', 'Shops', 'Discounts.shop_id = Shops.shop_id');
+		$where = [];
+		$where['Discounts.status'] = 1;
+		$where['Discounts.date_end:>='] = date('Y-m-d');
+		$where['DiscountDescription.context_key'] = $context_key;
+		if(isset($data['country_id']) && $data['country_id']){
+			$where['Shops.country_id'] = $data['country_id'];
+		}
+		$c->where($where);
+		$c->sortby('Discounts.percent', 'DESC');
+		$c->limit(15);
+		
+		$results = $modx->getIterator('Discounts', $c);
+		if($results){
+			foreach($results as $result){
+				$address = '';
+				if($result->get('addresses')){
+					$address = json_decode($result->get('addresses'), true);
+					if(!isset($address['city']) && isset($address[0])){
+						$address = $address[0];
+					}
+					$address = $address['city'].', '.$address['address'];
+				}
+
+				$image_thumb = $modx->runSnippet('phpthumbof', [
+						'input'  => $result->get('main_image'),
+						'options'=> '&w=860&h=405&zc=1'
+				]);
+				
+				if(strpos($image_thumb, 'http') === false){
+					$image_thumb = rtrim($modx->getOption('site_url'), '/').'/'.ltrim($image_thumb, '/');
+				}
+				
+				$json['slider'][] = [
+					'title'    => $result->get('name'),
+					'address' => $address,
+					'discount_id' => $result->discount_id,
+					'site_url'    => $modx->makeUrl(1127,'', array('deal'=>$result->get('discount_id')),'full'),
+					'photo'   => $image_thumb,
+					'discount' => $result->get('percent')
+				];
+			}
+		}
+		
+		$json['main_categories'] = [];
+		
+		$query = "SELECT c.category_id, c.icon, cd.name FROM modx_ship_category c LEFT JOIN modx_ship_category_description cd ON (c.category_id = cd.category_id) WHERE cd.context_key = '".$context_key."' AND c.status = 1 AND c.parent_id = %d ORDER BY c.sort_order ASC";
+
+		//get main catgories 
+		$main_query = $modx->query(sprintf($query, 0));
+
+		while ($result = $main_query->fetch(PDO::FETCH_ASSOC)) {
+			$json['main_categories'][] = [
+				'category_id' => $result['category_id'],
+				'name' => $result['name'],
+				'icon' => $modx->getOption('site_url').ltrim($result['icon'], '/'),
+			];
+		}
+		
+		$json['discounts_to_categories'] = [];
+		$categories = [5, 14, 36, 15];
+		
+		$json['products_to_cat'] = [];
+		
+		foreach($categories as $category_id){
+			
+			$category = $modx->getObject('CategoryDescription', ['category_id' => $category_id, 'context_key' => $context_key]);
+			$category_name = $category->get('name');
+	
+			$items = getDiscountsBy(['category_id' => $category_id], 0, $limit = 15);
+			
+			$json['discounts_to_categories'][] = [
+				'category_id' => $category_id, 
+				'name' => $category_name,
+				'count_discounts' => $count_discounts
+			];
+			
+			foreach($items as $item){
+				$json['products_to_cat'][] = array_merge($item, ['category_id' => $category_id, 'category' => $category_name]);
+			}
+			
+		}
+	}
+	
+	
+	if($type == 'search'){
+		$keywords = clean(($_GET['keyword'] ?? ''));
+		
+		$search_limit = 15;
+		
+		$json['results'] = [];
+		
+		if($keywords){
+			//Ги, хулі 
+			$wrong_s = ["'", "`", '"', '(', ')', ';', ':'];
+			foreach($wrong_s as $ss){$keywords = str_replace($ss,'', $keywords);}
+			if(isset($_SESSION['country_id'])){
+				$query = "SELECT
+					d.discount_id,
+					dd.name,
+					d.category_id,
+					d.shop_id,
+					d.main_image,
+					d.percent,
+					d.date_start,
+					d.date_end
+				FROM
+					modx_ship_discount_description dd
+				LEFT JOIN modx_ship_discounts d ON
+					(d.discount_id = dd.discount_id)
+				LEFT JOIN modx_ship_shops s ON
+					(d.shop_id = s.shop_id)
+				WHERE
+					(dd.name LIKE '%".$keywords."%' OR dd.description LIKE '%".$keywords."%' OR d.address LIKE '%".$keywords."%' )
+					AND d.status = 1 AND d.date_end > NOW() AND s.status_sale = 1 AND s.country_id = ".intval($_SESSION['country_id'])." AND dd.context_key = '".$context_key."'  GROUP BY d.discount_id LIMIT 15;";
+				
+			}else{
+				$query = "SELECT
+					d.discount_id,
+					dd.name,
+					d.category_id,
+					d.shop_id,
+					d.main_image,
+					d.percent,
+					d.date_start,
+					d.date_end
+				FROM
+					modx_ship_discount_description dd
+				LEFT JOIN modx_ship_discounts d ON
+					(d.discount_id = dd.discount_id)
+				LEFT JOIN modx_ship_shops s ON
+					(d.shop_id = s.shop_id)    
+				WHERE
+					(dd.name LIKE '%".$keywords."%' OR dd.description LIKE '%".$keywords."%' OR d.address LIKE '%".$keywords."%')
+					AND d.status = 1 AND d.date_end > NOW() AND s.status_sale = 1 AND dd.context_key = '".$context_key."' GROUP BY d.discount_id LIMIT $search_limit;";
+			}
+			// print $query;
+
+			$results = $modx->query($query);
+			if($results){
+				while ($result = $results->fetch(PDO::FETCH_ASSOC)) {
+					if(!$result['main_image']){
+						$result['main_image'] = $modx->getOption('image_placeholder');
+					}
+				
+					
+					$image_thumb = $modx->runSnippet('phpthumbof', [
+								'input'  => '/'.ltrim($result['main_image'], '/'),
+								'options'=> '&w=200&h=200&zc=1'
+					]);
+					if(strpos($image_thumb, 'http') === false){
+						$image_thumb = $modx->getOption('site_url').ltrim($image_thumb, '/');
+					}
+					
+					$json['results'][] = [
+						'type' => 'discount',
+						'name' => $result['name'],
+						'discount_id' => $result['discount_id'],
+						'id' => $result['discount_id'],
+						'date_start' => date('d.m.Y', strtotime($result['date_start'])),
+						'date_end'   => date('d.m.Y', strtotime($result['date_end'])),
+						'percent'    => $result['percent'],
+						'main_image' => $image_thumb,
+						'full_image' => $modx->getOption('site_url').ltrim($result['main_image'], '/'),
+					];
+				}
+			}
+			
+			// SHOPS 
+			$query = "SELECT
+					DISTINCT s.shop_id,
+					s.logo,
+					sd.name,
+					(
+					SELECT
+						COUNT(*)
+					FROM
+						modx_ship_discounts
+					WHERE
+				status = 1 AND date_end > NOW() AND shop_id = s.shop_id) AS count_discount
+				FROM
+					`modx_ship_shops` s
+				LEFT JOIN modx_ship_shops_description sd ON
+					s.shop_id = sd.shop_id
+				WHERE
+					(sd.name LIKE '%".$keywords."%' OR sd.description LIKE '%".$keywords."%') AND
+				status = 1";
+			if(isset($_SESSION['country_id'])){
+				$query .= " AND country_id = ".intval($_SESSION['country_id']);
+			}
+			$query .= " LIMIT $search_limit";
+			
+			$shops = $modx->query($query);
+			if($shops){
+				while ($shop = $shops->fetch(PDO::FETCH_ASSOC)) {
+					
+					if(!$shop['logo']){
+						$shop['logo'] = $modx->getOption('image_placeholder');
+					}
+				
+					$logo = $modx->runSnippet('phpthumbof', [
+						'input'  => $shop['logo'],
+						'options'=> '&w=200&h=200&zc=1'
+					]);
+					
+					if(strpos($logo, 'http') === false){
+						$logo = $modx->getOption('site_url').ltrim($logo, '/');
+					}
+										
+					$json['results'][] = [
+						'type' => 'shop',
+						'main_image' => $logo,
+						'full_image' => $modx->getOption('site_url').ltrim($shop['logo'], '/'),
+						'name' => $shop['name'],
+						'shop_id' => $shop['shop_id'],
+						'id' => $shop['shop_id'],
+						'count_deals' => $shop['count_discount'],
+					];
+				}
+			}
+			
+		}
+		
+	}
+	
+	
+	
+	if($type == 'update_profile'){
+		 
+		if(!$user_id){
+			$json['error'] = 'Помилка. Увійдіть в свій особистий кабінет';
+		}else{
+			$data['fullname'] = trim($data['fullname']);
+			$data['password'] = trim($data['password']);
+			$data['confirm_password'] = trim($data['confirm_password']);
+			$data['username'] = trim(strtolower($data['username']));
+						
+			if($data['password']){
+				if($data['password'] != $data['confirm_password']){
+					$json['error'] = 'Пароль не збігається';
+				}elseif(mb_strlen($data['password']) < 6){
+					$json['error'] = 'Пароль має містити мінімум 6 символів';
+				}
+			}
+			
+			if(empty($data['fullname'])){
+				$json['error'] = 'Вкажіть повне ім\'я';
+			}
+			
+			if(empty($data['username'])){
+				$json['error'] = 'Вкажіть Email';
+			}
+			
+			if(!$json){
+				$user = $modx->getObject('modUser', ['id' => $user_id]);
+				if($user->username != $data['username']){
+					$email_check = $modx->newQuery('modUser');
+					$email_check->where([
+						'id:!=' => $user_id,
+						'username' => $data['username']
+					]);
+					if($modx->getCount('modUser', $email_check, false)){
+						$json['error'] = 'Такий email вже зареєстровано';
+					}
+				}
+				
+				
+				if(!$json){
+					//do update
+					$user->set('username', $data['username']);
+					if($data['password']){
+						$user->set('password', $data['password']);
+					}
+					$user->save();
+					$profile = $modx->getObject('modUserProfile', ['internalKey' => $user->id]);
+					$profile->set('email', $data['username']);
+					$profile->set('fullname', $data['fullname']);
+					$profile->save();
+					$json['success'] = $modx->lexicon('admin_status_success');
+				}
+				
+			}
+		}	
+	}
+	
+	if($type == 'delete_account'){
+		if(!$user_id){
+			$json['error'] = 'Помилка.';
+		}else{
+			
+			if(!isset($user) || !is_object($user)){
+				$user = $modx->getObject('modUser', ['id' => $user_id]);
+			}
+			
+			$message = '<h4>Запит на видалення акаунту</h4>';
+			$message .= '<p>Пошта користувача: '.$user->get('username').'</p>';
+			$message .= '<p>Ідентифікатор користувача: '.$user->get('id').'</p>';
+			$message .= '<p>Запит надіслано із застосунку</p>';
+						
+			$modx->runSnippet('sendEmail', [
+				'subject' => 'Запит на видалення акаунту',
+				'email' => 'aaleksandrovich453@gmail.com',//$modx->getOption('emailsender'),
+				'message' => $message,
+			]);
+			
+			file_put_contents(__DIR__.'/delete_acc_requests.txt',  nl2br(strip_tags($message)) . "\n", FILE_APPEND);
+			
+			$json['success'] = 'Запит на видалення акаунту надіслано. Найближчим часом ваш акаунт буде видалено';
+		}
+	}
+	
+	
+	
+	if($user_id){
+		
+		$is_active_tarif = $modx->runSnippet('is_active_user');
+		$is_seller = $modx->runSnippet('is_seller');
+		if($is_active_tarif == 'true'){
+			$is_active_tarif = true;
+		}else{
+			$is_active_tarif = false;
+		}
+		
+		$json['user_id'] = $user_id;
+		$json['is_active_user'] = $is_active_tarif;
+		$json['is_seller'] = $is_seller ? true : false;
+		if($is_seller){
+			$json['seller_to_user'] = $is_seller;
+		}
+	}
+	
+}
+
+header('Content-Type: application/json; charset=utf-8');
+print json_encode($json);
+
+
+
+/*
+ADDITIONAL HELP functions
+*/
+
+
+function is_active_user(){
+	global $modx;
+	if(!$modx->user->id){
+		return false;
+	}else{
+		
+		$is_active_tarif = $modx->runSnippet('is_active_user');
+		$is_seller = $modx->runSnippet('is_seller');
+		
+		if($is_active_tarif == 'false' && !$is_seller){
+			return false;
+		}elseif($is_active_tarif == 'true'){
+			return true;
+		}elseif($is_seller){
+			return true;
+		}		
+	}
+	return false;
+}
+
+function isCheckoutUrlValid($datetime, $ttlMinutes = 55) {
+    if (!$datetime) return false;
+
+    $created = strtotime($datetime);
+    if (!$created) return false;
+
+    return (time() - $created) < ($ttlMinutes * 60);
+}
+
+function loadPackages(){
+	global $modx;
+	
+	$modx->addPackage('referal_transactions', $modx->getOption('core_path').'components/referal_transactions/model/');
+	$modx->addPackage('referals', $modx->getOption('core_path').'components/referals/model/');
+	$modx->addPackage('user_deal', $modx->getOption('core_path').'components/user_deal/model/');
+	$modx->addPackage('discounts', $modx->getOption('core_path').'components/discounts/model/');
+	$modx->addPackage('discount_description', $modx->getOption('core_path').'components/discount_description/model/');
+	$modx->addPackage('discount_images', $modx->getOption('core_path').'components/discount_images/model/');
+	$modx->addPackage('shops_description', $modx->getOption('core_path').'components/shops_description/model/');
+	$modx->addPackage('shops', $modx->getOption('core_path').'components/shops/model/');
+	$modx->addPackage('countries', $modx->getOption('core_path').'components/countries/model/');
+	$modx->addPackage('user_app', $modx->getOption('core_path').'components/user_app/model/');
+	$modx->addPackage('category_description', $modx->getOption('core_path').'components/category_description/model/');
+	$modx->addPackage('user_qr_code', $modx->getOption('core_path').'components/user_qr_code/model/');
+	$modx->addPackage('user_active', $modx->getOption('core_path').'components/user_active/model/');
+	
+}
+
+function getDiscountsBy($params = [], $start = 0, $limit = 15){
+	global $modx, $context_key, $country_id, $count_discounts;
+
+	$c = $modx->newQuery('Discounts');
+	$c->select(array(
+		'Discounts.discount_id as discount_id', 
+		'Discounts.status as status',
+		'Discounts.date_start as date_start',
+		'Discounts.date_end as date_end',
+		'Discounts.percent as percent',
+		'Discounts.old_price as old_price',
+		'Discounts.main_image as main_image',
+		'Discounts.currency as currency',
+		'DiscountDescription.name as name', 
+		'Discounts.map_coordinates as map_coordinates'
+	));
+	$c->leftJoin('DiscountDescription','DiscountDescription', 'DiscountDescription.discount_id = Discounts.discount_id');
+	$c->leftJoin('Shops', 'Shops', 'Discounts.shop_id = Shops.shop_id');
+	
+	$where = [];
+	$where['Discounts.status'] = 1;
+	$where['DiscountDescription.context_key'] = $context_key;
+	if(isset($params['by_shop']) && $params['by_shop']){
+		$where['Discounts.shop_id'] = (int)$params['by_shop'];
+	}
+	if(isset($_SESSION['country_id']) && $_SESSION['country_id']){
+		$where['Shops.country_id'] = (int)$_SESSION['country_id'];
+	}
+	
+	if(isset($params['category_id']) && $params['category_id']){
+		// get all categories
+		$categories = $modx->query("SELECT category_id FROM `modx_ship_category_path` WHERE path_id = '".intval($params['category_id'])."'");
+		$categories = $categories->fetchAll(PDO::FETCH_ASSOC);
+		$categories = array_column($categories, 'category_id');
+		
+		$where['Discounts.category_id:IN'] = $categories;
+	}
+	
+	if(isset($params['for_map']) && $params['for_map']){
+		$where['Discounts.map_coordinates:!='] = '';
+	}
+	
+	$c->where($where);
+	$c->sortby('Discounts.date_end', 'DESC'); // default sort 
+	$c->limit($limit, $start);
+	$c->prepare();
+	$sql_q = $c->toSQL();
+	
+	$count_discounts = $modx->getCount('Discounts', $c); // global variable
+	
+	$items = $modx->getIterator('Discounts', $c);
+	
+	$results = [];
+	foreach($items as $result){
+		$result = $result->toArray();
+		
+		if(!$result['main_image']){
+			$result['main_image'] = $modx->getOption('image_placeholder');
+		}
+		$image_thumb = $modx->runSnippet('phpthumbof', [
+                'input'  => $result['main_image'],
+                'options'=> '&w=350&h=250&zc=1'
+		]);
+		
+		if(strpos($image_thumb, 'http') == false){
+			$image_thumb = $modx->getOption('site_url').ltrim($image_thumb, '/');
+		}
+		
+		$coor = ['', ''];
+		if($result['map_coordinates']){
+			$coor = explode('/', $result['map_coordinates']);
+		}else{
+			$q = $modx->query("SELECT * FROM modx_ship_address_coordinates WHERE address = '".$modx->quote($result['address'])."'");
+			if($q){
+				$row = $q->fetch(PDO::FETCH_ASSOC);
+				if($row['lat'] && $row['lon']){
+					$coor = [$row['lat'], $row['lon']];
+				}
+			}
+		}
+		
+		$results[] = [
+			'name'       => $result['name'],
+			'image'      => $image_thumb,
+			'discount_id'=> $result['discount_id'],
+			'href'       => isset($href) ? $href : null,
+			'address'    => $result['address'],
+			'percent'    => '-'.$result['percent'].'%',
+			'percent_raw'=> $result['percent'],
+			'date_end'   => $result['date_end'],
+			'date_start' => $result['date_start'],
+			'old_price'  => $result['old_price'],
+			'currency'   => $result['currency'],
+			'coordinates' => [
+				'lat' => $coor[0],
+				'lan' => $coor[1],
+			]
+		];
+		
+	}
+	return $results;
+}
+
+function getCountDiscountsInCategory($cat_id = 0){
+    global $modx;
+    $c = 0;
+    if($cat_id){
+        if(isset($_SESSION['country_id'])){
+          $cnt = $modx->query("SELECT count(*) as cnt FROM modx_ship_discounts d LEFT JOIN modx_ship_shops s ON d.shop_id = s.shop_id WHERE d.status = 1 AND s.country_id = '".$_SESSION['country_id']."' AND d.category_id = '".(int)$cat_id."' AND d.date_end >= NOW();");
+        }else{
+          $cnt = $modx->query("SELECT count(*) as cnt FROM modx_ship_discounts d LEFT JOIN modx_ship_shops s ON d.shop_id = s.shop_id WHERE d.status = 1 AND d.category_id = '".(int)$cat_id."' AND d.date_end >= NOW();");
+        }
+        $cnt = $cnt->fetch(PDO::FETCH_ASSOC);
+        if($cnt){
+            $c = $cnt['cnt'];
+        }
+    }
+    return ($c) ? $c : '';
+}
+
+function generateSecureToken(int $length = 32){
+    try {
+        $bytes = random_bytes($length);
+        return mb_substr(bin2hex($bytes), 0, $length);
+    } catch (Exception $e) {
+        error_log("Error generating secure token: " . $e->getMessage());
+        throw new Exception("Could not generate secure token.");
+    }
+}
+
+function sendRegisterEmail($email, $fullname = ''){
+	global $modx;
+
+	$content = '<div style="max-width:600px;margin:40px auto;padding:30px;background:#f4f9ff;border:1px solid #d6e8ff;border-radius:10px;font-family:Arial, sans-serif;color:#333;">
+  <div style="text-align:center;">
+    <img src="https://cdn-icons-png.flaticon.com/512/7518/7518748.png" alt="Success" width="80" style="margin-bottom:20px;">
+    <h2 style="color:#2e7d32;">Hi '.$fullname.'!</h2>
+    <p style="font-size:16px;margin:10px 0 20px;">Thanks for registering with '.$modx->getOption('site_name').'! We are thrilled to have you on board.</p>
+  </div>
+
+  <div style="background:#ffffff;padding:20px;border-radius:8px;border:1px solid #e0e0e0;">
+    <p>You do not yet have full access to posting ads and the referral program.</p>
+    <p>If you have any questions, feel free to reply to this email.</p>
+	<p>Get started by clicking below:</p>
+  </div>
+
+  <div style="margin-top:20px;text-align:center;">
+    <a href="'.$modx->makeUrl(1113,'web','', 'full').'" style="display:inline-block;padding:10px 20px;background:#2e7d32;color:#fff;text-decoration:none;border-radius:5px;">Go to Dashboard</a>
+  </div>
+
+  <p style="margin-top:30px;font-size:13px;color:#777;text-align:center;">
+    Best regards,<br>
+The '.$modx->getOption('site_name').' Team
+  </p>
+</div>';
+	
+	
+	$modx->runSnippet('sendEmail', [
+		'email' => $email, 
+		'subject' => 'Welcome! You’ve successfully joined '.$modx->getOption('site_name'),
+		'message' =>  $content
+	]);
+	
+}
