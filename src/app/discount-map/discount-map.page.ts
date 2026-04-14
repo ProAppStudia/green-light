@@ -19,9 +19,8 @@ import { ApiService } from '../services/api';
 import { AuthService } from 'src/app/services/auth.service';
 //локалізація 
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-// Leaflet 
+// Leaflet
 import * as L from 'leaflet';
-import 'leaflet.markercluster';
 //change icons
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -58,11 +57,13 @@ export class DiscountMapPage implements OnInit {
   markerCluster!: any;
 
   ionViewDidEnter() {
-    if (!this.map) {
-      this.initMap();
-    } else {
-      setTimeout(() => this.map?.invalidateSize(), 300);
-    }
+    setTimeout(() => {
+      if (!this.map) {
+        this.initMap();
+      } else {
+        this.map?.invalidateSize();
+      }
+    }, 300);
   }
 
 
@@ -186,22 +187,31 @@ export class DiscountMapPage implements OnInit {
   }
 
   //leaflet map initialization
-  initMap() {
-    this.map = L.map('map').setView([50.4501, 30.5234], 12);
+  async initMap() {
+    try {
+      // Встановлюємо window.L ДО імпорту плагіну,
+      // щоб leaflet.markercluster (UMD) прикріпився до правильного екземпляра L
+      (window as any).L = L;
+      await import('leaflet.markercluster');
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(this.map);
+      this.map = L.map('map').setView([50.4501, 30.5234], 12);
 
-    // Кластер
-    this.markerCluster = (L as any).markerClusterGroup({
-      showCoverageOnHover: false,
-      maxClusterRadius: 50
-    });
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(this.map);
 
-    this.map.addLayer(this.markerCluster);
+      // Кластер
+      this.markerCluster = (L as any).markerClusterGroup({
+        showCoverageOnHover: false,
+        maxClusterRadius: 50
+      });
 
-    this.loadDiscounts();
+      this.map.addLayer(this.markerCluster);
+
+      this.loadDiscounts();
+    } catch (err) {
+      console.error('initMap error:', JSON.stringify(err), err);
+    }
   }
 
   loadDiscounts(filters: any = {}) {
@@ -216,7 +226,11 @@ export class DiscountMapPage implements OnInit {
 
     const markers: L.Marker[] = [];
 
-    this.apiService.getDiscountsMap(filters).subscribe({
+    // Завжди передаємо contextKey для коректної роботи на мобільному
+    const contextKey = (this.selectedLanguage || 'UA').toLowerCase();
+    const apiFilters = { contextKey, ...filters };
+
+    this.apiService.getDiscountsMap(apiFilters).subscribe({
       next: (res:any) => {
         if(res && res.discounts){
           if(!res.discounts.length){
@@ -224,8 +238,10 @@ export class DiscountMapPage implements OnInit {
             return;
           }
           res.discounts.forEach((discount: any) => {
-              if(discount.coordinates.lat && discount.coordinates.lan){
-                const marker = L.marker([discount.coordinates.lat, discount.coordinates.lan]);
+              const lat = parseFloat(discount.coordinates?.lat);
+              const lan = parseFloat(discount.coordinates?.lan);
+              if(!isNaN(lat) && !isNaN(lan) && lat !== 0 && lan !== 0){
+                const marker = L.marker([lat, lan]);
                 const popupContent = `
                   <div class="custom-popup">
                     <img src="${discount.image}" />
@@ -243,7 +259,7 @@ export class DiscountMapPage implements OnInit {
                   className: 'ionic-popup'
                 });
                 markers.push(marker);
-              } 
+              }
           })
           // додаємо всі маркери в кластер
           this.markerCluster.addLayers(markers);
@@ -256,11 +272,17 @@ export class DiscountMapPage implements OnInit {
           }
         }
       },
-      error: (err) => {
+      error: async (err) => {
         console.error('Помилка HTTP:', err);
+        const alert = await this.alertCtrl.create({
+          header: 'Помилка',
+          message: 'Не вдалося завантажити дані карти. Перевірте з\'єднання.',
+          buttons: ['OK']
+        });
+        await alert.present();
       },
     });
-    
+
   }
 
   async showNoResultsAlert() {
