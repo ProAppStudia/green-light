@@ -8,6 +8,9 @@ html, body {
   -moz-text-size-adjust: none !important;
   text-size-adjust: none !important;
 }
+html, body {
+  overflow-x: hidden;
+}
 
 /*
  * App Global CSS

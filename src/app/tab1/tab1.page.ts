@@ -129,7 +129,6 @@ export class Tab1Page implements OnInit {
   ngOnInit() {
 
     console.log('Device Pixel');
-    console.log('Device Pixel -- ');
     console.log(window.innerWidth);
     console.log(screen.width);
     console.log(window.devicePixelRatio);
